@@ -10,6 +10,9 @@ namespace UHabitacional_Web
         // DBSets = Tablas en la Base de Datos
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<TipoUsuario> TiposUsuario { get; set; }
+        public DbSet<Inquilino> Inquilino { get; set; }
+        public DbSet<Edificio> Edificio { get; set; }
+        public DbSet<Departamento> Departamento { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -235,6 +238,5 @@ namespace UHabitacional_Web
                 new Departamento { Id = 3, NumeroInt = "201", Piso = 2, EdificioId = "1-2" }
             );
         }
-        public DbSet<UHabitacional_Web.Models.Inquilino> Inquilino { get; set; } = default!;
     }
 }

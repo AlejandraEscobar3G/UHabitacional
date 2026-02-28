@@ -15,10 +15,53 @@
 <div>
     <h1 class="display-6 mb-5">Inquilinos</h1>
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col">
-                Tabla
-            </div>
+        <div class="row justify-content-end mb-5">
+            <a class="w-25 btn btn-outline-success" asp-controller="Inquilino" asp-action="Create">
+                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                </svg> Nuevo inquilino
+            </a>
         </div>
+        @if (Model == null || !Model.Any())
+        {
+            <div class="row justify-content-center">
+                <img class="w-25" src="~/images/sin-datos.png" alt="Sin datos" />
+                <p class="mb-0 mt-3 h3 text-center text-body-tertiary">No se encontraron datos</p>
+            </div>
+        }
+        else
+        {
+            <div class="row justify-content-center g-5">
+                <div class="col-12">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Edificio</th>
+                                <th>Departamento</th>
+                                <th>Fecha inicio</th>
+                                <th>Editar</th>
+                                <th>Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th scope="row">@Html.DisplayFor(modelItem => item.Id)</th>
+                                    <td>@Html.DisplayFor(modelItem => item.Usuario.Nombre)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Departamento.Edificio.Id)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Departamento.NumeroInt)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.FechaInicio)</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
     </div>
 </div>
