@@ -50,15 +50,34 @@ namespace UHabitacional_Web.Controllers
         // POST: InquilinoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Inquilino inquilino)
         {
             try
             {
+                inquilino.Usuario.Estatus = 1;
+                inquilino.Usuario.CreatedAt = DateTime.Now;
+                inquilino.Usuario.CreatedBy = 0;
+
+                _context.Usuarios.Add(inquilino.Usuario);
+                _context.SaveChanges();
+
+                Inquilino inquilinoDto = new Inquilino()
+                {
+                    FechaInicio = inquilino.FechaInicio,
+                    UsuarioId = inquilino.Usuario.Id,
+                    DepartamentoId = inquilino.DepartamentoId,
+                    CreatedAt = DateTime.Now,
+                    CreatedBy = 0
+                };
+
+                _context.Inquilino.Add(inquilinoDto);
+                _context.SaveChanges();
+
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return RedirectToAction(nameof(Index));
             }
         }
 

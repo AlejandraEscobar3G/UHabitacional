@@ -49,11 +49,15 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
-                                    <th scope="row">@Html.DisplayFor(modelItem => item.Id)</th>
-                                    <td>@Html.DisplayFor(modelItem => item.Usuario.Nombre)</td>
+                                    <th scope="row">@Html.DisplayFor(modelItem => item.UsuarioId)</th>
+                                    <td>
+                                        @($"{item.Usuario.Nombre} {item.Usuario.ApellidoPaterno}")
+                                    </td>
                                     <td>@Html.DisplayFor(modelItem => item.Departamento.Edificio.Id)</td>
                                     <td>@Html.DisplayFor(modelItem => item.Departamento.NumeroInt)</td>
-                                    <td>@Html.DisplayFor(modelItem => item.FechaInicio)</td>
+                                    <td>
+                                        @item.FechaInicio.ToString("dd/MM/yyyy")
+                                    </td>
                                     <td></td>
                                     <td></td>
                                 </tr>
