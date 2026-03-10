@@ -49,7 +49,11 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
-                                    <th scope="row">@Html.DisplayFor(modelItem => item.UsuarioId)</th>
+                                    <th scope="row">
+                                        <button type="button" class="btn btn-primary inquilino-details" data-id="@item.UsuarioId" data-bs-target="#inquilinoDetails">
+                                            @Html.DisplayFor(modelItem => item.UsuarioId)
+                                        </button>
+                                    </th>
                                     <td>
                                         @($"{item.Usuario.Nombre} {item.Usuario.ApellidoPaterno}")
                                     </td>
@@ -68,4 +72,7 @@
             </div>
         }
     </div>
+</div>
+
+<div class="modal fade" id="inquilinoDetails" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel">
 </div>

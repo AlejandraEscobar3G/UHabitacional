@@ -7,7 +7,7 @@
         public string ApellidoPaterno { get; set; }
         public string ApellidoMaterno { get; set; }
         public string Correo { get; set; }
-        public int Estatus { get; set; }
+        public EstatusUsuario Estatus { get; set; }
 
         // Relacion con TipoUsuario
         public int TipoUsuarioId { get; set; }

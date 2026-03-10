@@ -22,4 +22,11 @@ $(document).ready(function() {
             });
         });
     });
+
+    $(".inquilino-details").on("click", function() {
+        var id = $(this).data("id");
+        $("#inquilinoDetails").load("/Inquilino/Details/" + id, function() {
+            $("#inquilinoDetails").modal("show");
+        });
+    });
 });

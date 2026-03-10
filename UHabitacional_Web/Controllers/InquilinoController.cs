@@ -27,9 +27,17 @@ namespace UHabitacional_Web.Controllers
         }
 
         // GET: InquilinoController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            return View();
+            Inquilino? inquilino = await _context.Inquilino
+                .Where(i => i.UsuarioId == id)
+                .Include(i => i.Usuario)
+                    .ThenInclude(t => t.TipoUsuario)
+                .Include(i => i.Departamento)
+                    .ThenInclude(d => d.Edificio)
+                .FirstOrDefaultAsync();
+
+            return PartialView("Details", inquilino);
         }
 
         // GET: InquilinoController/Create
@@ -54,7 +62,7 @@ namespace UHabitacional_Web.Controllers
         {
             try
             {
-                inquilino.Usuario.Estatus = 1;
+                inquilino.Usuario.Estatus = EstatusUsuario.Activo;
                 inquilino.Usuario.CreatedAt = DateTime.Now;
                 inquilino.Usuario.CreatedBy = 0;
 

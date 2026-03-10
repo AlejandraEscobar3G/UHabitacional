@@ -1,0 +1,51 @@
+﻿@model UHabitacional_Web.Models.Inquilino
+
+<div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5">@Model.UsuarioId - Detalles</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row justify-content-center">
+                <div class="col-3 fw-medium my-3">Nombre</div>
+                <div class="col-7 my-3">@Model.Usuario.Nombre @Model.Usuario.ApellidoPaterno @Model.Usuario.ApellidoMaterno</div>
+
+                <div class="col-3 fw-medium mb-3">Correo</div>
+                <div class="col-7 mb-3">@Model.Usuario.Correo</div>
+
+                <div class="col-3 fw-medium mb-3">Estatus</div>
+                <div class="col-7 mb-3">
+                    @if (Model.Usuario.Estatus == EstatusUsuario.Activo)
+                    {
+                        <span class="badge text-bg-success">Activo</span>
+                    }
+                    else if (Model.Usuario.Estatus == EstatusUsuario.Inactivo)
+                    {
+                        <span class="badge text-bg-secondary">Inactivo</span>
+                    }
+                    else
+                    {
+                        <span class="badge text-bg-warning">Bloqueado</span>
+                    }
+                </div>
+
+                <div class="col-3 fw-medium mb-3">Rol</div>
+                <div class="col-7 mb-3">@Model.Usuario.TipoUsuario.Descripcion</div>
+
+                <div class="col-3 fw-medium mb-3">Edificio</div>
+                <div class="col-7 mb-3">@Model.Departamento.EdificioId</div>
+
+                <div class="col-3 fw-medium mb-3">Departamento</div>
+                <div class="col-7 mb-3">@Model.Departamento.NumeroInt</div>
+
+                <div class="col-3 fw-medium mb-3">Fecha de inicio</div>
+                <div class="col-7 mb-3">@Model.FechaInicio.ToString("dd/MM/yyyy")</div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary">Editar</button>
+        </div>
+    </div>
+</div>
