@@ -29,4 +29,22 @@ $(document).ready(function() {
             $("#inquilinoDetails").modal("show");
         });
     });
+
+    // Inicializar radio button estatus en edicion de inquilino
+    var seleccionado = $('input[name="Usuario.Estatus"]:checked').val();
+    if (seleccionado === "Inactivo") {
+        $('#InquilinoFechaFin').show();
+    }
+    else {
+         $("#InquilinoFechaFin").hide();
+    }
+
+    $('input[name="Usuario.Estatus"]').on("change", function() {
+        if ($(this).val() === "Inactivo") {
+            $("#InquilinoFechaFin").show();
+        }
+        else {
+            $("#InquilinoFechaFin").hide();
+        }
+    });
 });

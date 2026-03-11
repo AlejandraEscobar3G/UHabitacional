@@ -1,0 +1,89 @@
+﻿@model UHabitacional_Web.Models.Inquilino
+
+@{
+    ViewData["Title"] = "Editar Inquilino";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-area="" asp-controller="Inquilino" asp-action="Index">Inquilinos</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Editar</li>
+    </ol>
+</nav>
+
+<div>
+    <h1 class="display-6 mb-5">Editar Inquilino</h1>
+    <div class="container">
+        <form class="row justify-content-center border border-secondary-subtle p-4 rounded" asp-action="Edit">
+            <input type="hidden" asp-for="UsuarioId" />
+
+            <div class="mb-3 col-6">
+                <label asp-for="Usuario.Nombre" class="form-label">Nombre</label>
+                <input asp-for="Usuario.Nombre" type="text" class="form-control" placeholder="John">
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="Usuario.ApellidoPaterno" class="form-label">Apellido Paterno</label>
+                <input asp-for="Usuario.ApellidoPaterno" type="text" class="form-control" placeholder="Doe">
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="Usuario.ApellidoMaterno" class="form-label">Apellido Materno</label>
+                <input asp-for="Usuario.ApellidoMaterno" type="text" class="form-control" placeholder="Doe">
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="Usuario.Correo" class="form-label">Correo electrónico</label>
+                <input asp-for="Usuario.Correo" type="email" class="form-control" placeholder="nombre@ejemplo.com">
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="Usuario.TipoUsuarioId" class="form-label">Tipo de usuario:</label>
+                <select asp-for="Usuario.TipoUsuarioId" class="form-control" asp-items="ViewBag.TipoUsuarios"></select>
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="Departamento.EdificioId" class="form-label">Selecciona el edificio:</label>
+                <select asp-for="Departamento.EdificioId" id="EdificioId" class="form-control" asp-items="ViewBag.Edificios">
+                    <option value="" disabled selected>Selecciona edificio</option>
+                </select>
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="DepartamentoId" class="form-label">Selecciona el departamento:</label>
+                <select asp-for="DepartamentoId" id="DepartamentoId" class="form-control" asp-items="ViewBag.Departamentos">
+                    <option value="" disabled selected>Selecciona departamento</option>
+                </select>
+            </div>
+            <div class="mb-3 col-6">
+                <label class="d-block">Estatus</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" asp-for="Usuario.Estatus" type="radio" id="Activo" value="Activo">
+                    <label class="form-check-label" for="Activo">Activo</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" asp-for="Usuario.Estatus" type="radio" id="Bloqueado" value="Bloqueado">
+                    <label class="form-check-label" for="Bloqueado">Bloqueado</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" asp-for="Usuario.Estatus" type="radio" id="Inactivo" value="Inactivo">
+                    <label class="form-check-label" for="Inactivo">Inactivo</label>
+                </div>
+            </div>
+            <div class="mb-3 col-6">
+                <label asp-for="FechaInicio" class="form-label">Selecciona fecha de ingreso:</label>
+                <input asp-for="FechaInicio" type="date" class="form-control">
+            </div>
+            <div class="mb-3 col-6" id="InquilinoFechaFin">
+                <label asp-for="FechaFin" class="form-label">Selecciona fecha de egreso:</label>
+                <input asp-for="FechaFin" type="date" class="form-control">
+            </div>
+            <div class="col-12 text-center mt-4">
+                <input type="submit" value="Guardar" class="w-50 btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

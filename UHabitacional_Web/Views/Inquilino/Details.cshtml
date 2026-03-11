@@ -45,7 +45,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-primary">Editar</button>
+            <a class="btn btn-primary" asp-area="" asp-controller="Inquilino" asp-action="Edit" asp-route-id="@Model.UsuarioId">Editar</a>
         </div>
     </div>
 </div>

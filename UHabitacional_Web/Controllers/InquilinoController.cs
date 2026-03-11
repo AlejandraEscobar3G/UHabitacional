@@ -90,18 +90,96 @@ namespace UHabitacional_Web.Controllers
         }
 
         // GET: InquilinoController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            Inquilino? inquilino = await _context.Inquilino
+                .Where(i => i.UsuarioId == id)
+                .Include(i => i.Usuario)
+                    .ThenInclude(t => t.TipoUsuario)
+                .Include(i => i.Departamento)
+                    .ThenInclude(d => d.Edificio)
+                .FirstOrDefaultAsync();
+
+            if (inquilino == null)
+            {
+                return View(inquilino);
+            }
+
+            List<TipoUsuario> tipoUsuarios = _context.TiposUsuario.Where(u => u.Id == 2).ToList();
+            List<Edificio> edificiosDisponibles = _context.Edificio
+                .Where(e =>
+                    e.Id == inquilino.Departamento.EdificioId
+                    || e.Departamentos.Any(
+                        d => !d.Inquilinos.Any(i => i.FechaFin == null))
+                    )
+                .ToList();
+            var departamentos = _context.Departamento
+                .Where(d =>
+                    d.EdificioId == inquilino.Departamento.EdificioId
+                    && (
+                        d.Id == inquilino.DepartamentoId
+                        || !d.Inquilinos.Any(i => i.FechaFin == null)
+                    )
+                )
+                .Select(d => new { id = d.Id, numeroInt = d.NumeroInt })
+                .ToList();
+
+            ViewBag.TipoUsuarios = new SelectList(tipoUsuarios, "Id", "Descripcion", inquilino.Usuario.TipoUsuarioId);
+            ViewBag.Edificios = new SelectList(edificiosDisponibles, "Id", "Id", inquilino.Departamento.EdificioId);
+            ViewBag.Departamentos = new SelectList(departamentos, "id", "numeroInt", inquilino.DepartamentoId);
+
+            return View(inquilino);
         }
 
         // POST: InquilinoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(int id, Inquilino inquilino)
         {
             try
             {
+                // Update de usuario
+                Usuario? usuario = await _context.Usuarios
+                    .Include(u => u.TipoUsuario)
+                    .Include(u => u.Inquilino)
+                    .FirstOrDefaultAsync(u => u.Id == id);
+
+                if (usuario == null)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                usuario.Nombre = inquilino.Usuario.Nombre;
+                usuario.ApellidoPaterno = inquilino.Usuario.ApellidoPaterno;
+                usuario.ApellidoMaterno = inquilino.Usuario.ApellidoMaterno;
+                usuario.Correo = inquilino.Usuario.Correo;
+                usuario.TipoUsuarioId = inquilino.Usuario.TipoUsuarioId;
+                usuario.Estatus = inquilino.Usuario.Estatus;
+                usuario.ModifyAt = DateTime.Now;
+                usuario.ModifyBy = 0;
+
+                // Update de Inquilino
+                Inquilino? inquilinoDto = await _context.Inquilino
+                .Where(i => i.UsuarioId == id)
+                .Include(i => i.Usuario)
+                    .ThenInclude(t => t.TipoUsuario)
+                .Include(i => i.Departamento)
+                    .ThenInclude(d => d.Edificio)
+                .FirstOrDefaultAsync();
+
+                if (inquilinoDto == null)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                inquilinoDto.FechaInicio = inquilino.FechaInicio;
+                inquilinoDto.FechaFin = inquilino.FechaFin;
+                inquilinoDto.DepartamentoId = inquilino.DepartamentoId;
+                inquilinoDto.ModifyAt = DateTime.Now;
+                inquilinoDto.ModifyBy = 0;
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             catch
