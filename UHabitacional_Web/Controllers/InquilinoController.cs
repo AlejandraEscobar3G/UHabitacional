@@ -138,27 +138,6 @@ namespace UHabitacional_Web.Controllers
         {
             try
             {
-                // Update de usuario
-                Usuario? usuario = await _context.Usuarios
-                    .Include(u => u.TipoUsuario)
-                    .Include(u => u.Inquilino)
-                    .FirstOrDefaultAsync(u => u.Id == id);
-
-                if (usuario == null)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-
-                usuario.Nombre = inquilino.Usuario.Nombre;
-                usuario.ApellidoPaterno = inquilino.Usuario.ApellidoPaterno;
-                usuario.ApellidoMaterno = inquilino.Usuario.ApellidoMaterno;
-                usuario.Correo = inquilino.Usuario.Correo;
-                usuario.TipoUsuarioId = inquilino.Usuario.TipoUsuarioId;
-                usuario.Estatus = inquilino.Usuario.Estatus;
-                usuario.ModifyAt = DateTime.Now;
-                usuario.ModifyBy = 0;
-
-                // Update de Inquilino
                 Inquilino? inquilinoDto = await _context.Inquilino
                 .Where(i => i.UsuarioId == id)
                 .Include(i => i.Usuario)
@@ -172,8 +151,18 @@ namespace UHabitacional_Web.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
+                // Actualiza tabla Usuario
+                inquilinoDto.Usuario.Nombre = inquilino.Usuario.Nombre;
+                inquilinoDto.Usuario.ApellidoPaterno = inquilino.Usuario.ApellidoPaterno;
+                inquilinoDto.Usuario.ApellidoMaterno = inquilino.Usuario.ApellidoMaterno;
+                inquilinoDto.Usuario.Correo = inquilino.Usuario.Correo;
+                inquilinoDto.Usuario.TipoUsuarioId = inquilino.Usuario.TipoUsuarioId;
+                inquilinoDto.Usuario.Estatus = inquilino.Usuario.Estatus;
+                inquilinoDto.Usuario.ModifyAt = DateTime.Now;
+                inquilinoDto.Usuario.ModifyBy = 0;
+
+                // Actualiza tabla Inquilino
                 inquilinoDto.FechaInicio = inquilino.FechaInicio;
-                inquilinoDto.FechaFin = inquilino.FechaFin;
                 inquilinoDto.DepartamentoId = inquilino.DepartamentoId;
                 inquilinoDto.ModifyAt = DateTime.Now;
                 inquilinoDto.ModifyBy = 0;
@@ -189,23 +178,45 @@ namespace UHabitacional_Web.Controllers
         }
 
         // GET: InquilinoController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            return View();
+            Inquilino? inquilino = await _context.Inquilino
+                .Where(i => i.UsuarioId == id)
+                .Include(i => i.Usuario)
+                    .ThenInclude(t => t.TipoUsuario)
+                .Include(i => i.Departamento)
+                    .ThenInclude(d => d.Edificio)
+                .FirstOrDefaultAsync();
+
+            return PartialView("_Delete", inquilino);
         }
 
         // POST: InquilinoController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
+                Inquilino? inquilino = await _context.Inquilino
+                    .Where(i => i.UsuarioId == id)
+                    .Include(i => i.Usuario)
+                    .FirstOrDefaultAsync();
+
+                if (inquilino == null)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                inquilino.Usuario.Estatus = EstatusUsuario.Inactivo;
+                inquilino.FechaFin = DateTime.Now;
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return RedirectToAction(nameof(Index));
             }
         }
 
@@ -214,7 +225,7 @@ namespace UHabitacional_Web.Controllers
             var departamentos = _context.Departamento
                 .Where(d =>
                     d.EdificioId == edificioId
-                    && !d.Inquilinos.Any()
+                    && !d.Inquilinos.Any(i => i.FechaFin == null)
                 )
                 .Select(d => new { id = d.Id, numeroInt = d.NumeroInt })
                 .ToList();

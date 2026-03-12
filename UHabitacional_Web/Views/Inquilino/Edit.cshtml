@@ -64,19 +64,12 @@
                     <input class="form-check-input" asp-for="Usuario.Estatus" type="radio" id="Bloqueado" value="Bloqueado">
                     <label class="form-check-label" for="Bloqueado">Bloqueado</label>
                 </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" asp-for="Usuario.Estatus" type="radio" id="Inactivo" value="Inactivo">
-                    <label class="form-check-label" for="Inactivo">Inactivo</label>
-                </div>
             </div>
             <div class="mb-3 col-6">
                 <label asp-for="FechaInicio" class="form-label">Selecciona fecha de ingreso:</label>
                 <input asp-for="FechaInicio" type="date" class="form-control">
             </div>
-            <div class="mb-3 col-6" id="InquilinoFechaFin">
-                <label asp-for="FechaFin" class="form-label">Selecciona fecha de egreso:</label>
-                <input asp-for="FechaFin" type="date" class="form-control">
-            </div>
+            <div class="mb-3 col-6"></div>
             <div class="col-12 text-end mt-4">
                 <a value="Guardar" class="w-25 btn btn-outline-danger" asp-controller="Inquilino" asp-action="Index">Cancelar</a>
                 <button type="submit" class="w-25 btn btn-primary">

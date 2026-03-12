@@ -3,6 +3,9 @@
 
 // Write your JavaScript code.
 $(document).ready(function() {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
     $("#EdificioId").change(function() {
         var edificioId = $(this).val();
         $.getJSON('/Inquilino/GetDepartamentosByEdificio', { edificioId: edificioId }, function(data) {
@@ -30,21 +33,10 @@ $(document).ready(function() {
         });
     });
 
-    // Inicializar radio button estatus en edicion de inquilino
-    var seleccionado = $('input[name="Usuario.Estatus"]:checked').val();
-    if (seleccionado === "Inactivo") {
-        $('#InquilinoFechaFin').show();
-    }
-    else {
-         $("#InquilinoFechaFin").hide();
-    }
-
-    $('input[name="Usuario.Estatus"]').on("change", function() {
-        if ($(this).val() === "Inactivo") {
-            $("#InquilinoFechaFin").show();
-        }
-        else {
-            $("#InquilinoFechaFin").hide();
-        }
+    $(".inquilino-remove").on("click", function() {
+        var id = $(this).data("id");
+        $("#inquilinoRemove").load("/Inquilino/Delete/" + id, function() {
+            $("#inquilinoRemove").modal("show");
+        });
     });
 });
