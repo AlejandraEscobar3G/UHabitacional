@@ -77,6 +77,7 @@ namespace UHabitacional_Web
             {
                 entity.HasKey(u => u.Id);
                 entity.Property(u => u.Descripcion).IsRequired().HasMaxLength(150);
+                entity.Property(u => u.Estatus).IsRequired().HasDefaultValue(EstatusIdentificacion.Activo);
 
                 // Campos auditoria
                 entity.Property(u => u.CreatedAt)
@@ -238,5 +239,6 @@ namespace UHabitacional_Web
                 new Departamento { Id = 3, NumeroInt = "201", Piso = 2, EdificioId = "1-2" }
             );
         }
+        public DbSet<UHabitacional_Web.Models.Identificacion> Identificacion { get; set; } = default!;
     }
 }

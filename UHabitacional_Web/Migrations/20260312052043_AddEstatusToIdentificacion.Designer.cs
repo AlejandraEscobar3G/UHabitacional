@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UHabitacional_Web;
 
@@ -11,9 +12,11 @@ using UHabitacional_Web;
 namespace UHabitacional_Web.Migrations
 {
     [DbContext(typeof(UHabitacionalContext))]
-    partial class UHabitacionalContextModelSnapshot : ModelSnapshot
+    [Migration("20260312052043_AddEstatusToIdentificacion")]
+    partial class AddEstatusToIdentificacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
