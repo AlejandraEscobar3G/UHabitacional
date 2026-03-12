@@ -13,6 +13,7 @@ namespace UHabitacional_Web
         public DbSet<Inquilino> Inquilino { get; set; }
         public DbSet<Edificio> Edificio { get; set; }
         public DbSet<Departamento> Departamento { get; set; }
+        public DbSet<Identificacion> Identificacion { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -239,6 +240,5 @@ namespace UHabitacional_Web
                 new Departamento { Id = 3, NumeroInt = "201", Piso = 2, EdificioId = "1-2" }
             );
         }
-        public DbSet<UHabitacional_Web.Models.Identificacion> Identificacion { get; set; } = default!;
     }
 }

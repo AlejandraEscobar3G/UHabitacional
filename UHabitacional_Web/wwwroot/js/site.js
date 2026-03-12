@@ -5,38 +5,4 @@
 $(document).ready(function() {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
-
-    $("#EdificioId").change(function() {
-        var edificioId = $(this).val();
-        $.getJSON('/Inquilino/GetDepartamentosByEdificio', { edificioId: edificioId }, function(data) {
-            var deptoSelect = $("#DepartamentoId");
-            deptoSelect.empty();
-            deptoSelect.append($('<option>', {
-                value: "",
-                text: "Selecciona departamento",
-                disabled: true,
-                selected: true
-            }));
-            $.each(data, function(i, item) {
-                deptoSelect.append($('<option>', {
-                    value: item.id,
-                    text: item.numeroInt
-                }));
-            });
-        });
-    });
-
-    $(".inquilino-details").on("click", function() {
-        var id = $(this).data("id");
-        $("#inquilinoDetails").load("/Inquilino/Details/" + id, function() {
-            $("#inquilinoDetails").modal("show");
-        });
-    });
-
-    $(".inquilino-remove").on("click", function() {
-        var id = $(this).data("id");
-        $("#inquilinoRemove").load("/Inquilino/Delete/" + id, function() {
-            $("#inquilinoRemove").modal("show");
-        });
-    });
 });

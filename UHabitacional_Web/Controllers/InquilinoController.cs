@@ -209,7 +209,13 @@ namespace UHabitacional_Web.Controllers
                 }
 
                 inquilino.Usuario.Estatus = EstatusUsuario.Inactivo;
+                inquilino.Usuario.ModifyAt = DateTime.Now;
+                inquilino.Usuario.ModifyBy = 0;
+
                 inquilino.FechaFin = DateTime.Now;
+                inquilino.ModifyAt = DateTime.Now;
+                inquilino.ModifyBy = 0;
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
