@@ -1,0 +1,119 @@
+﻿@model IEnumerable<UHabitacional_Web.Models.Edificio>
+
+@{
+    ViewData["Title"] = "Edificio Page";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Edificios</li>
+    </ol>
+</nav>
+
+<div>
+    <h1 class="display-6 mb-5">Edificios</h1>
+    <div class="container">
+        <div class="row justify-content-end mb-5">
+            <button type="button" class="btn btn-outline-success w-25 edificio-create"
+                    data-bs-target="#edificioCreate">
+                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                </svg> Nueva edificio
+            </button>
+        </div>
+        @if (Model == null || !Model.Any())
+        {
+            <div class="row justify-content-center">
+                <img class="w-25" src="~/images/sin-datos.png" alt="Sin datos" />
+                <p class="mb-0 mt-3 h3 text-center text-body-tertiary">No se encontraron datos</p>
+            </div>
+        }
+        else
+        {
+            <div class="row justify-content-center g-5">
+                <div class="col-12">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th>Calle</th>
+                                <th>Total Departamentos</th>
+                                <th>Número pisos</th>
+                                <th>Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th class="text-center align-middle" scope="row">
+                                        @Html.DisplayFor(modelItem => item.Id)
+                                    </th>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => item.Calle)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => item.TotalDeptos)
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => item.NumeroPisos)
+                                    </td>
+                                    <td class="align-middle">
+                                        <h5 class="text-center m-0">
+                                            @if (item.Estatus == EstatusEdificio.Activo)
+                                            {
+                                                <span class="badge text-bg-success">Activo</span>
+                                            }
+                                            else if (item.Estatus == EstatusEdificio.EnConstruccion)
+                                            {
+                                                <span class="badge text-bg-secondary">En construcción</span>
+                                            }
+                                            else if (item.Estatus == EstatusEdificio.EnReparacion)
+                                            {
+                                                <span class="badge text-bg-warning">En reparación</span>
+                                            }
+                                            else if (item.Estatus == EstatusEdificio.Clausurado)
+                                            {
+                                                <span class="badge text-bg-danger">Clausurado</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge text-bg-dark">Demolido</span>
+                                            }
+                                        </h5>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        @if (item.Estatus != EstatusEdificio.Demolido)
+                                        {
+                                            <button type="button" class="btn btn-outline-primary me-2 edificio-edit"
+                                                    data-id="@item.Id" data-bs-target="#edificioEdit"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar edificio">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
+                                                </svg>
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="edificioCreate" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel">
+</div>
+
+<div class="modal fade" id="edificioEdit" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel">
+</div>
+
+@section Scripts {
+    <script src="~/js/Edificio.js"></script>
+}

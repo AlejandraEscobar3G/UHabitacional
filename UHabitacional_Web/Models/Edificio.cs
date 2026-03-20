@@ -6,6 +6,7 @@
         public string Calle { get; set; }
         public int TotalDeptos { get; set; }
         public int NumeroPisos { get; set; }
+        public EstatusEdificio Estatus { get; set; } = EstatusEdificio.Activo;
 
         // Campos de auditoria
         public DateTime CreatedAt { get; set; }

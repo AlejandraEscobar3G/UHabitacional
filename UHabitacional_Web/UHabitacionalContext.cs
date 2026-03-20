@@ -97,6 +97,11 @@ namespace UHabitacional_Web
                 entity.Property(e => e.TotalDeptos).IsRequired();
                 entity.Property(e => e.NumeroPisos).IsRequired();
 
+                entity.Property(e => e.Estatus)
+                    .HasConversion<int>()
+                    .IsRequired()
+                    .HasDefaultValue(EstatusEdificio.Activo);
+
                 // Campos auditoria
                 entity.Property(u => u.CreatedAt)
                     .HasDefaultValueSql("SYSDATETIME()")
