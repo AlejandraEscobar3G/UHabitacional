@@ -1,17 +1,17 @@
-﻿@model UHabitacional_Web.Models.Identificacion
+﻿@model UHabitacional_Web.Models.TipoUsuario
 
-<form class="modal-dialog modal-dialog-centered modal-lg" asp-action="Create">
+<form class="modal-dialog modal-dialog-centered modal-lg" asp-action="Edit">
     <input type="hidden" asp-for="Id" />
     <div class="modal-content">
         <div class="modal-header">
-            <h1 class="modal-title fs-5">Crear tipo de identificación</h1>
+            <h1 class="modal-title fs-5">Editar tipo de usuario</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <div class="row justify-content-center">
                 <div class="mb-3 col-6">
-                    <label asp-for="Descripcion" class="form-label">Tipo de identificación</label>
-                    <input asp-for="Descripcion" type="text" class="form-control" placeholder="INE">
+                    <label asp-for="Descripcion" class="form-label">Tipo de usuario</label>
+                    <input asp-for="Descripcion" type="text" class="form-control" placeholder="Administrador">
                 </div>
             </div>
         </div>
