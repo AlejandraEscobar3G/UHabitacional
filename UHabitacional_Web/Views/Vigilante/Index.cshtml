@@ -1,0 +1,117 @@
+﻿@model IEnumerable<UHabitacional_Web.Models.Usuario>
+
+@{
+    ViewData["Title"] = "Vigilante Page";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">Vigilantes</li>
+    </ol>
+</nav>
+
+<div>
+    <h1 class="display-6 mb-5">Vigilantes</h1>
+    <div class="container">
+        <div class="row justify-content-end mb-5">
+            <button type="button" class="btn btn-outline-success w-25 vigilante-create"
+                    data-bs-target="#vigilanteCreate">
+                <svg class="me-2" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2" />
+                </svg> Nuevo vigilante
+            </button>
+        </div>
+        @if (Model == null || !Model.Any())
+        {
+            <div class="row justify-content-center">
+                <img class="w-25" src="~/images/sin-datos.png" alt="Sin datos" />
+                <p class="mb-0 mt-3 h3 text-center text-body-tertiary">No se encontraron datos</p>
+            </div>
+        }
+        else
+        {
+            <div class="row justify-content-center g-5">
+                <div class="col-12">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th class="text-center">ID</th>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th class="text-center align-middle" scope="row">
+                                        @Html.DisplayFor(modelItem => item.Id)
+                                    </th>
+                                    <td class="align-middle">
+                                        @($"{item.Nombre} {item.ApellidoPaterno}")
+                                    </td>
+                                    <td class="align-middle">
+                                        @Html.DisplayFor(modelItem => item.Correo)
+                                    </td>
+                                    <td class="align-middle">
+                                        <h5 class="text-center m-0">
+                                            @if (item.Estatus == EstatusUsuario.Activo)
+                                            {
+                                                <span class="badge text-bg-success">Activo</span>
+                                            }
+                                            else if (item.Estatus == EstatusUsuario.Inactivo)
+                                            {
+                                                <span class="badge text-bg-secondary">Inactivo</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge text-bg-warning">Bloqueado</span>
+                                            }
+                                        </h5>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        @if (item.Estatus != EstatusUsuario.Inactivo)
+                                        {
+                                            <button type="button" class="btn btn-outline-primary me-2 vigilante-edit"
+                                                    data-id="@item.Id" data-bs-target="#vigilanteEdit"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Editar vigilante">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325" />
+                                                </svg>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger vigilante-remove"
+                                                    data-id="@item.Id" data-bs-target="#vigilanteRemove"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Deshabilitar vigilante">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                                </svg>
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="vigilanteCreate" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel">
+</div>
+
+<div class="modal fade" id="vigilanteEdit" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel">
+</div>
+
+<div class="modal fade" id="vigilanteRemove" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel">
+</div>
+
+@section Scripts {
+    <script src="~/js/Vigilante.js"></script>
+}
