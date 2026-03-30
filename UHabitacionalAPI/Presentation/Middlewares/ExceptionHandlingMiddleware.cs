@@ -23,7 +23,7 @@ namespace UHabitacionalAPI.Presentation.Middlewares
             catch (DomainException ex)
             {
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = MapStatusCode(ex.InnerException ?? ex, ex.Operation);
+                context.Response.StatusCode = MapStatusCode(ex.InnerException ?? ex);
 
                 var result = new
                 {
@@ -34,9 +34,23 @@ namespace UHabitacionalAPI.Presentation.Middlewares
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(result));
             }
+            catch (Exception ex)
+            {
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = MapStatusCode(ex);
+
+                var result = new
+                {
+                    error = ex.Message,
+                    entity = DomainEntity.UNHANDLED_ENTITY,
+                    operation = DomainOperation.UNHANDLED_OPERATION
+                };
+
+                await context.Response.WriteAsync(JsonSerializer.Serialize(result));
+            }
         }
 
-        private static int MapStatusCode(Exception ex, DomainOperation operation)
+        private static int MapStatusCode(Exception ex)
         {
             return ex switch
             {
