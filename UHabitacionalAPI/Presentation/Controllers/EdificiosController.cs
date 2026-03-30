@@ -21,11 +21,6 @@ namespace UHabitacionalAPI.Presentation.Controllers
         {
             List<EdificioResponse> edificios = await _edificiosService.GetAsync(filters);
 
-            if (edificios.IsNullOrEmpty())
-            {
-                return NotFound("No se encontraron edificios con los filtros seleccionados.");
-            }
-
             return Ok(edificios);
         }
 
@@ -33,11 +28,6 @@ namespace UHabitacionalAPI.Presentation.Controllers
         public async Task<ActionResult<EdificioResponse>> GetById(string id)
         {
             EdificioResponse? edificio = await _edificiosService.GetByIdAsync(id);
-
-            if (edificio is null)
-            {
-                return NotFound($"Edificio con ID {id} no encontrado.");
-            }
 
             return Ok(edificio);
         }

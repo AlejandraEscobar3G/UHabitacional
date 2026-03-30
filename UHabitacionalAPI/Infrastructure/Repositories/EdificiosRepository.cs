@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using UHabitacionalAPI.Application.Interfaces;
 using UHabitacionalAPI.Domain.Entities;
 using UHabitacionalAPI.Domain.Enums;
@@ -73,7 +74,16 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
                     })
                     .ToListAsync();
 
+                if (edificios.IsNullOrEmpty())
+                {
+                    throw new UhNotFoundException(DomainEntity.EDIFICIO, "No se encontraron edificios con los filtros seleccionados.");
+                }
+
                 return edificios;
+            }
+            catch (UhNotFoundException ex)
+            {
+                throw new DomainException(ex.Entity, ex.Operation, ex.Message, ex);
             }
             catch (ArgumentNullException ex)
             {
