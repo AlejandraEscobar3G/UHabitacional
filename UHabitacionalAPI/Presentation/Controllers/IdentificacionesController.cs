@@ -1,62 +1,64 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UHabitacionalAPI.Application.Interfaces;
+using UHabitacionalAPI.Application.Services;
 using UHabitacionalAPI.Presentation.Dtos;
 
 namespace UHabitacionalAPI.Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EdificiosController : ControllerBase
+    public class IdentificacionesController : ControllerBase
     {
-        private readonly IEdificiosService _edificiosService;
-        public EdificiosController(IEdificiosService edificiosService)
+        private readonly IIdentificacionesService _identificacionesService;
+        public IdentificacionesController(IIdentificacionesService identificacionesService)
         {
-            _edificiosService = edificiosService;
+            _identificacionesService = identificacionesService;
         }
 
         /// <summary>
-        /// Obtiene la lista de edificios filtrados.
+        /// Obtiene la lista de identificaciones filtradas.
         /// </summary>
         /// <param name="filters">Filtros de búsqueda.</param>
-        /// <returns>Lista de edificios.</returns>
+        /// <returns>Lista de identificaciones.</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(ApiResponse<List<EdificioResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<List<IdentificacionResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse<List<EdificioResponse>>>> Get([FromQuery] EdificioFilterRequest filters)
+        public async Task<ActionResult<ApiResponse<List<IdentificacionResponse>>>>
+            Get([FromQuery] IdentificacionFilterRequest filters)
         {
-            List<EdificioResponse> edificios = await _edificiosService.GetAsync(filters);
+            List<IdentificacionResponse> identificaciones = await _identificacionesService.GetAsync(filters);
 
-            return Ok(ApiResponse<List<EdificioResponse>>.Ok(edificios));
+            return Ok(ApiResponse<List<IdentificacionResponse>>.Ok(identificaciones));
         }
 
         /// <summary>
-        /// Obtiene un edificio por su identificador único.
+        /// Obtiene una identificación por su identificador único.
         /// </summary>
-        /// <param name="id">Identificador del edificio.</param>
-        /// <returns>El edificio encontrado.</returns>
+        /// <param name="id">Identificador de la identificación.</param>
+        /// <returns>La identificación encontrada.</returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(ApiResponse<EdificioResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<IdentificacionResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse<EdificioResponse>>> GetById(string id)
+        public async Task<ActionResult<ApiResponse<IdentificacionResponse>>> GetById(int id)
         {
-            EdificioResponse? edificio = await _edificiosService.GetByIdAsync(id);
+            IdentificacionResponse? identificacion = await _identificacionesService.GetByIdAsync(id);
 
-            return Ok(ApiResponse<EdificioResponse>.Ok(edificio));
+            return Ok(ApiResponse<IdentificacionResponse>.Ok(identificacion));
         }
 
         /// <summary>
-        /// Crea un nuevo edificio en la base de datos.
+        /// Crea una nueva identificación en la base de datos.
         /// </summary>
-        /// <param name="request">Datos del edificio a crear.</param>
-        /// <returns>El identificador del edificio creado.</returns>
+        /// <param name="request">Datos de la identificación a crear.</param>
+        /// <returns>El identificador de la identificación creada.</returns>
         [HttpPost]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse<string>>> Create([FromBody] EdificioRequest request)
+        public async Task<ActionResult<ApiResponse<string>>> Create([FromBody] IdentificacionRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -70,22 +72,22 @@ namespace UHabitacionalAPI.Presentation.Controllers
 
             int userId = 123;
 
-            string edificioId = await _edificiosService.CreateAsync(request, userId);
-            return CreatedAtAction(nameof(GetById), new { edificioId }, ApiResponse<string>.Created("Edificio creado con éxito"));
+            int identificacionId = await _identificacionesService.CreateAsync(request, userId);
+            return CreatedAtAction(nameof(GetById), new { identificacionId }, ApiResponse<string>.Created("Identificación creada con éxito"));
         }
 
         /// <summary>
-        /// Actualiza un edificio existente.
+        /// Actualiza una identificación existente.
         /// </summary>
-        /// <param name="id">Identificador del edificio a actualizar.</param>
-        /// <param name="request">Datos actualizados del edificio.</param>
+        /// <param name="id">Identificador de la identificación a actualizar.</param>
+        /// <param name="request">Datos actualizados de la identificación.</param>
         /// <returns>Mensaje de confirmación.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse<string>>> Update(string id, [FromBody] EdificioRequest request)
+        public async Task<ActionResult<ApiResponse<string>>> Update(int id, [FromBody] IdentificacionRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -99,18 +101,18 @@ namespace UHabitacionalAPI.Presentation.Controllers
 
             int userId = 123;
 
-            int result = await _edificiosService.UpdateAsync(id, request, userId);
+            int result = await _identificacionesService.UpdateAsync(id, request, userId);
 
             if (result == 0)
             {
                 return NotFound(ApiResponse<string>.Fail(
                     StatusCodes.Status404NotFound,
-                    $"No se pudo actualizar el edificio con ID {id}.",
-                    new List<string> { $"No se pudo actualizar el edificio con ID {id}." }
+                    $"No se pudo actualizar la identificación con ID {id}.",
+                    new List<string> { $"No se pudo actualizar la identificación con ID {id}." }
                 ));
             }
 
-            return Ok(ApiResponse<string>.Created("Actualizado con éxito"));
+            return Ok(ApiResponse<string>.Created("Actualizada con éxito"));
         }
     }
 }

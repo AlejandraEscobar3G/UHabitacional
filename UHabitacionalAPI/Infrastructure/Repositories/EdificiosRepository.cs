@@ -2,7 +2,6 @@
 using Microsoft.IdentityModel.Tokens;
 using UHabitacionalAPI.Application.Interfaces;
 using UHabitacionalAPI.Domain.Entities;
-using UHabitacionalAPI.Domain.Enums;
 using UHabitacionalAPI.Domain.Exceptions;
 using UHabitacionalAPI.Infrastructure.Contexts;
 using UHabitacionalAPI.Presentation.Dtos;
@@ -29,14 +28,12 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
             catch (DbUpdateException dbEx)
             {
                 throw new DomainException(
-                    DomainEntity.EDIFICIO, DomainOperation.CREATE,
                     "No se pudo crear el edificio en la base de datos, intentelo de nuevo más tarde.", dbEx
                 );
             }
             catch (Exception ex)
             {
                 throw new DomainException(
-                    DomainEntity.EDIFICIO, DomainOperation.CREATE,
                     "Ocurrió un error inesperado en la creación del edificio.", ex
                 );
             }
@@ -76,29 +73,28 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
 
                 if (edificios.IsNullOrEmpty())
                 {
-                    throw new UhNotFoundException(DomainEntity.EDIFICIO, "No se encontraron edificios con los filtros seleccionados.");
+                    throw new UhNotFoundException("No se encontraron edificios con los filtros seleccionados.");
                 }
 
                 return edificios;
             }
             catch (UhNotFoundException ex)
             {
-                throw new DomainException(ex.Entity, ex.Operation, ex.Message, ex);
+                throw new DomainException(ex.Message, ex);
             }
             catch (ArgumentNullException ex)
             {
-                throw new DomainException(DomainEntity.EDIFICIO, DomainOperation.READ, "Valor nulo no aceptado", ex);
+                throw new DomainException("Valor nulo no aceptado", ex);
             }
             catch (Exception ex)
             {
                 throw new DomainException(
-                    DomainEntity.EDIFICIO, DomainOperation.READ,
                     "Ocurrió un error inesperado en la consulta de edificios.", ex
                 );
             }
         }
 
-        public async Task<EdificioResponse?> GetByIdAsync(string id)
+        public async Task<EdificioResponse> GetByIdAsync(string id)
         {
             try
             {
@@ -116,23 +112,22 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
 
                 if (edificio is null)
                 {
-                    throw new UhNotFoundException(DomainEntity.EDIFICIO, $"Edificio no encontrado (ID. {id})");
+                    throw new UhNotFoundException($"Edificio no encontrado (ID. {id})");
                 }
 
                 return edificio;
             }
             catch (UhNotFoundException ex)
             {
-                throw new DomainException(ex.Entity, ex.Operation, ex.Message, ex);
+                throw new DomainException(ex.Message, ex);
             }
             catch (ArgumentNullException ex)
             {
-                throw new DomainException(DomainEntity.EDIFICIO, DomainOperation.READ, "Valor nulo no aceptado", ex);
+                throw new DomainException("Valor nulo no aceptado", ex);
             }
             catch (Exception ex)
             {
                 throw new DomainException(
-                    DomainEntity.EDIFICIO, DomainOperation.READ,
                     $"Ocurrió un error inesperado en la consulta de edificio (ID. {id})", ex
                 );
             }
@@ -148,7 +143,7 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
 
                 if (edificio is null)
                 {
-                    throw new UhNotFoundException(DomainEntity.EDIFICIO, $"Edificio no encontrado (ID. {id})");
+                    throw new UhNotFoundException($"Edificio no encontrado (ID. {id})");
                 }
 
                 edificio.Calle = request.Calle;
@@ -163,22 +158,20 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
             catch (DbUpdateException ex)
             {
                 throw new DomainException(
-                    DomainEntity.EDIFICIO, DomainOperation.UPDATE,
                     "No se pudo actualizar el edificio en la base de datos, intentelo de nuevo más tarde.", ex
                 );
             }
             catch (ArgumentNullException ex)
             {
-                throw new DomainException(DomainEntity.EDIFICIO, DomainOperation.READ, "Valor nulo no aceptado", ex);
+                throw new DomainException("Valor nulo no aceptado", ex);
             }
             catch(UhNotFoundException ex)
             {
-                throw new DomainException(ex.Entity, ex.Operation, ex.Message, ex);
+                throw new DomainException(ex.Message, ex);
             }
             catch (Exception ex)
             {
                 throw new DomainException(
-                    DomainEntity.EDIFICIO, DomainOperation.READ,
                     $"Ocurrió un error inesperado con la actualización del edificio (ID. {id})", ex
                 );
             }

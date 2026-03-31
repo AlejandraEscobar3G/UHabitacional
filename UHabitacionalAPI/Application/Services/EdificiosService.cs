@@ -1,6 +1,5 @@
 ﻿using UHabitacionalAPI.Application.Interfaces;
 using UHabitacionalAPI.Domain.Entities;
-using UHabitacionalAPI.Domain.Exceptions;
 using UHabitacionalAPI.Presentation.Dtos;
 
 namespace UHabitacionalAPI.Application.Services
@@ -33,7 +32,7 @@ namespace UHabitacionalAPI.Application.Services
             return await _edificiosRepository.GetAsync(filters);
         }
 
-        public async Task<EdificioResponse?> GetByIdAsync(string id)
+        public async Task<EdificioResponse> GetByIdAsync(string id)
         {
             return await _edificiosRepository.GetByIdAsync(id);
         }
