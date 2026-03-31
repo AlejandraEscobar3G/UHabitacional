@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UHabitacionalAPI.Application.Interfaces;
-using UHabitacionalAPI.Application.Services;
 using UHabitacionalAPI.Presentation.Dtos;
 
 namespace UHabitacionalAPI.Presentation.Controllers
@@ -60,16 +59,6 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<string>>> Create([FromBody] IdentificacionRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                List<string> errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-
-                return BadRequest(ApiResponse<string>.Fail(StatusCodes.Status400BadRequest, "Errores de validación", errors));
-            }
-
             int userId = 123;
 
             int identificacionId = await _identificacionesService.CreateAsync(request, userId);
@@ -89,16 +78,6 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<string>>> Update(int id, [FromBody] IdentificacionRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                List<string> errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-
-                return BadRequest(ApiResponse<string>.Fail(StatusCodes.Status400BadRequest, "Errores de validación", errors));
-            }
-
             int userId = 123;
 
             int result = await _identificacionesService.UpdateAsync(id, request, userId);
@@ -113,6 +92,34 @@ namespace UHabitacionalAPI.Presentation.Controllers
             }
 
             return Ok(ApiResponse<string>.Created("Actualizada con éxito"));
+        }
+
+        /// <summary>
+        /// Elimina una identificación existente.
+        /// </summary>
+        /// <param name="id">Identificador de la identificación a eliminar.</param>
+        /// <returns>Mensaje de confirmación.</returns>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse<string>>> Delete(int id)
+        {
+            int userId = 123;
+
+            int result = await _identificacionesService.DeleteAsync(id, userId);
+
+            if (result == 0)
+            {
+                return NotFound(ApiResponse<string>.Fail(
+                    StatusCodes.Status404NotFound,
+                    $"No se pudo eliminar la identificación con ID {id}.",
+                    new List<string> { $"No se pudo eliminar la identificación con ID {id}." }
+                ));
+            }
+
+            return Ok(ApiResponse<string>.Created("Eliminada con éxito"));
         }
     }
 }

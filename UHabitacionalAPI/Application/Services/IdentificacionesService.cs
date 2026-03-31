@@ -1,5 +1,6 @@
 ﻿using UHabitacionalAPI.Application.Interfaces;
 using UHabitacionalAPI.Domain.Entities;
+using UHabitacionalAPI.Domain.Enums;
 using UHabitacionalAPI.Presentation.Dtos;
 
 namespace UHabitacionalAPI.Application.Services
@@ -17,7 +18,7 @@ namespace UHabitacionalAPI.Application.Services
             Identificacion identificacion = new Identificacion()
             {
                 Descripcion = request.Descripcion,
-                Estatus = request.Estatus,
+                Estatus = EstatusIdentificacion.Activo,
                 CreatedAt = DateTime.Now,
                 CreatedBy = userId
             };
@@ -57,6 +58,17 @@ namespace UHabitacionalAPI.Application.Services
 
             identificacion.Descripcion = request.Descripcion;
             identificacion.Estatus = request.Estatus;
+            identificacion.ModifyAt = DateTime.Now;
+            identificacion.ModifyBy = userId;
+
+            return await _identificacionesRepository.UpdateAsync(identificacion);
+        }
+
+        public async Task<int> DeleteAsync(int id, int userId)
+        {
+            Identificacion identificacion = await _identificacionesRepository.GetByIdAsync(id);
+
+            identificacion.Estatus = EstatusIdentificacion.Inactivo;
             identificacion.ModifyAt = DateTime.Now;
             identificacion.ModifyBy = userId;
 

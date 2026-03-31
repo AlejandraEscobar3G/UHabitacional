@@ -58,16 +58,6 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<string>>> Create([FromBody] EdificioRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                List<string> errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-
-                return BadRequest(ApiResponse<string>.Fail(StatusCodes.Status400BadRequest, "Errores de validación", errors));
-            }
-
             int userId = 123;
 
             string edificioId = await _edificiosService.CreateAsync(request, userId);
@@ -87,16 +77,6 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<string>>> Update(string id, [FromBody] EdificioRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                List<string> errors = ModelState.Values
-                    .SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-
-                return BadRequest(ApiResponse<string>.Fail(StatusCodes.Status400BadRequest, "Errores de validación", errors));
-            }
-
             int userId = 123;
 
             int result = await _edificiosService.UpdateAsync(id, request, userId);

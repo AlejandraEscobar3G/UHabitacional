@@ -8,5 +8,6 @@ namespace UHabitacionalAPI.Application.Interfaces
         Task<IdentificacionResponse> GetByIdAsync(int id);
         Task<int> CreateAsync(IdentificacionRequest request, int userId);
         Task<int> UpdateAsync(int id, IdentificacionRequest request, int userId);
+        Task<int> DeleteAsync(int id, int userId);
     }
 }
