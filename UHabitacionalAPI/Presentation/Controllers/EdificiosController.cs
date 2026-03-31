@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
 using UHabitacionalAPI.Application.Interfaces;
 using UHabitacionalAPI.Presentation.Dtos;
 
@@ -16,42 +14,89 @@ namespace UHabitacionalAPI.Presentation.Controllers
             _edificiosService = edificiosService;
         }
 
+        /// <summary>
+        /// Obtiene la lista de edificios filtrados.
+        /// </summary>
+        /// <param name="filters">Filtros de búsqueda.</param>
+        /// <returns>Lista de edificios.</returns>
         [HttpGet]
-        public async Task<ActionResult<List<EdificioResponse>>> Get([FromQuery] EdificioFilterRequest filters)
+        [ProducesResponseType(typeof(ApiResponse<List<EdificioResponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse<List<EdificioResponse>>>> Get([FromQuery] EdificioFilterRequest filters)
         {
             List<EdificioResponse> edificios = await _edificiosService.GetAsync(filters);
 
-            return Ok(edificios);
+            return Ok(ApiResponse<List<EdificioResponse>>.Ok(edificios));
         }
 
+        /// <summary>
+        /// Obtiene un edificio por su identificador único.
+        /// </summary>
+        /// <param name="id">Identificador del edificio.</param>
+        /// <returns>El edificio encontrado.</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<EdificioResponse>> GetById(string id)
+        [ProducesResponseType(typeof(ApiResponse<EdificioResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<ApiResponse<EdificioResponse>>> GetById(string id)
         {
             EdificioResponse? edificio = await _edificiosService.GetByIdAsync(id);
 
-            return Ok(edificio);
+            return Ok(ApiResponse<EdificioResponse>.Ok(edificio));
         }
 
+        /// <summary>
+        /// Crea un nuevo edificio en la base de datos.
+        /// </summary>
+        /// <param name="request">Datos del edificio a crear.</param>
+        /// <returns>El identificador del edificio creado.</returns>
         [HttpPost]
-        public async Task<ActionResult<string>> Create([FromBody] EdificioRequest request)
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse<string>>> Create([FromBody] EdificioRequest request)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                List<string> errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return BadRequest(ApiResponse<string>.Fail(StatusCodes.Status400BadRequest, "Errores de validación", errors));
             }
 
             int userId = 123;
 
             string edificioId = await _edificiosService.CreateAsync(request, userId);
-            return CreatedAtAction(nameof(GetById), new { edificioId }, null);
+            return CreatedAtAction(nameof(GetById), new { edificioId }, ApiResponse<string>.Created("Edificio creado con éxito"));
         }
 
+        /// <summary>
+        /// Actualiza un edificio existente.
+        /// </summary>
+        /// <param name="id">Identificador del edificio a actualizar.</param>
+        /// <param name="request">Datos actualizados del edificio.</param>
+        /// <returns>Mensaje de confirmación.</returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(string id, [FromBody] EdificioRequest request)
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ApiResponse<string>>> Update(string id, [FromBody] EdificioRequest request)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                List<string> errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                return BadRequest(ApiResponse<string>.Fail(StatusCodes.Status400BadRequest, "Errores de validación", errors));
             }
 
             int userId = 123;
@@ -60,10 +105,14 @@ namespace UHabitacionalAPI.Presentation.Controllers
 
             if (result == 0)
             {
-                return NotFound($"No se pudo actualizar el edificio con ID {id}.");
+                return NotFound(ApiResponse<string>.Fail(
+                    StatusCodes.Status404NotFound,
+                    $"No se pudo actualizar el edificio con ID {id}.",
+                    new List<string> { $"No se pudo actualizar el edificio con ID {id}." }
+                ));
             }
 
-            return Ok("Actualizado con éxito");
+            return Ok(ApiResponse<string>.Created("Actualizado con éxito"));
         }
     }
 }

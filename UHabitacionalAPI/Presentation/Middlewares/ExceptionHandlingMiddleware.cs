@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections;
+using System.Net.NetworkInformation;
 using System.Text.Json;
 using UHabitacionalAPI.Domain.Enums;
 using UHabitacionalAPI.Domain.Exceptions;
+using UHabitacionalAPI.Presentation.Dtos;
 
 namespace UHabitacionalAPI.Presentation.Middlewares
 {
@@ -22,29 +25,21 @@ namespace UHabitacionalAPI.Presentation.Middlewares
             }
             catch (DomainException ex)
             {
+                int status = MapStatusCode(ex.InnerException ?? ex);
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = MapStatusCode(ex.InnerException ?? ex);
+                context.Response.StatusCode = status;
 
-                var result = new
-                {
-                    error = ex.Message,
-                    entity = ex.Entity,
-                    operation = ex.Operation
-                };
+                ApiResponse<string> result = ApiResponse<string>.Fail(status, ex.Message, new List<string> { ex.Message });
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(result));
             }
             catch (Exception ex)
             {
+                int status = MapStatusCode(ex);
                 context.Response.ContentType = "application/json";
-                context.Response.StatusCode = MapStatusCode(ex);
+                context.Response.StatusCode = status;
 
-                var result = new
-                {
-                    error = ex.Message,
-                    entity = DomainEntity.UNHANDLED_ENTITY,
-                    operation = DomainOperation.UNHANDLED_OPERATION
-                };
+                ApiResponse<string> result = ApiResponse<string>.Fail(status, ex.Message, new List<string> { ex.Message });
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(result));
             }
