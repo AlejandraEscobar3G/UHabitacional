@@ -39,11 +39,11 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
             }
         }
 
-        public async Task<List<EdificioResponse>> GetAsync(EdificioFilterRequest filters)
+        public async Task<List<Edificio>> GetAsync(EdificioFilterRequest filters)
         {
             try
             {
-                var query = _context.Edificio.AsQueryable();
+                IQueryable<Edificio> query = _context.Edificio.AsQueryable();
 
                 if (filters.Estatus.HasValue)
                 {
@@ -60,16 +60,7 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
                     query = query.Where(e => e.TotalDeptos == filters.TotalDeptos);
                 }
 
-                List<EdificioResponse> edificios = await query
-                    .Select(e => new EdificioResponse
-                    {
-                        Id = e.Id,
-                        Calle = e.Calle,
-                        NumeroPisos = e.NumeroPisos,
-                        Estatus = e.Estatus,
-                        TotalDeptos = e.TotalDeptos
-                    })
-                    .ToListAsync();
+                List<Edificio> edificios = await query.ToListAsync();
 
                 if (edificios.IsNullOrEmpty())
                 {
@@ -94,21 +85,12 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
             }
         }
 
-        public async Task<EdificioResponse> GetByIdAsync(string id)
+        public async Task<Edificio> GetByIdAsync(string id)
         {
             try
             {
-                EdificioResponse? edificio = await _context.Edificio
-                    .Where(e => e.Id == id)
-                    .Select(e => new EdificioResponse
-                    {
-                        Id = e.Id,
-                        Calle = e.Calle,
-                        NumeroPisos = e.NumeroPisos,
-                        Estatus = e.Estatus,
-                        TotalDeptos = e.TotalDeptos
-                    })
-                    .FirstOrDefaultAsync();
+                Edificio? edificio = await _context.Edificio
+                    .FirstOrDefaultAsync(e => e.Id == id);
 
                 if (edificio is null)
                 {
@@ -133,26 +115,11 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
             }
         }
 
-        public async Task<int> UpdateAsync(string id, EdificioRequest request, int userId)
+        public async Task<int> UpdateAsync(Edificio request)
         {
             try
             {
-                Edificio? edificio = _context.Edificio
-                    .Where(e => e.Id == id)
-                    .FirstOrDefault(e => e.Id == id);
-
-                if (edificio is null)
-                {
-                    throw new UhNotFoundException($"Edificio no encontrado (ID. {id})");
-                }
-
-                edificio.Calle = request.Calle;
-                edificio.TotalDeptos = request.TotalDeptos;
-                edificio.NumeroPisos = request.NumeroPisos;
-                edificio.Estatus = request.Estatus;
-                edificio.ModifyAt = DateTime.Now;
-                edificio.ModifyBy = userId;
-
+                _context.Edificio.Update(request);
                 return await _context.SaveChangesAsync();
             } 
             catch (DbUpdateException ex)
@@ -164,10 +131,6 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
             catch (ArgumentNullException ex)
             {
                 throw new DomainException("Valor nulo no aceptado", ex);
-            }
-            catch(UhNotFoundException ex)
-            {
-                throw new DomainException(ex.Message, ex);
             }
             catch (Exception ex)
             {

@@ -29,17 +29,45 @@ namespace UHabitacionalAPI.Application.Services
 
         public async Task<List<EdificioResponse>> GetAsync(EdificioFilterRequest filters)
         {
-            return await _edificiosRepository.GetAsync(filters);
+            List<Edificio> edificios = await _edificiosRepository.GetAsync(filters);
+
+            return edificios.Select(e => new EdificioResponse()
+            {
+                Id = e.Id,
+                Calle = e.Calle,
+                Estatus = e.Estatus,
+                NumeroPisos = e.NumeroPisos,
+                TotalDeptos = e.TotalDeptos
+            }).ToList();
         }
 
         public async Task<EdificioResponse> GetByIdAsync(string id)
         {
-            return await _edificiosRepository.GetByIdAsync(id);
+            Edificio edificio = await _edificiosRepository.GetByIdAsync(id);
+            EdificioResponse response = new EdificioResponse()
+            {
+                Id = edificio.Id,
+                Calle = edificio.Calle,
+                Estatus = edificio.Estatus,
+                NumeroPisos = edificio.NumeroPisos,
+                TotalDeptos = edificio.TotalDeptos
+            };
+
+            return response;
         }
 
         public async Task<int> UpdateAsync(string id, EdificioRequest request, int userId)
         {
-            return await _edificiosRepository.UpdateAsync(id, request, userId);
+            Edificio edificio = await _edificiosRepository.GetByIdAsync(id);
+
+            edificio.Calle = request.Calle;
+            edificio.Estatus = request.Estatus;
+            edificio.NumeroPisos = request.NumeroPisos;
+            edificio.TotalDeptos = request.TotalDeptos;
+            edificio.ModifyAt = DateTime.Now;
+            edificio.ModifyBy = userId;
+
+            return await _edificiosRepository.UpdateAsync(edificio);
         }
     }
 }
