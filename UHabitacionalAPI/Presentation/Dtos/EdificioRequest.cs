@@ -5,6 +5,9 @@ namespace UHabitacionalAPI.Presentation.Dtos
 {
     public class EdificioRequest
     {
+        [Required(ErrorMessage = "Campo 'Id' es requerido.")]
+        public string Id { get; set; }
+
         [Required(ErrorMessage = "Campo 'Calle' es requerido.")]
         public string Calle { get; set; }
 

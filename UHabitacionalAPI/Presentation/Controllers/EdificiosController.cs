@@ -61,7 +61,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
             int userId = 123;
 
             string edificioId = await _edificiosService.CreateAsync(request, userId);
-            return CreatedAtAction(nameof(GetById), new { edificioId }, ApiResponse<string>.Created("Edificio creado con éxito"));
+            return CreatedAtAction(nameof(GetById), new { id = edificioId }, ApiResponse<string>.Created("Edificio creado con éxito"));
         }
 
         /// <summary>

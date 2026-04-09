@@ -135,7 +135,7 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
             catch (Exception ex)
             {
                 throw new DomainException(
-                    $"Ocurrió un error inesperado con la actualización del edificio (ID. {id})", ex
+                    $"Ocurrió un error inesperado con la actualización del edificio (ID. {request.Id})", ex
                 );
             }
         }

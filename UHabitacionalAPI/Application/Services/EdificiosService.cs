@@ -16,6 +16,7 @@ namespace UHabitacionalAPI.Application.Services
         {
             Edificio edificio = new Edificio()
             {
+                Id = request.Id,
                 Calle = request.Calle,
                 TotalDeptos = request.TotalDeptos,
                 NumeroPisos = request.NumeroPisos,
