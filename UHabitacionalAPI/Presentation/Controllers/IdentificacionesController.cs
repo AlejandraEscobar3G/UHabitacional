@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UHabitacionalAPI.Application.Interfaces;
+using UHabitacionalAPI.Domain.Entities;
 using UHabitacionalAPI.Presentation.Dtos;
 
 namespace UHabitacionalAPI.Presentation.Controllers
@@ -8,9 +9,11 @@ namespace UHabitacionalAPI.Presentation.Controllers
     [ApiController]
     public class IdentificacionesController : ControllerBase
     {
+        private readonly ILogger<IdentificacionesController> _logger;
         private readonly IIdentificacionesService _identificacionesService;
-        public IdentificacionesController(IIdentificacionesService identificacionesService)
+        public IdentificacionesController(ILogger<IdentificacionesController> logger, IIdentificacionesService identificacionesService)
         {
+            _logger = logger;
             _identificacionesService = identificacionesService;
         }
 
@@ -26,8 +29,11 @@ namespace UHabitacionalAPI.Presentation.Controllers
         public async Task<ActionResult<ApiResponse<List<IdentificacionResponse>>>>
             Get([FromQuery] IdentificacionFilterRequest filters)
         {
+            _logger.LogInformation("Consultando lista de identificaciones...");
+
             List<IdentificacionResponse> identificaciones = await _identificacionesService.GetAsync(filters);
 
+            _logger.LogInformation($"Se obtuvieron {identificaciones.Count} identificaciones");
             return Ok(ApiResponse<List<IdentificacionResponse>>.Ok(identificaciones));
         }
 
@@ -42,7 +48,14 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<IdentificacionResponse>>> GetById(int id)
         {
+            _logger.LogInformation($"Consultando identificacion con id {id}");
+
             IdentificacionResponse? identificacion = await _identificacionesService.GetByIdAsync(id);
+
+            if (identificacion == null)
+            {
+                _logger.LogInformation("Identificacion no encontrada");
+            }
 
             return Ok(ApiResponse<IdentificacionResponse>.Ok(identificacion));
         }
@@ -59,9 +72,13 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<string>>> Create([FromBody] IdentificacionRequest request)
         {
+            _logger.LogInformation("Creación de identificación...");
+
             int userId = 123;
 
             int identificacionId = await _identificacionesService.CreateAsync(request, userId);
+
+            _logger.LogInformation($"Identificación creado {identificacionId}");
             return CreatedAtAction(nameof(GetById), new { identificacionId }, ApiResponse<string>.Created("Identificación creada con éxito"));
         }
 
@@ -84,6 +101,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
 
             if (result == 0)
             {
+                _logger.LogInformation("Identificacion no encontrada");
                 return NotFound(ApiResponse<string>.Fail(
                     StatusCodes.Status404NotFound,
                     $"No se pudo actualizar la identificación con ID {id}.",
@@ -91,6 +109,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
                 ));
             }
 
+            _logger.LogInformation($"Identificacion con ID {id} actualizada");
             return Ok(ApiResponse<string>.Created("Actualizada con éxito"));
         }
 
@@ -112,6 +131,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
 
             if (result == 0)
             {
+                _logger.LogInformation("Identificacion no encontrada");
                 return NotFound(ApiResponse<string>.Fail(
                     StatusCodes.Status404NotFound,
                     $"No se pudo eliminar la identificación con ID {id}.",
@@ -119,6 +139,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
                 ));
             }
 
+            _logger.LogInformation($"Identificacion con ID {id} eliminada");
             return Ok(ApiResponse<string>.Created("Eliminada con éxito"));
         }
     }

@@ -8,10 +8,12 @@ namespace UHabitacionalAPI.Presentation.Controllers
     [ApiController]
     public class EdificiosController : ControllerBase
     {
+        private readonly ILogger<EdificiosController> _logger;
         private readonly IEdificiosService _edificiosService;
-        public EdificiosController(IEdificiosService edificiosService)
+        public EdificiosController(ILogger<EdificiosController> logger, IEdificiosService edificiosService)
         {
             _edificiosService = edificiosService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -25,8 +27,11 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<List<EdificioResponse>>>> Get([FromQuery] EdificioFilterRequest filters)
         {
+            _logger.LogInformation("Consultando lista de edificios...");
+
             List<EdificioResponse> edificios = await _edificiosService.GetAsync(filters);
 
+            _logger.LogInformation($"Se obtuvieron {edificios.Count} edificios");
             return Ok(ApiResponse<List<EdificioResponse>>.Ok(edificios));
         }
 
@@ -41,7 +46,14 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<EdificioResponse>>> GetById(string id)
         {
+            _logger.LogInformation($"Consultando edificio con id {id}");
+
             EdificioResponse? edificio = await _edificiosService.GetByIdAsync(id);
+
+            if (edificio is null)
+            {
+                _logger.LogInformation("Edificio no encontrado");
+            }
 
             return Ok(ApiResponse<EdificioResponse>.Ok(edificio));
         }
@@ -58,9 +70,12 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<string>>> Create([FromBody] EdificioRequest request)
         {
+            _logger.LogInformation("Creación de edificio...");
             int userId = 123;
 
             string edificioId = await _edificiosService.CreateAsync(request, userId);
+
+            _logger.LogInformation($"Edificio creado {edificioId}");
             return CreatedAtAction(nameof(GetById), new { id = edificioId }, ApiResponse<string>.Created("Edificio creado con éxito"));
         }
 
@@ -83,6 +98,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
 
             if (result == 0)
             {
+                _logger.LogInformation("Edificio no encontrado");
                 return NotFound(ApiResponse<string>.Fail(
                     StatusCodes.Status404NotFound,
                     $"No se pudo actualizar el edificio con ID {id}.",
@@ -90,6 +106,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
                 ));
             }
 
+            _logger.LogInformation($"Edificio con ID {id} actualizado");
             return Ok(ApiResponse<string>.Created("Actualizado con éxito"));
         }
     }

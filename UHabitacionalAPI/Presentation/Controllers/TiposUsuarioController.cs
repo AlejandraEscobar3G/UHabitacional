@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UHabitacionalAPI.Application.Interfaces;
+using UHabitacionalAPI.Domain.Entities;
 using UHabitacionalAPI.Presentation.Dtos;
 
 namespace UHabitacionalAPI.Presentation.Controllers
@@ -8,9 +9,11 @@ namespace UHabitacionalAPI.Presentation.Controllers
     [ApiController]
     public class TiposUsuarioController : ControllerBase
     {
+        private readonly ILogger<TiposUsuarioController> _logger;
         private readonly ITiposUsuarioService _tiposUsuarioService;
-        public TiposUsuarioController(ITiposUsuarioService repository)
+        public TiposUsuarioController(ILogger<TiposUsuarioController> logger, ITiposUsuarioService repository)
         {
+            _logger = logger;
             _tiposUsuarioService = repository;
         }
 
@@ -26,8 +29,11 @@ namespace UHabitacionalAPI.Presentation.Controllers
         public async Task<ActionResult<ApiResponse<List<TipoUsuarioResponse>>>>
             Get([FromQuery] TipoUsuarioFilterRequest filters)
         {
+            _logger.LogInformation("Consultando lista de tipos de usuario...");
+
             List<TipoUsuarioResponse> tiposUsuario = await _tiposUsuarioService.GetAsync(filters);
 
+            _logger.LogInformation($"Se obtuvieron {tiposUsuario.Count} tipos de usuario");
             return Ok(ApiResponse<List<TipoUsuarioResponse>>.Ok(tiposUsuario));
         }
 
@@ -42,9 +48,16 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<TipoUsuarioResponse>>> GetById(int id)
         {
-            TipoUsuarioResponse? identificacion = await _tiposUsuarioService.GetByIdAsync(id);
+            _logger.LogInformation($"Consultando tipo de usuario con id {id}");
 
-            return Ok(ApiResponse<TipoUsuarioResponse>.Ok(identificacion));
+            TipoUsuarioResponse? response = await _tiposUsuarioService.GetByIdAsync(id);
+
+            if (response == null)
+            {
+                _logger.LogInformation("Tipo de usuario no encontrado");
+            }
+
+            return Ok(ApiResponse<TipoUsuarioResponse>.Ok(response));
         }
 
         /// <summary>
@@ -59,9 +72,13 @@ namespace UHabitacionalAPI.Presentation.Controllers
         [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ApiResponse<string>>> Create([FromBody] TipoUsuarioRequest request)
         {
+            _logger.LogInformation("Creación de tipo de usuario...");
+
             int userId = 123;
 
             int tipoUsuarioId = await _tiposUsuarioService.CreateAsync(request, userId);
+
+            _logger.LogInformation($"Tipo de usuario creado {tipoUsuarioId}");
             return CreatedAtAction(nameof(GetById), new { tipoUsuarioId }, ApiResponse<string>.Created("Tipo de usuario creado con éxito"));
         }
 
@@ -84,6 +101,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
 
             if (result == 0)
             {
+                _logger.LogInformation("Tipo de usuario no encontrado");
                 return NotFound(ApiResponse<string>.Fail(
                     StatusCodes.Status404NotFound,
                     $"No se pudo actualizar el tipo de usuario con ID {id}.",
@@ -91,6 +109,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
                 ));
             }
 
+            _logger.LogInformation($"Tipo de usuario con ID {id} actualizado");
             return Ok(ApiResponse<string>.Created("Actualizada con éxito"));
         }
 
@@ -112,6 +131,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
 
             if (result == 0)
             {
+                _logger.LogInformation("Tipo de usuario no encontrado");
                 return NotFound(ApiResponse<string>.Fail(
                     StatusCodes.Status404NotFound,
                     $"No se pudo eliminar el tipo de usuario con ID {id}.",
@@ -119,6 +139,7 @@ namespace UHabitacionalAPI.Presentation.Controllers
                 ));
             }
 
+            _logger.LogInformation($"Tipo de usuario con ID {id} eliminado");
             return Ok(ApiResponse<string>.Created("Eliminada con éxito"));
         }
     }
