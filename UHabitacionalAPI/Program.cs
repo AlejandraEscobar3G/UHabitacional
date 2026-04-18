@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
+using System.Reflection;
 using UHabitacionalAPI.Application.Interfaces;
 using UHabitacionalAPI.Application.Services;
 using UHabitacionalAPI.Infrastructure.Contexts;
@@ -15,6 +16,8 @@ builder.Services.AddScoped<IEdificiosRepository, EdificiosRepository>();
 builder.Services.AddScoped<IEdificiosService, EdificiosService>();
 builder.Services.AddScoped<IIdentificacionesRepository, IdentificacionesRepository>();
 builder.Services.AddScoped<IIdentificacionesService, IdentificacionesService>();
+builder.Services.AddScoped<ITiposUsuarioRepository, TiposUsuarioRepository>();
+builder.Services.AddScoped<ITiposUsuarioService, TiposUsuarioService>();
 
 builder.Services.AddControllers();
 
@@ -44,6 +47,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+    c.IncludeXmlComments(xmlPath);
     c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "UHabitacional API",
