@@ -8,6 +8,8 @@ using UHabitacionalAPI.Infrastructure.Contexts;
 using UHabitacionalAPI.Infrastructure.Repositories;
 using UHabitacionalAPI.Presentation.Dtos;
 using UHabitacionalAPI.Presentation.Middlewares;
+using UHabitacionalAPI.Remote.Interfaces;
+using UHabitacionalAPI.Remote.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,7 @@ builder.Services.AddScoped<IIdentificacionesRepository, IdentificacionesReposito
 builder.Services.AddScoped<IIdentificacionesService, IdentificacionesService>();
 builder.Services.AddScoped<ITiposUsuarioRepository, TiposUsuarioRepository>();
 builder.Services.AddScoped<ITiposUsuarioService, TiposUsuarioService>();
+builder.Services.AddHttpClient<IDragonBallService, DragonBallService>();
 
 builder.Services.AddControllers();
 
