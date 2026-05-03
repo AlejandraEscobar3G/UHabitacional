@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections;
-using System.Net.NetworkInformation;
 using System.Text.Json;
-using UHabitacionalAPI.Domain.Enums;
 using UHabitacionalAPI.Domain.Exceptions;
 using UHabitacionalAPI.Presentation.Dtos;
 
@@ -49,6 +46,7 @@ namespace UHabitacionalAPI.Presentation.Middlewares
         {
             return ex switch
             {
+                UhRuleViolationException => StatusCodes.Status422UnprocessableEntity,
                 UhNotFoundException => StatusCodes.Status404NotFound,
                 NotImplementedException => StatusCodes.Status501NotImplemented,
                 ArgumentException => StatusCodes.Status400BadRequest,

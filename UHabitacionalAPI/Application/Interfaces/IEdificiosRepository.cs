@@ -9,5 +9,6 @@ namespace UHabitacionalAPI.Application.Interfaces
         Task<List<Edificio>> GetAsync(EdificioFilterRequest filters);
         Task<Edificio> GetByIdAsync(string id);
         Task<int> UpdateAsync(Edificio request);
+        Task<int> GetTotalDepartamentos(string edificioId);
     }
 }

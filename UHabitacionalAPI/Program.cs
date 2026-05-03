@@ -20,6 +20,8 @@ builder.Logging.AddDebug();
 // Add services to the container.
 builder.Services.AddScoped<IEdificiosRepository, EdificiosRepository>();
 builder.Services.AddScoped<IEdificiosService, EdificiosService>();
+builder.Services.AddScoped<IDepartamentosRepository, DepartamentosRepository>();
+builder.Services.AddScoped<IDepartamentosService, DepartamentosService>();
 builder.Services.AddScoped<IIdentificacionesRepository, IdentificacionesRepository>();
 builder.Services.AddScoped<IIdentificacionesService, IdentificacionesService>();
 builder.Services.AddScoped<ITiposUsuarioRepository, TiposUsuarioRepository>();

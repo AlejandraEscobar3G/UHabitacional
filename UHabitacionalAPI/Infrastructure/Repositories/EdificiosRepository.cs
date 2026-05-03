@@ -115,6 +115,37 @@ namespace UHabitacionalAPI.Infrastructure.Repositories
             }
         }
 
+        public async Task<int> GetTotalDepartamentos(string edificioId)
+        {
+            try
+            {
+                Edificio? edificio = await _context.Edificio
+                    .Include(e => e.Departamentos)
+                    .FirstOrDefaultAsync(e => e.Id == edificioId);
+
+                if (edificio is null)
+                {
+                    throw new UhNotFoundException($"Edificio no encontrado (ID. {edificioId})");
+                }
+
+                return edificio.Departamentos.Count;
+            }
+            catch (UhNotFoundException ex)
+            {
+                throw new DomainException(ex.Message, ex);
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new DomainException("Valor nulo no aceptado", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new DomainException(
+                    $"Ocurrió un error inesperado en la consulta de edificio (ID. {edificioId})", ex
+                );
+            }
+        }
+
         public async Task<int> UpdateAsync(Edificio request)
         {
             try
