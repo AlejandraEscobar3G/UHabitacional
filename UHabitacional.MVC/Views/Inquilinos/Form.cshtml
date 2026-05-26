@@ -1,0 +1,106 @@
+@model InquilinoFormViewModel
+@{
+    var id = ViewBag.Id as int?;
+    bool isEdit = id.HasValue;
+    var action = isEdit ? "Edit" : "Create";
+    var ids = (ViewBag.Identificaciones as List<IdentificacionDto>) ?? new List<IdentificacionDto>();
+    var depts = (ViewBag.Departamentos as List<DepartamentoDto>) ?? new List<DepartamentoDto>();
+}
+
+<div class="page-header">
+    <div>
+        <div class="page-title">@(isEdit ? "Editar inquilino" : "Nuevo inquilino")</div>
+        <div class="page-subtitle">Información personal y asignación de departamento.</div>
+    </div>
+</div>
+
+<div class="card flat">
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""]?.Errors.Count > 0)
+    {
+        <div class="alert alert-danger">@ViewData.ModelState[""]!.Errors.First().ErrorMessage</div>
+    }
+    <form asp-action="@action" asp-route-id="@id" method="post" autocomplete="off">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="IdUsuario" />
+        <input type="hidden" asp-for="IdTipoUsuario" />
+
+        <div class="form-grid">
+            <div class="form-section-title">Datos personales</div>
+            <div class="field">
+                <label asp-for="Nombre">Nombre(s) <span class="req">*</span></label>
+                <input asp-for="Nombre" />
+                <span asp-validation-for="Nombre" class="err"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Apellidos">Apellidos <span class="req">*</span></label>
+                <input asp-for="Apellidos" />
+                <span asp-validation-for="Apellidos" class="err"></span>
+            </div>
+            <div class="field">
+                <label asp-for="IdIdentificacion">Tipo de identificación <span class="req">*</span></label>
+                <select asp-for="IdIdentificacion">
+                    <option value="0">Selecciona…</option>
+                    @foreach (var i in ids)
+                    {
+                        <option value="@i.IdIdentificacion">@i.Nombre</option>
+                    }
+                </select>
+                <span asp-validation-for="IdIdentificacion" class="err"></span>
+            </div>
+            <div class="field">
+                <label asp-for="NumeroIdentificacion">Número de identificación <span class="req">*</span></label>
+                <input asp-for="NumeroIdentificacion" />
+                <span asp-validation-for="NumeroIdentificacion" class="err"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Telefono">Teléfono</label>
+                <input asp-for="Telefono" placeholder="55 1234 5678" />
+            </div>
+            <div class="field">
+                <label asp-for="Email">Correo electrónico <span class="req">*</span></label>
+                <input asp-for="Email" type="email" />
+                <span asp-validation-for="Email" class="err"></span>
+            </div>
+
+            <div class="form-section-title">Acceso al sistema</div>
+            <div class="field full">
+                <label asp-for="Password">@(isEdit ? "Nueva contraseña (opcional)" : "Contraseña inicial *")</label>
+                <input asp-for="Password" type="password" autocomplete="new-password"
+                       placeholder="@(isEdit ? "Déjalo vacío para no cambiarla" : "Mínimo 6 caracteres")" />
+                <span asp-validation-for="Password" class="err"></span>
+            </div>
+
+            <div class="form-section-title">Asignación</div>
+            <div class="field">
+                <label asp-for="IdDepartamento">Departamento <span class="req">*</span></label>
+                <select asp-for="IdDepartamento">
+                    <option value="0">Selecciona…</option>
+                    @foreach (var d in depts)
+                    {
+                        <option value="@d.IdDepartamento">@d.NombreEdificio · @d.NumeroDepartamento</option>
+                    }
+                </select>
+                <span asp-validation-for="IdDepartamento" class="err"></span>
+            </div>
+            <div class="field">
+                <label asp-for="FechaInicio">Fecha de inicio</label>
+                <input asp-for="FechaInicio" type="date" />
+            </div>
+            @if (isEdit)
+            {
+                <div class="field full">
+                    <label asp-for="FechaFin">Fecha de fin (baja del inquilino)</label>
+                    <input asp-for="FechaFin" type="date" />
+                    <span class="hint">Llena este campo solo si el inquilino dejó la unidad habitacional.</span>
+                </div>
+            }
+        </div>
+
+        <div class="form-actions">
+            <a class="btn btn-ghost" href="@Url.Action("Index")">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                @await Html.PartialAsync("_Icons", "check")<span>@(isEdit ? "Guardar cambios" : "Guardar y crear")</span>
+            </button>
+        </div>
+    </form>
+</div>

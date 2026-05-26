@@ -1,0 +1,76 @@
+@{
+    var path = (ViewContext.HttpContext.Request.Path.Value ?? "").ToLowerInvariant();
+    string Cls(params string[] starts) =>
+        starts.Any(s => path.StartsWith(s)) ? "nav-item active" : "nav-item";
+}
+<aside class="sidebar">
+    <a class="brand" href="@Url.Action("Index", "Home")">
+        <span class="brand-mark">@await Html.PartialAsync("_Icons", "logo")</span>
+        <span class="brand-name">U<span class="accent">Habitacional</span></span>
+    </a>
+
+    <div class="nav-section">Inicio</div>
+    <a class="@Cls("/home")" href="@Url.Action("Index", "Home")">
+        @await Html.PartialAsync("_Icons", "home")<span>Home</span>
+    </a>
+
+    @if (CurrentUser.EsAdministrador)
+    {
+        <div class="nav-section">Administración</div>
+        <a class="@Cls("/vigilantes")" href="@Url.Action("Index", "Vigilantes")">
+            @await Html.PartialAsync("_Icons", "shield")<span>Vigilantes</span>
+        </a>
+        <a class="@Cls("/inquilinos")" href="@Url.Action("Index", "Inquilinos")">
+            @await Html.PartialAsync("_Icons", "users")<span>Inquilinos</span>
+        </a>
+        <a class="@Cls("/departamentos")" href="@Url.Action("Index", "Departamentos")">
+            @await Html.PartialAsync("_Icons", "door")<span>Departamentos</span>
+        </a>
+        <a class="@Cls("/edificios")" href="@Url.Action("Index", "Edificios")">
+            @await Html.PartialAsync("_Icons", "building")<span>Edificios</span>
+        </a>
+
+        <div class="nav-section">Catálogos</div>
+        <a class="@Cls("/perfiles")" href="@Url.Action("Index", "Perfiles")">
+            @await Html.PartialAsync("_Icons", "badge")<span>Perfiles</span>
+        </a>
+        <a class="@Cls("/identificaciones")" href="@Url.Action("Index", "Identificaciones")">
+            @await Html.PartialAsync("_Icons", "idcard")<span>Identificaciones</span>
+        </a>
+    }
+
+    @if (CurrentUser.EsInquilino)
+    {
+        <div class="nav-section">Mis visitantes</div>
+        <a class="@Cls("/visitantes")" href="@Url.Action("Index", "Visitantes")">
+            @await Html.PartialAsync("_Icons", "user_plus")<span>Mis visitantes</span>
+        </a>
+    }
+
+    @if (CurrentUser.EsVigilante)
+    {
+        <div class="nav-section">Turno</div>
+        <a class="@Cls("/checador")" href="@Url.Action("Index", "Checador")">
+            @await Html.PartialAsync("_Icons", "clock")<span>Checador</span>
+        </a>
+        <a class="@Cls("/registrovisitante")" href="@Url.Action("Index", "RegistroVisitante")">
+            @await Html.PartialAsync("_Icons", "scan")<span>Registro visitante</span>
+        </a>
+    }
+
+    <div class="sidebar-foot">
+        <div class="user-chip">
+            <div class="avatar">@CurrentUser.Iniciales</div>
+            <div class="user-meta">
+                <div>@CurrentUser.Nombre</div>
+                <small>@CurrentUser.Email</small>
+            </div>
+        </div>
+        <form method="post" action="@Url.Action("Logout", "Auth")" data-confirm="¿Cerrar tu sesión?">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="logout-btn">
+                @await Html.PartialAsync("_Icons", "logout")<span>Cerrar sesión</span>
+            </button>
+        </form>
+    </div>
+</aside>

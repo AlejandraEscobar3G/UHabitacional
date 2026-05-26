@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UHabitacional · Diagramas (Clases y Arquitectura)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+    <style>
+        :root {
+            --brand: #14532d;
+            --brand-2: #16a34a;
+            --bg: #f6f7f5;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--brand) 0%, var(--brand-2) 100%);
+            color: white;
+            padding: 32px 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        header h1 {
+            margin: 0 0 6px 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        header p {
+            margin: 0;
+            opacity: 0.92;
+            font-size: 15px;
+        }
+
+        nav {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 24px;
+        }
+
+        nav a {
+            display: inline-block;
+            padding: 14px 0;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--brand-2);
+            border-bottom-color: var(--brand-2);
+        }
+
+        main {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+        }
+
+        section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 28px;
+            margin-bottom: 28px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        section h2 {
+            margin: 0 0 6px 0;
+            font-size: 22px;
+            color: var(--brand);
+            font-weight: 600;
+        }
+
+        section .subtitle {
+            color: var(--muted);
+            margin: 0 0 22px 0;
+            font-size: 14px;
+        }
+
+        .diagram-container {
+            background: #fafafa;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        .mermaid {
+            background: transparent;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .legend-item {
+            background: #f9fafb;
+            border-left: 4px solid var(--brand-2);
+            padding: 10px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .legend-item strong {
+            display: block;
+            margin-bottom: 2px;
+            color: var(--brand);
+        }
+
+        .legend-item span {
+            color: var(--muted);
+            font-size: 12.5px;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>UHabitacional · Diagramas del Proyecto</h1>
+        <p>Diagrama de Clases y Diagrama de Arquitectura · Solución: API + MVC + SQL Server</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#clases">Diagrama de Clases</a></li>
+            <li><a href="#arquitectura">Diagrama de Arquitectura</a></li>
+            <li><a href="#capas">Detalle por Capas</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- ===================== DIAGRAMA DE CLASES ===================== -->
+        <section id="clases">
+            <h2>1. Diagrama de Clases</h2>
+            <p class="subtitle">
+                Entidades del dominio bajo <code>UHabitacional.API.Domain.Entities</code>,
+                sus atributos principales y relaciones (asociaciones, multiplicidad y claves foráneas).
+            </p>
+
+            <div class="diagram-container">
+<pre class="mermaid">
+classDiagram
+    direction LR
+
+    class TipoUsuario {
+        +int IdTipoUsuario
+        +string Nombre
+        +string Descripcion
+        +bool Activo
+        +DateTime FechaCreacion
+        +DateTime FechaModificacion
+    }
+
+    class Identificacion {
+        +int IdIdentificacion
+        +string Nombre
+        +string Descripcion
+        +bool Activo
+        +DateTime FechaCreacion
+        +DateTime FechaModificacion
+    }
+
+    class Usuario {
+        +int IdUsuario
+        +int IdTipoUsuario
+        +int IdIdentificacion
+        +string NumeroIdentificacion
+        +string Nombre
+        +string Apellidos
+        +string Email
+        +string PasswordHash
+        +string Telefono
+        +bool Activo
+        +DateTime FechaCreacion
+        +DateTime FechaModificacion
+    }
+
+    class Sesion {
+        +int IdSesion
+        +int IdUsuario
+        +string Jti
+        +DateTime FechaInicio
+        +DateTime FechaExpiracion
+        +DateTime FechaUltimaActividad
+        +DateTime FechaCierre
+        +string DireccionIP
+        +string UserAgent
+        +bool Activa
+    }
+
+    class Edificio {
+        +int IdEdificio
+        +string Nombre
+        +string Descripcion
+        +int NumeroPisos
+        +int TotalDeptos
+        +DateTime FechaCreacion
+        +DateTime FechaModificacion
+    }
+
+    class Departamento {
+        +int IdDepartamento
+        +int IdEdificio
+        +string NumeroDepartamento
+        +int Piso
+        +DateTime FechaCreacion
+        +DateTime FechaModificacion
+    }
+
+    class Inquilino {
+        +int IdInquilino
+        +int IdUsuario
+        +int IdDepartamento
+        +DateTime FechaInicio
+        +DateTime FechaFin
+        +bool Activo
+        +DateTime FechaCreacion
+        +DateTime FechaModificacion
+    }
+
+    class BitacoraVigilante {
+        +int IdBitacoraVigilante
+        +int IdUsuario
+        +DateTime FechaHoraEntrada
+        +DateTime FechaHoraSalida
+        +string Observaciones
+        +DateTime FechaCreacion
+        +DateTime FechaModificacion
+    }
+
+    class BitacoraVisitante {
+        +int IdBitacoraVisitante
+        +int IdInquilino
+        +string NombreVisitante
+        +int IdIdentificacion
+        +string NumeroIdentificacion
+        +string CodigoVisita
+        +DateTime FechaHoraLlegada
+        +DateTime FechaHoraSalida
+        +string Observaciones
+        +int IdVigilanteEntrada
+        +int IdVigilanteSalida
+        +bool Activo
+    }
+
+    TipoUsuario "1" --> "0..*" Usuario : clasifica
+    Identificacion "1" --> "0..*" Usuario : identifica
+    Usuario "1" --> "0..*" Sesion : abre
+    Usuario "1" --> "0..1" Inquilino : es
+    Edificio "1" --> "0..*" Departamento : contiene
+    Departamento "1" --> "0..*" Inquilino : aloja
+    Inquilino "1" --> "0..*" BitacoraVisitante : registra
+    Identificacion "1" --> "0..*" BitacoraVisitante : presenta
+    Usuario "1" --> "0..*" BitacoraVigilante : registra (turno)
+    Usuario "1" --> "0..*" BitacoraVisitante : vigilante entrada
+    Usuario "1" --> "0..*" BitacoraVisitante : vigilante salida
+</pre>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <strong>Catálogos</strong>
+                    <span>TipoUsuario, Identificacion, Edificio, Departamento — operaciones CRU.</span>
+                </div>
+                <div class="legend-item">
+                    <strong>Usuarios</strong>
+                    <span>Usuario hereda su rol vía TipoUsuario (Administrador, Vigilante, Inquilino).</span>
+                </div>
+                <div class="legend-item">
+                    <strong>Bitácoras</strong>
+                    <span>Tablas transaccionales: vigilantes (turnos) y visitantes (acceso a la unidad).</span>
+                </div>
+                <div class="legend-item">
+                    <strong>Sesión</strong>
+                    <span>Sesion persiste el JTI del JWT y permite invalidar tokens en logout.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== DIAGRAMA DE ARQUITECTURA ===================== -->
+        <section id="arquitectura">
+            <h2>2. Diagrama de Arquitectura</h2>
+            <p class="subtitle">
+                Vista de despliegue lógico: cliente web (Razor MVC) consume el API REST,
+                que a su vez expone una arquitectura en capas (Clean Architecture) sobre SQL Server.
+            </p>
+
+            <div class="diagram-container">
+<pre class="mermaid">
+flowchart TB
+    subgraph Cliente["CLIENTE"]
+        Browser["Navegador<br/>(Edge / Chrome)"]
+    end
+
+    subgraph MVC["UHabitacional.MVC · Aplicación Web (ASP.NET Razor)"]
+        direction TB
+        Views["Vistas Razor<br/>(.cshtml + Bootstrap)"]
+        MvcCtrl["Controllers<br/>Home · Auth · Edificios<br/>Departamentos · Inquilinos<br/>Vigilantes · Visitantes · Checador"]
+        MvcVM["ViewModels<br/>+ Models / DTOs"]
+        ApiClient["ApiClient<br/>(HttpClient tipado)"]
+        AuthAttr["AuthorizeRoleAttribute<br/>+ Cookie Auth"]
+    end
+
+    subgraph API["UHabitacional.API · Web API REST (ASP.NET Core)"]
+        direction TB
+        subgraph Presentation["Capa de Presentación"]
+            ApiCtrl["Controllers<br/>Auth · Usuarios · TiposUsuario<br/>Identificaciones · Edificios<br/>Departamentos · Inquilinos<br/>BitacoraVigilante · BitacoraVisitante · Sesion"]
+            MW["Middleware<br/>JWT · Session Validation<br/>Exception Handling"]
+        end
+        subgraph Application["Capa de Aplicación"]
+            Services["Services<br/>(Auth · Usuario · Edificio · Departamento<br/>Inquilino · Bitácoras · Sesion · etc.)"]
+            DTOs["DTOs + Interfaces<br/>(IRepository / IService)"]
+            Helpers["Helpers<br/>CodigoVisitaGenerator"]
+        end
+        subgraph Domain["Capa de Dominio"]
+            Entities["Entities<br/>Usuario · TipoUsuario · Identificacion<br/>Edificio · Departamento · Inquilino<br/>BitacoraVigilante · BitacoraVisitante · Sesion"]
+            Exceptions["Exceptions + Constants<br/>(BusinessRule · NotFound · Roles)"]
+        end
+        subgraph Infrastructure["Capa de Infraestructura"]
+            Repos["Repositories<br/>(EF Core)"]
+            DbCtx["ApplicationDbContext"]
+            Security["JwtSettings<br/>CurrentUserService"]
+        end
+    end
+
+    subgraph DB["SQL Server · UHabitacionalDB"]
+        direction LR
+        Tables["Tablas<br/>Usuario · TipoUsuario · Identificacion<br/>Edificio · Departamento · Inquilino<br/>BitacoraVigilante · BitacoraVisitante · Sesion"]
+    end
+
+    Browser -- HTTPS --> Views
+    Views --> MvcCtrl
+    MvcCtrl --> MvcVM
+    MvcCtrl --> AuthAttr
+    MvcCtrl -- HttpClient + Bearer JWT --> ApiClient
+    ApiClient -- "REST / JSON" --> ApiCtrl
+
+    ApiCtrl --> MW
+    MW --> Services
+    ApiCtrl --> Services
+    Services --> DTOs
+    Services --> Helpers
+    Services --> Entities
+    Services --> Repos
+    Repos --> Entities
+    Repos --> DbCtx
+    Security --> MW
+    DbCtx -- "EF Core / SqlClient" --> Tables
+
+    classDef cli fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+    classDef mvc fill:#fef3c7,stroke:#b45309,color:#78350f
+    classDef api fill:#dcfce7,stroke:#15803d,color:#14532d
+    classDef db  fill:#f5d0fe,stroke:#86198f,color:#581c87
+
+    class Browser cli
+    class Views,MvcCtrl,MvcVM,ApiClient,AuthAttr mvc
+    class ApiCtrl,MW,Services,DTOs,Helpers,Entities,Exceptions,Repos,DbCtx,Security api
+    class Tables db
+</pre>
+            </div>
+        </section>
+
+        <!-- ===================== DETALLE POR CAPAS ===================== -->
+        <section id="capas">
+            <h2>3. Flujo de una petición típica</h2>
+            <p class="subtitle">
+                Secuencia simplificada de un caso de uso: un Administrador da de alta un Inquilino desde la web.
+            </p>
+
+            <div class="diagram-container">
+<pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Admin as Administrador
+    participant V as Vista Razor<br/>(Inquilinos/Form)
+    participant MC as MVC<br/>InquilinosController
+    participant AC as ApiClient<br/>(HttpClient)
+    participant MW as Middleware<br/>(JWT + Sesion)
+    participant AP as API<br/>InquilinosController
+    participant SV as Service<br/>InquilinoService
+    participant RP as Repository<br/>InquilinoRepository
+    participant DB as SQL Server<br/>(Inquilino)
+
+    Admin->>V: Llena formulario y envía
+    V->>MC: POST /Inquilinos/Create
+    MC->>AC: PostAsync("inquilinos", dto, JWT)
+    AC->>MW: HTTP POST + Bearer
+    MW->>MW: Valida JWT y Sesion.Activa
+    MW->>AP: Request autenticada
+    AP->>SV: CreateAsync(dto)
+    SV->>SV: Validaciones de negocio
+    SV->>RP: AddAsync(entidad)
+    RP->>DB: INSERT Inquilino
+    DB-->>RP: Id generado
+    RP-->>SV: Entidad
+    SV-->>AP: DTO
+    AP-->>AC: 201 Created
+    AC-->>MC: InquilinoDto
+    MC-->>V: Redirect a Index
+    V-->>Admin: Lista actualizada
+</pre>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        UHabitacional · Diplomado · Generado el 2026-05-26
+    </footer>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: { curve: 'basis', useMaxWidth: true },
+            sequence: { useMaxWidth: true },
+            class: { useMaxWidth: true },
+            themeVariables: {
+                primaryColor: '#dcfce7',
+                primaryTextColor: '#14532d',
+                primaryBorderColor: '#16a34a',
+                lineColor: '#374151',
+                secondaryColor: '#fef3c7',
+                tertiaryColor: '#dbeafe'
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+@model UsuarioCreateDto
+@{
+    var id = ViewBag.Id as int?;
+    bool isEdit = id.HasValue;
+    var action = isEdit ? "Edit" : "Create";
+    var ids = (ViewBag.Identificaciones as List<IdentificacionDto>) ?? new List<IdentificacionDto>();
+}
+
+<div class="page-header">
+    <div>
+        <div class="page-title">@(isEdit ? "Editar vigilante" : "Nuevo vigilante")</div>
+        <div class="page-subtitle">@(isEdit ? "Actualiza la información del vigilante." : "Da de alta a un nuevo elemento de seguridad.")</div>
+    </div>
+</div>
+
+<div class="card flat">
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""]?.Errors.Count > 0)
+    {
+        <div class="alert alert-danger">@ViewData.ModelState[""]!.Errors.First().ErrorMessage</div>
+    }
+    <form asp-action="@action" asp-route-id="@id" method="post" autocomplete="off">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="form-section-title">Datos personales</div>
+
+            <div class="field">
+                <label asp-for="Nombre">Nombre(s) <span class="req">*</span></label>
+                <input asp-for="Nombre" placeholder="Ej. Carlos" />
+                <span asp-validation-for="Nombre" class="err"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Apellidos">Apellidos <span class="req">*</span></label>
+                <input asp-for="Apellidos" placeholder="Ej. Méndez Ruiz" />
+                <span asp-validation-for="Apellidos" class="err"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="IdIdentificacion">Tipo de identificación <span class="req">*</span></label>
+                <select asp-for="IdIdentificacion">
+                    <option value="0">Selecciona…</option>
+                    @foreach (var i in ids)
+                    {
+                        <option value="@i.IdIdentificacion">@i.Nombre</option>
+                    }
+                </select>
+                <span asp-validation-for="IdIdentificacion" class="err"></span>
+            </div>
+            <div class="field">
+                <label asp-for="NumeroIdentificacion">Número de identificación <span class="req">*</span></label>
+                <input asp-for="NumeroIdentificacion" placeholder="Ej. ABCD800101..." />
+                <span asp-validation-for="NumeroIdentificacion" class="err"></span>
+            </div>
+
+            <div class="field">
+                <label asp-for="Telefono">Teléfono</label>
+                <input asp-for="Telefono" placeholder="55 1234 5678" />
+            </div>
+            <div class="field">
+                <label asp-for="Email">Correo electrónico <span class="req">*</span></label>
+                <input asp-for="Email" type="email" placeholder="correo@@uhabitacional.com" />
+                <span asp-validation-for="Email" class="err"></span>
+            </div>
+
+            <div class="form-section-title">Acceso al sistema</div>
+            <div class="field full">
+                <label asp-for="Password">@(isEdit ? "Nueva contraseña (opcional)" : "Contraseña inicial *")</label>
+                <input asp-for="Password" type="password" autocomplete="new-password"
+                       placeholder="@(isEdit ? "Déjalo vacío para no cambiarla" : "Mínimo 6 caracteres")" />
+                <span class="hint">El vigilante podrá cambiarla en su primer ingreso.</span>
+                <span asp-validation-for="Password" class="err"></span>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a class="btn btn-ghost" href="@Url.Action("Index")">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                @await Html.PartialAsync("_Icons", "check")<span>@(isEdit ? "Guardar cambios" : "Guardar y crear")</span>
+            </button>
+        </div>
+    </form>
+</div>

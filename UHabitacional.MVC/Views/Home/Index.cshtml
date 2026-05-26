@@ -1,0 +1,60 @@
+@{
+    bool admin = CurrentUser.EsAdministrador;
+    bool inq = CurrentUser.EsInquilino;
+    bool vig = CurrentUser.EsVigilante;
+
+    var adminCards = new[]
+    {
+        new { Url = Url.Action("Index","Vigilantes")!, Title = "Administración de vigilantes", Desc = "Gestiona el personal de seguridad y sus turnos.", Icon = "shield", Accent = false },
+        new { Url = Url.Action("Index","Inquilinos")!, Title = "Administración de inquilinos", Desc = "Alta, edición y baja de residentes registrados.", Icon = "users", Accent = false },
+        new { Url = Url.Action("Index","Departamentos")!, Title = "Administración de departamentos", Desc = "Departamentos, ubicación y ocupación.", Icon = "door", Accent = false },
+        new { Url = Url.Action("Index","Edificios")!, Title = "Administración de edificios", Desc = "Edificios, pisos y capacidad de la unidad.", Icon = "building", Accent = false },
+        new { Url = Url.Action("Index","Perfiles")!, Title = "Perfiles de usuario", Desc = "Roles y permisos dentro de la plataforma.", Icon = "badge", Accent = true },
+        new { Url = Url.Action("Index","Identificaciones")!, Title = "Tipos de identificación", Desc = "Catálogo de documentos válidos.", Icon = "idcard", Accent = true }
+    };
+
+    var inquilinoCards = new[]
+    {
+        new { Url = Url.Action("Index","Visitantes")!, Title = "Administración de visitantes", Desc = "Registra visitantes y genera su código único de visita.", Icon = "user_plus", Accent = false }
+    };
+
+    var vigilanteCards = new[]
+    {
+        new { Url = Url.Action("Index","Checador")!, Title = "Checador (entrada / salida)", Desc = "Registra tu entrada y salida de turno.", Icon = "clock", Accent = true },
+        new { Url = Url.Action("Index","RegistroVisitante")!, Title = "Registro de visitantes", Desc = "Valida el código de visita y registra el acceso.", Icon = "scan", Accent = false }
+    };
+
+    var cards = admin ? adminCards : inq ? inquilinoCards : vigilanteCards;
+}
+
+<div class="welcome-strip">
+    <div>
+        <h2>Hola, @CurrentUser.Nombre</h2>
+        <p>Bienvenido al panel de UHabitacional. Selecciona un módulo para comenzar.</p>
+    </div>
+    <div class="stat">
+        <div>
+            <div class="num">@CurrentUser.TipoUsuario</div>
+            <div class="lbl">Perfil</div>
+        </div>
+    </div>
+</div>
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Módulos disponibles</div>
+        <div class="page-subtitle">Estos son los módulos habilitados para tu perfil.</div>
+    </div>
+</div>
+
+<div class="home-cards">
+    @foreach (var c in cards)
+    {
+        <a class="home-card @(c.Accent ? "accent" : "")" href="@c.Url">
+            <span class="ico">@await Html.PartialAsync("_Icons", c.Icon)</span>
+            <h3>@c.Title</h3>
+            <p>@c.Desc</p>
+            <span class="arrow">@await Html.PartialAsync("_Icons", "arrow")</span>
+        </a>
+    }
+</div>

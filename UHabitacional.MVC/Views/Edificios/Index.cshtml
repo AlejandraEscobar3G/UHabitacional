@@ -1,0 +1,56 @@
+@model IEnumerable<EdificioDto>
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Administración de edificios</div>
+        <div class="page-subtitle">Edificios, pisos y capacidad de la unidad habitacional.</div>
+    </div>
+    <a class="btn btn-primary" href="@Url.Action("Create")">
+        @await Html.PartialAsync("_Icons", "plus")<span>Nuevo edificio</span>
+    </a>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Pisos</th>
+                <th>Total deptos.</th>
+                <th style="text-align:right">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="6"><div class="empty-state"><strong>Sin registros</strong><span>Empieza creando tu primer edificio.</span></div></td></tr>
+            }
+            @foreach (var e in Model)
+            {
+                <tr>
+                    <td class="cell-id">ED-@e.IdEdificio.ToString("D3")</td>
+                    <td class="cell-strong">@e.Nombre</td>
+                    <td>@(string.IsNullOrEmpty(e.Descripcion) ? "—" : e.Descripcion)</td>
+                    <td>@e.NumeroPisos</td>
+                    <td><span class="pill pill-soft">@e.TotalDeptos</span></td>
+                    <td class="cell-actions">
+                        <a class="btn btn-ghost btn-sm" href="@Url.Action("Edit", new { id = e.IdEdificio })">
+                            @await Html.PartialAsync("_Icons", "edit")<span>Editar</span>
+                        </a>
+                        <form method="post" action="@Url.Action("Delete", new { id = e.IdEdificio })" style="display:inline" data-confirm="¿Eliminar el edificio @e.Nombre?">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                @await Html.PartialAsync("_Icons", "trash")<span>Eliminar</span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="table-foot">
+        <span>Mostrando @Model.Count() registro(s)</span>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+@model DepartamentoCreateDto
+@{
+    var id = ViewBag.Id as int?;
+    bool isEdit = id.HasValue;
+    var action = isEdit ? "Edit" : "Create";
+    var edificios = (ViewBag.Edificios as List<EdificioDto>) ?? new List<EdificioDto>();
+}
+
+<div class="page-header">
+    <div>
+        <div class="page-title">@(isEdit ? "Editar departamento" : "Nuevo departamento")</div>
+        <div class="page-subtitle">Selecciona el edificio y completa los datos del departamento.</div>
+    </div>
+</div>
+
+<div class="card flat">
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""]?.Errors.Count > 0)
+    {
+        <div class="alert alert-danger">@ViewData.ModelState[""]!.Errors.First().ErrorMessage</div>
+    }
+    <form asp-action="@action" asp-route-id="@id" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="form-section-title">Ubicación</div>
+            <div class="field">
+                <label asp-for="IdEdificio">Edificio <span class="req">*</span></label>
+                <select asp-for="IdEdificio">
+                    <option value="0">Selecciona un edificio</option>
+                    @foreach (var ed in edificios)
+                    {
+                        <option value="@ed.IdEdificio">@ed.Nombre</option>
+                    }
+                </select>
+                <span asp-validation-for="IdEdificio" class="err"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Piso">Piso <span class="req">*</span></label>
+                <input asp-for="Piso" type="number" min="1" />
+                <span asp-validation-for="Piso" class="err"></span>
+            </div>
+            <div class="field full">
+                <label asp-for="NumeroDepartamento">Número de departamento <span class="req">*</span></label>
+                <input asp-for="NumeroDepartamento" placeholder="Ej. A-301" />
+                <span asp-validation-for="NumeroDepartamento" class="err"></span>
+            </div>
+        </div>
+        <div class="form-actions">
+            <a class="btn btn-ghost" href="@Url.Action("Index")">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                @await Html.PartialAsync("_Icons", "check")<span>@(isEdit ? "Guardar cambios" : "Guardar y crear")</span>
+            </button>
+        </div>
+    </form>
+</div>

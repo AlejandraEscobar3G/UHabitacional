@@ -1,0 +1,44 @@
+@model IEnumerable<DepartamentoDto>
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Administración de departamentos</div>
+        <div class="page-subtitle">Departamentos por edificio, su piso y ocupación.</div>
+    </div>
+    <a class="btn btn-primary" href="@Url.Action("Create")">
+        @await Html.PartialAsync("_Icons", "plus")<span>Nuevo departamento</span>
+    </a>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead><tr><th>ID</th><th>Edificio</th><th>Número</th><th>Piso</th><th style="text-align:right">Acciones</th></tr></thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="5"><div class="empty-state"><strong>Sin departamentos</strong><span>Crea edificios y empieza a agregar departamentos.</span></div></td></tr>
+            }
+            @foreach (var d in Model)
+            {
+                <tr>
+                    <td class="cell-id">DP-@d.IdDepartamento.ToString("D3")</td>
+                    <td>@d.NombreEdificio</td>
+                    <td class="cell-strong"><span class="pill pill-soft">@d.NumeroDepartamento</span></td>
+                    <td>@d.Piso</td>
+                    <td class="cell-actions">
+                        <a class="btn btn-ghost btn-sm" href="@Url.Action("Edit", new { id = d.IdDepartamento })">
+                            @await Html.PartialAsync("_Icons", "edit")<span>Editar</span>
+                        </a>
+                        <form method="post" action="@Url.Action("Delete", new { id = d.IdDepartamento })" style="display:inline" data-confirm="¿Eliminar el departamento @d.NumeroDepartamento?">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                @await Html.PartialAsync("_Icons", "trash")<span>Eliminar</span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="table-foot"><span>Mostrando @Model.Count() registro(s)</span></div>
+</div>

@@ -1,0 +1,70 @@
+@model LoginDto
+@{
+    ViewBag.PageTitle = "Iniciar sesión";
+    ViewBag.HideSidebar = true;
+}
+
+<div class="login-page">
+    <aside class="login-aside">
+        <div class="brand">
+            <span class="brand-mark">@await Html.PartialAsync("_Icons", "logo-lg")</span>
+            <span class="brand-name">U<span class="accent">Habitacional</span></span>
+        </div>
+        <div>
+            <h1>Control de acceso<br />residencial, simplificado.</h1>
+            <p>Gestiona vigilantes, inquilinos y visitantes desde un solo lugar. Trazabilidad completa, seguridad y transparencia.</p>
+            <div class="features">
+                <div class="feature">
+                    <span class="dot">@await Html.PartialAsync("_Icons", "shield")</span>
+                    <span class="txt">Validación rápida de visitantes con código único de visita.</span>
+                </div>
+                <div class="feature">
+                    <span class="dot">@await Html.PartialAsync("_Icons", "clock")</span>
+                    <span class="txt">Registro automático de entradas y salidas.</span>
+                </div>
+                <div class="feature">
+                    <span class="dot">@await Html.PartialAsync("_Icons", "users")</span>
+                    <span class="txt">Roles diferenciados: Administrador, Inquilino y Vigilante.</span>
+                </div>
+            </div>
+        </div>
+        <div class="foot">© @DateTime.Now.Year UHabitacional. Todos los derechos reservados.</div>
+    </aside>
+
+    <div class="login-main">
+        <div class="login-card">
+            <h2>Iniciar sesión</h2>
+            <p class="sub">Accede con tu correo y contraseña.</p>
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""]?.Errors.Count > 0)
+            {
+                <div class="alert alert-danger">
+                    @await Html.PartialAsync("_Icons", "alert")
+                    <span>@ViewData.ModelState[""]!.Errors.First().ErrorMessage</span>
+                </div>
+            }
+
+            <form asp-action="Login" method="post" class="login-form" autocomplete="off">
+                @Html.AntiForgeryToken()
+                <div class="field">
+                    <label asp-for="Email">Correo electrónico</label>
+                    <input asp-for="Email" type="email" placeholder="tu@correo.com" />
+                    <span asp-validation-for="Email" class="err"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Password">Contraseña</label>
+                    <input asp-for="Password" type="password" placeholder="••••••••" />
+                    <span asp-validation-for="Password" class="err"></span>
+                </div>
+                <button type="submit" class="btn btn-primary" style="justify-content:center;width:100%;padding:13px">
+                    Iniciar sesión
+                </button>
+            </form>
+
+            <div class="login-tips">
+                <strong>Credenciales iniciales</strong>
+                <span>Email: <code>admin@@uhabitacional.com</code> · Password: <code>Admin123!</code></span>
+            </div>
+        </div>
+    </div>
+</div>

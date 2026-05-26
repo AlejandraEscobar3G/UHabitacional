@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="UHabitacional.API/UHabitacional.API.csproj" />
+  <Project Path="UHabitacional.MVC/UHabitacional.MVC.csproj" />
+</Solution>

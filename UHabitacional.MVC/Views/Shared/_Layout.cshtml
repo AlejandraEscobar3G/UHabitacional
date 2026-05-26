@@ -1,0 +1,75 @@
+@{
+    var crumbs = (ViewBag.Breadcrumbs as List<BreadcrumbItem>) ?? new List<BreadcrumbItem>();
+    var pageTitle = (ViewBag.PageTitle as string) ?? "UHabitacional";
+    var hideSidebar = ViewBag.HideSidebar as bool? ?? false;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@pageTitle · UHabitacional</title>
+    <link rel="icon" type="image/svg+xml" href="~/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="~/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="~/favicon-16x16.png" />
+    <link rel="shortcut icon" href="~/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="~/apple-touch-icon.png" />
+    <link rel="manifest" href="~/site.webmanifest" />
+    <meta name="theme-color" content="#2D4A3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@@400;500;600;700;800&family=Inter:wght@@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+@if (hideSidebar || !CurrentUser.IsAuthenticated)
+{
+    @RenderBody()
+}
+else
+{
+    <div class="layout">
+        @await Html.PartialAsync("_Sidebar")
+        <div>
+            <div class="topbar">
+                <div class="breadcrumb">
+                    @for (int i = 0; i < crumbs.Count; i++)
+                    {
+                        var c = crumbs[i];
+                        bool isLast = (i == crumbs.Count - 1);
+                        if (isLast || string.IsNullOrEmpty(c.Url))
+                        {
+                            <span class="crumb current">@c.Label</span>
+                        }
+                        else
+                        {
+                            <a class="crumb link" href="@c.Url">@c.Label</a>
+                        }
+                        if (!isLast)
+                        {
+                            <span class="sep">/</span>
+                        }
+                    }
+                </div>
+                <div class="topbar-actions">
+                    <span style="font-size:12px;color:var(--muted)">@CurrentUser.TipoUsuario</span>
+                </div>
+            </div>
+            <main class="content">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success">@TempData["Success"]</div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger">@TempData["Error"]</div>
+                }
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+}
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

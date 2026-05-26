@@ -1,0 +1,87 @@
+@model ChecadorViewModel
+@{
+    var ahora = DateTime.Now;
+    var fechaStr = ahora.ToString("dddd, dd 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-MX"));
+    var abierto = Model.TurnoAbierto;
+}
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Checador de turno</div>
+        <div class="page-subtitle">Registra tu entrada y salida del turno.</div>
+    </div>
+</div>
+
+<div class="checador-wrap">
+    <div class="card flat" style="text-align:center;padding:40px 32px">
+        <div style="font-size:13px;color:var(--muted);text-transform:capitalize">@fechaStr</div>
+        <div class="live-clock" style="font-family:'Inter',monospace;font-size:64px;font-weight:700;letter-spacing:-.02em;color:var(--primary);margin:6px 0 24px">
+            @ahora.ToString("HH:mm:ss")
+        </div>
+
+        <div style="font-size:14px;color:var(--muted);margin-bottom:20px">
+            Vigilante: <strong style="color:var(--ink)">@CurrentUser.Nombre</strong>
+            @if (abierto != null)
+            {
+                <span> · Turno iniciado a las <strong style="color:var(--ink)">@abierto.FechaHoraEntrada.ToString("HH:mm")</strong></span>
+            }
+        </div>
+
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+            @if (abierto == null)
+            {
+                <form method="post" asp-action="Entrada">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-primary" style="padding:14px 28px;font-size:15px">
+                        @await Html.PartialAsync("_Icons", "check")<span>Registrar entrada</span>
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form method="post" asp-action="Salida" asp-route-id="@abierto.IdBitacoraVigilante">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-accent" style="padding:14px 28px;font-size:15px">
+                        @await Html.PartialAsync("_Icons", "logout")<span>Registrar salida</span>
+                    </button>
+                </form>
+            }
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div style="margin-top:24px">
+                <div class="status-badge">@await Html.PartialAsync("_Icons", "check")<span>@TempData["Success"]</span></div>
+            </div>
+        }
+    </div>
+
+    <div class="card flat" style="margin-top:18px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px">Historial reciente</div>
+        @if (!Model.Historial.Any())
+        {
+            <div class="empty-state"><strong>Sin registros</strong><span>Tu historial aparecerá aquí.</span></div>
+        }
+        else
+        {
+            <table>
+                <thead><tr><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Duración</th><th>Observaciones</th></tr></thead>
+                <tbody>
+                    @foreach (var b in Model.Historial)
+                    {
+                        var dur = b.FechaHoraSalida.HasValue
+                            ? (b.FechaHoraSalida.Value - b.FechaHoraEntrada).ToString(@"hh\h\ mm\m")
+                            : "Abierto";
+                        <tr>
+                            <td>@b.FechaHoraEntrada.ToString("dd MMM yyyy")</td>
+                            <td>@b.FechaHoraEntrada.ToString("HH:mm")</td>
+                            <td>@(b.FechaHoraSalida?.ToString("HH:mm") ?? "—")</td>
+                            <td>@dur</td>
+                            <td>@(string.IsNullOrEmpty(b.Observaciones) ? "—" : b.Observaciones)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

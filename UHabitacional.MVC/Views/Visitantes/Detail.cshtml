@@ -1,0 +1,43 @@
+@model BitacoraVisitanteDto
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Visitante registrado</div>
+        <div class="page-subtitle">Comparte el código de visita con tu invitado.</div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn btn-ghost" href="@Url.Action("Index")">Volver al listado</a>
+        <a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.IdBitacoraVisitante })">
+            @await Html.PartialAsync("_Icons", "edit")<span>Editar</span>
+        </a>
+    </div>
+</div>
+
+<div class="card flat">
+    <div class="code-display" style="margin-bottom:22px">
+        <div>
+            <div class="lbl">Código de visita</div>
+            <div class="code">@Model.CodigoVisita</div>
+        </div>
+        <div class="hint">Pídele al visitante presentar este código en el acceso.</div>
+    </div>
+
+    <div class="visitor-preview" style="margin-top:0">
+        <div class="row"><span>Visitante</span><span>@Model.NombreVisitante</span></div>
+        <div class="row"><span>Identificación</span><span>@Model.Identificacion · @Model.NumeroIdentificacion</span></div>
+        <div class="row"><span>Registrado por</span><span>@Model.NombreInquilino</span></div>
+        <div class="row"><span>Fecha de creación</span><span>@Model.FechaCreacion.ToString("dd MMM yyyy HH:mm")</span></div>
+        @if (Model.FechaHoraLlegada.HasValue)
+        {
+            <div class="row"><span>Hora de entrada</span><span>@Model.FechaHoraLlegada.Value.ToString("dd MMM HH:mm")</span></div>
+        }
+        @if (Model.FechaHoraSalida.HasValue)
+        {
+            <div class="row"><span>Hora de salida</span><span>@Model.FechaHoraSalida.Value.ToString("dd MMM HH:mm")</span></div>
+        }
+        @if (!string.IsNullOrEmpty(Model.Observaciones))
+        {
+            <div class="row"><span>Observaciones</span><span>@Model.Observaciones</span></div>
+        }
+    </div>
+</div>

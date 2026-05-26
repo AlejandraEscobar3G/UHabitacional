@@ -1,0 +1,87 @@
+@model RegistroVisitanteViewModel
+@{
+    var v = Model.Visitante;
+    bool tieneEntrada = v?.FechaHoraLlegada.HasValue ?? false;
+    bool tieneSalida = v?.FechaHoraSalida.HasValue ?? false;
+}
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Registro entrada / salida de visitante</div>
+        <div class="page-subtitle">Solicita al visitante su código de visita y valídalo para registrar su acceso.</div>
+    </div>
+</div>
+
+<div class="checador-wrap">
+    <div class="card flat">
+        <form asp-action="Validar" method="post" autocomplete="off">
+            @Html.AntiForgeryToken()
+            <div class="field">
+                <label for="codigo">Código de visita</label>
+                <input id="codigo" class="code-input-big" name="codigo" placeholder="UH-XXXX-XX" maxlength="11" value="@Model.Codigo" required />
+            </div>
+            @if (Model.EsError && !string.IsNullOrEmpty(Model.Mensaje))
+            {
+                <div class="alert alert-danger" style="margin-top:14px">
+                    @await Html.PartialAsync("_Icons", "alert")
+                    <span>@Model.Mensaje</span>
+                </div>
+            }
+            <div style="display:flex;justify-content:center;margin-top:18px">
+                <button type="submit" class="btn btn-primary" style="padding:13px 28px">
+                    @await Html.PartialAsync("_Icons", "scan")<span>Validar código</span>
+                </button>
+            </div>
+        </form>
+
+        @if (v != null)
+        {
+            <div class="visitor-preview">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+                    <div style="font-weight:700;font-size:18px;color:var(--primary-700)">Visitante validado</div>
+                    <span class="pill pill-success">@await Html.PartialAsync("_Icons", "check") Código válido</span>
+                </div>
+                <div class="row"><span>Visitante</span><span>@v.NombreVisitante</span></div>
+                <div class="row"><span>Identificación</span><span>@v.Identificacion · @v.NumeroIdentificacion</span></div>
+                <div class="row"><span>Inquilino que invita</span><span>@v.NombreInquilino</span></div>
+                <div class="row"><span>Motivo</span><span>@(string.IsNullOrEmpty(v.Observaciones) ? "—" : v.Observaciones)</span></div>
+                <div class="row"><span>Código de visita</span><span><code style="background:#fff;padding:3px 8px;border-radius:6px;font-family:'Inter',monospace;color:var(--primary);font-weight:700">@v.CodigoVisita</code></span></div>
+                @if (tieneEntrada)
+                {
+                    <div class="row"><span>Hora de entrada</span><span>@v.FechaHoraLlegada!.Value.ToString("dd MMM HH:mm")</span></div>
+                }
+                @if (tieneSalida)
+                {
+                    <div class="row"><span>Hora de salida</span><span>@v.FechaHoraSalida!.Value.ToString("dd MMM HH:mm")</span></div>
+                }
+            </div>
+
+            <div style="display:flex;gap:12px;margin-top:18px;justify-content:flex-end;flex-wrap:wrap">
+                @if (!tieneEntrada)
+                {
+                    <form method="post" asp-action="RegistrarEntrada" asp-route-id="@v.IdBitacoraVisitante">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="codigo" value="@v.CodigoVisita" />
+                        <button type="submit" class="btn btn-primary">
+                            @await Html.PartialAsync("_Icons", "check")<span>Registrar entrada</span>
+                        </button>
+                    </form>
+                }
+                @if (tieneEntrada && !tieneSalida)
+                {
+                    <form method="post" asp-action="RegistrarSalida" asp-route-id="@v.IdBitacoraVisitante">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="codigo" value="@v.CodigoVisita" />
+                        <button type="submit" class="btn btn-accent">
+                            @await Html.PartialAsync("_Icons", "logout")<span>Registrar salida</span>
+                        </button>
+                    </form>
+                }
+                @if (tieneEntrada && tieneSalida)
+                {
+                    <div class="status-badge">@await Html.PartialAsync("_Icons", "check") Visita completada</div>
+                }
+            </div>
+        }
+    </div>
+</div>

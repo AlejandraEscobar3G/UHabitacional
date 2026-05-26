@@ -1,0 +1,40 @@
+@model IdentificacionCreateDto
+@{
+    var id = ViewBag.Id as int?;
+    bool isEdit = id.HasValue;
+    var action = isEdit ? "Edit" : "Create";
+}
+
+<div class="page-header">
+    <div>
+        <div class="page-title">@(isEdit ? "Editar tipo de identificación" : "Nuevo tipo de identificación")</div>
+        <div class="page-subtitle">Documento oficial que se aceptará en el sistema.</div>
+    </div>
+</div>
+
+<div class="card flat">
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""]?.Errors.Count > 0)
+    {
+        <div class="alert alert-danger">@ViewData.ModelState[""]!.Errors.First().ErrorMessage</div>
+    }
+    <form asp-action="@action" asp-route-id="@id" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="field full">
+                <label asp-for="Nombre">Nombre <span class="req">*</span></label>
+                <input asp-for="Nombre" placeholder="Ej. INE, Pasaporte, Cédula" />
+                <span asp-validation-for="Nombre" class="err"></span>
+            </div>
+            <div class="field full">
+                <label asp-for="Descripcion">Descripción</label>
+                <textarea asp-for="Descripcion" rows="3" placeholder="Detalles adicionales (opcional)"></textarea>
+            </div>
+        </div>
+        <div class="form-actions">
+            <a class="btn btn-ghost" href="@Url.Action("Index")">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                @await Html.PartialAsync("_Icons", "check")<span>@(isEdit ? "Guardar cambios" : "Guardar y crear")</span>
+            </button>
+        </div>
+    </form>
+</div>

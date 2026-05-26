@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UHabitacional · Prototipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ====================================================================
+   UHABITACIONAL — Prototipo navegable
+   Paleta C · Bosque Urbano · Logo: Bloques Residenciales
+   ==================================================================== */
+
+/* ---------- Tokens ---------- */
+:root{
+  --primary:#2D4A3E;
+  --primary-700:#1F3528;
+  --primary-100:#D6E1D7;
+  --primary-50:#EAF0E8;
+  --accent:#CB6843;
+  --accent-700:#A4502F;
+  --accent-100:#F4DCCE;
+  --soft:#A8C09A;
+
+  --bg:#FBFAF7;
+  --surface:#FFFFFF;
+  --ink:#1A1A1A;
+  --muted:#6E6E6E;
+  --muted-2:#9A9A98;
+  --line:rgba(0,0,0,.08);
+  --line-strong:rgba(0,0,0,.14);
+
+  --danger:#C0392B;
+  --danger-100:#FBE6E2;
+  --success:#2D6A4F;
+  --success-100:#D6EBDD;
+  --warning:#B7791F;
+
+  --radius:12px;
+  --radius-lg:18px;
+  --radius-pill:999px;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.04), 0 1px 6px rgba(0,0,0,.04);
+  --shadow-md:0 12px 30px -16px rgba(0,0,0,.18);
+  --shadow-lg:0 30px 60px -24px rgba(0,0,0,.25);
+
+  --t-fast:.15s ease;
+  --t-base:.22s ease;
+}
+
+/* ---------- Reset ---------- */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Plus Jakarta Sans','Inter',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:transparent;color:inherit}
+input,select,textarea{font:inherit;color:inherit}
+ul{list-style:none}
+
+/* ---------- Demo bar (solo prototipo) ---------- */
+.demo-bar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:#1A1A1A;color:#fff;padding:8px 16px;
+  display:flex;align-items:center;gap:14px;font-size:12px;
+  border-bottom:1px solid #000;
+}
+.demo-bar .label{opacity:.65;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.demo-bar .role-switch{display:flex;gap:4px}
+.demo-bar .role-switch button{
+  padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.08);
+  color:#fff;font-size:11px;font-weight:600;letter-spacing:.03em;
+  transition:background var(--t-fast);
+}
+.demo-bar .role-switch button:hover{background:rgba(255,255,255,.18)}
+.demo-bar .role-switch button.active{background:var(--accent);color:#fff}
+.demo-bar .right{margin-left:auto;display:flex;gap:14px;align-items:center;opacity:.7}
+
+/* ---------- App shell ---------- */
+#app{padding-top:36px;min-height:100vh}
+.layout{display:grid;grid-template-columns:248px 1fr;min-height:calc(100vh - 36px)}
+.layout.no-sidebar{grid-template-columns:1fr}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  background:var(--surface);border-right:1px solid var(--line);
+  padding:24px 16px;display:flex;flex-direction:column;gap:6px;
+  position:sticky;top:36px;height:calc(100vh - 36px);overflow-y:auto;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 10px;margin-bottom:20px}
+.brand-mark{flex-shrink:0}
+.brand-name{font-weight:800;font-size:17px;letter-spacing:-.01em}
+.brand-name .accent{color:var(--accent)}
+.nav-section{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-2);padding:14px 12px 6px}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-radius:10px;font-size:14px;font-weight:500;
+  color:#3a3a36;transition:background var(--t-fast),color var(--t-fast);
+  cursor:pointer;
+}
+.nav-item:hover{background:var(--primary-50);color:var(--primary)}
+.nav-item.active{background:var(--primary);color:#fff}
+.nav-item.active svg{color:#fff}
+.nav-item svg{color:var(--muted);flex-shrink:0;transition:color var(--t-fast)}
+.nav-item:hover svg{color:var(--primary)}
+.sidebar-foot{margin-top:auto;padding:12px 6px;border-top:1px solid var(--line)}
+.user-chip{
+  display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;
+  transition:background var(--t-fast);
+}
+.user-chip:hover{background:var(--bg)}
+.avatar{
+  width:34px;height:34px;border-radius:50%;background:var(--primary);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;
+}
+.user-meta{font-size:13px;line-height:1.2}
+.user-meta small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.logout-btn{
+  width:100%;margin-top:6px;display:flex;align-items:center;gap:8px;
+  padding:9px 10px;border-radius:10px;color:var(--danger);font-size:13px;font-weight:600;
+  transition:background var(--t-fast);
+}
+.logout-btn:hover{background:var(--danger-100)}
+
+/* ---------- Topbar ---------- */
+.topbar{
+  background:var(--surface);border-bottom:1px solid var(--line);
+  padding:14px 32px;display:flex;align-items:center;gap:18px;
+  position:sticky;top:36px;z-index:50;
+}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);flex:1;min-width:0}
+.breadcrumb .crumb{padding:3px 0;transition:color var(--t-fast)}
+.breadcrumb .crumb.link{cursor:pointer}
+.breadcrumb .crumb.link:hover{color:var(--primary)}
+.breadcrumb .crumb.current{color:var(--ink);font-weight:600}
+.breadcrumb .sep{color:var(--muted-2);font-size:11px}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.icon-btn{
+  width:36px;height:36px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--muted);transition:background var(--t-fast),color var(--t-fast);
+}
+.icon-btn:hover{background:var(--bg);color:var(--ink)}
+
+/* ---------- Main content ---------- */
+.content{padding:32px 40px 64px;max-width:1400px;width:100%}
+.page-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px;flex-wrap:wrap}
+.page-title{font-size:28px;font-weight:700;letter-spacing:-.015em}
+.page-subtitle{color:var(--muted);font-size:14px;margin-top:4px;max-width:520px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 18px;border-radius:10px;font-size:14px;font-weight:600;
+  transition:transform var(--t-fast),background var(--t-fast),box-shadow var(--t-fast),color var(--t-fast);
+  white-space:nowrap;
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-700)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{background:var(--accent-700)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line-strong)}
+.btn-ghost:hover{background:var(--bg)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#9a2c1f}
+.btn-sm{padding:7px 12px;font-size:13px}
+.btn-icon{width:34px;height:34px;padding:0;justify-content:center;border-radius:8px}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px}
+.card.flat{box-shadow:var(--shadow-sm)}
+
+/* ---------- Home cards ---------- */
+.welcome-strip{
+  background:linear-gradient(120deg,var(--primary) 0%, #1F3528 100%);
+  color:#fff;border-radius:var(--radius-lg);padding:28px 32px;margin-bottom:28px;
+  display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;
+  position:relative;overflow:hidden;
+}
+.welcome-strip::after{
+  content:"";position:absolute;right:-40px;top:-40px;width:240px;height:240px;
+  background:radial-gradient(circle at center,rgba(168,192,154,.25),transparent 60%);
+  pointer-events:none;
+}
+.welcome-strip h2{font-size:24px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.welcome-strip p{opacity:.8;max-width:520px;font-size:14px}
+.welcome-strip .stat{display:flex;gap:24px;position:relative;z-index:1}
+.welcome-strip .stat div{text-align:right}
+.welcome-strip .stat .num{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.welcome-strip .stat .lbl{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:.1em}
+
+.home-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.home-card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);
+  padding:24px;cursor:pointer;transition:transform var(--t-base),box-shadow var(--t-base),border-color var(--t-base);
+  display:flex;flex-direction:column;gap:14px;min-height:180px;
+}
+.home-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:transparent}
+.home-card .ico{
+  width:46px;height:46px;border-radius:12px;background:var(--primary-50);color:var(--primary);
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.home-card.accent .ico{background:var(--accent-100);color:var(--accent-700)}
+.home-card h3{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.home-card p{font-size:13px;color:var(--muted);line-height:1.5;flex:1}
+.home-card .arrow{align-self:flex-end;color:var(--muted);transition:color var(--t-fast),transform var(--t-fast)}
+.home-card:hover .arrow{color:var(--accent);transform:translateX(4px)}
+
+/* ---------- Tables ---------- */
+.table-toolbar{display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.search-input{
+  display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface);
+  border:1px solid var(--line);border-radius:10px;min-width:280px;flex:1;max-width:380px;
+  transition:border-color var(--t-fast);
+}
+.search-input:focus-within{border-color:var(--primary)}
+.search-input svg{color:var(--muted);flex-shrink:0}
+.search-input input{border:0;outline:0;background:transparent;flex:1;font-size:14px}
+.filter-pill{
+  display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;
+  border:1px solid var(--line-strong);font-size:13px;font-weight:500;background:var(--surface);
+  cursor:pointer;transition:background var(--t-fast),border-color var(--t-fast);
+}
+.filter-pill:hover{border-color:var(--primary)}
+.filter-pill.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.filter-pill select{border:0;background:transparent;outline:0;font-size:13px;color:inherit;cursor:pointer}
+
+.table-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:14px}
+thead th{
+  text-align:left;padding:14px 18px;background:#FAFAF7;color:var(--muted);
+  font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  border-bottom:1px solid var(--line);
+}
+tbody td{padding:14px 18px;border-bottom:1px solid var(--line);vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr{transition:background var(--t-fast)}
+tbody tr:hover{background:var(--bg)}
+.cell-id{font-family:'Inter',monospace;font-size:12px;color:var(--muted)}
+.cell-strong{font-weight:600}
+.cell-actions{text-align:right;white-space:nowrap}
+.cell-actions .btn{margin-left:6px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.02em}
+.pill-success{background:var(--success-100);color:var(--success)}
+.pill-neutral{background:#E9E7E2;color:#5a5852}
+.pill-accent{background:var(--accent-100);color:var(--accent-700)}
+.pill-soft{background:var(--primary-100);color:var(--primary)}
+.pill-danger{background:var(--danger-100);color:var(--danger)}
+
+.table-foot{
+  padding:14px 18px;display:flex;justify-content:space-between;align-items:center;
+  color:var(--muted);font-size:13px;border-top:1px solid var(--line);background:#FAFAF7;
+}
+.pagination{display:flex;gap:4px}
+.pagination button{
+  width:30px;height:30px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:13px;font-weight:600;
+}
+.pagination button:hover{background:var(--surface)}
+.pagination button.active{background:var(--primary);color:#fff}
+
+/* ---------- Forms ---------- */
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 24px}
+.form-grid .full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:600;color:#3a3a36}
+.field label .req{color:var(--danger)}
+.field .hint{font-size:12px;color:var(--muted)}
+.field input,.field select,.field textarea{
+  padding:11px 14px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);
+  font-size:14px;transition:border-color var(--t-fast),box-shadow var(--t-fast),background var(--t-fast);
+  width:100%;outline:0;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--primary);box-shadow:0 0 0 3px rgba(45,74,62,.12);
+}
+.field.error input,.field.error select,.field.error textarea{
+  border-color:var(--danger);background:#FCF5F4;
+}
+.field.error .err{color:var(--danger);font-size:12px;display:flex;align-items:center;gap:5px}
+.field .err{display:none}
+.field.error .err{display:flex}
+.field select:disabled,.field input:disabled{background:#F1EFEB;color:var(--muted);cursor:not-allowed}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+.form-section-title{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:8px 0 4px;grid-column:1/-1}
+
+/* ---------- Modal ---------- */
+.modal-mask{
+  position:fixed;inset:0;background:rgba(20,20,18,.55);backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;z-index:200;
+  opacity:0;pointer-events:none;transition:opacity var(--t-base);
+}
+.modal-mask.open{opacity:1;pointer-events:auto}
+.modal{
+  background:var(--surface);border-radius:var(--radius-lg);max-width:480px;width:calc(100% - 32px);
+  padding:28px;box-shadow:var(--shadow-lg);transform:translateY(8px);transition:transform var(--t-base);
+}
+.modal-mask.open .modal{transform:translateY(0)}
+.modal h3{font-size:20px;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
+.modal .subtitle{color:var(--muted);font-size:14px;margin-bottom:18px}
+.modal .data-block{
+  background:var(--bg);border-radius:10px;padding:14px 16px;font-size:13px;margin-bottom:18px;
+  border:1px solid var(--line);
+}
+.modal .data-block div{display:flex;justify-content:space-between;padding:4px 0}
+.modal .data-block div+div{border-top:1px dashed var(--line)}
+.modal .data-block span:first-child{color:var(--muted);font-weight:500}
+.modal .data-block span:last-child{font-weight:600;text-align:right}
+.modal .confirm-text{font-size:14px;margin-bottom:20px;color:#3a3a36}
+.modal .actions{display:flex;gap:10px;justify-content:flex-end}
+
+/* ---------- Login ---------- */
+.login-page{min-height:calc(100vh - 36px);display:grid;grid-template-columns:1fr 1fr}
+.login-aside{
+  background:linear-gradient(160deg,var(--primary) 0%, #1F3528 100%);color:#fff;
+  padding:48px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;
+}
+.login-aside::after{
+  content:"";position:absolute;bottom:-80px;right:-80px;width:320px;height:320px;
+  background:radial-gradient(circle,rgba(168,192,154,.25),transparent 60%);
+}
+.login-aside .brand-name{color:#fff;font-size:22px}
+.login-aside .brand-name .accent{color:var(--soft)}
+.login-aside h1{font-size:42px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-bottom:12px;position:relative}
+.login-aside p{opacity:.8;max-width:380px;font-size:15px;line-height:1.6;position:relative}
+.login-aside .features{display:grid;gap:14px;margin-top:32px;position:relative}
+.login-aside .feature{display:flex;gap:12px;align-items:flex-start}
+.login-aside .feature .dot{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.login-aside .feature .txt{font-size:14px;opacity:.95;line-height:1.45}
+.login-aside .foot{font-size:12px;opacity:.6;position:relative}
+.login-main{padding:48px;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.login-card{max-width:380px;width:100%}
+.login-card h2{font-size:30px;font-weight:700;letter-spacing:-.015em;margin-bottom:8px}
+.login-card .sub{color:var(--muted);margin-bottom:32px;font-size:14px}
+.login-form{display:flex;flex-direction:column;gap:16px}
+.login-error{
+  background:var(--danger-100);color:var(--danger);padding:12px 14px;border-radius:10px;font-size:13px;
+  display:flex;align-items:center;gap:8px;font-weight:500;
+}
+.login-tips{
+  background:var(--surface);border:1px dashed var(--line-strong);border-radius:12px;
+  padding:14px 16px;margin-top:24px;font-size:12px;color:var(--muted);
+}
+.login-tips strong{color:var(--ink);font-weight:600;display:block;margin-bottom:6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.login-tips code{background:var(--bg);padding:2px 6px;border-radius:5px;font-size:11px;font-family:'Inter',monospace}
+
+/* ---------- 404 ---------- */
+.notfound{
+  min-height:calc(100vh - 36px);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:48px;
+}
+.notfound .code{font-size:120px;font-weight:800;color:var(--primary);letter-spacing:-.04em;line-height:1}
+.notfound h2{font-size:28px;font-weight:700;margin:6px 0 8px}
+.notfound p{color:var(--muted);max-width:380px;margin-bottom:24px}
+
+/* ---------- Checador / Registro visitante ---------- */
+.checador-wrap{max-width:560px;margin:0 auto}
+.code-input-big{
+  font-size:28px;letter-spacing:.4em;text-align:center;font-weight:700;
+  font-family:'Inter',monospace;text-transform:uppercase;
+}
+.visitor-preview{
+  background:linear-gradient(145deg,var(--primary-50) 0%, rgba(168,192,154,.25) 100%);
+  border:1px solid var(--primary-100);border-radius:var(--radius-lg);padding:24px;margin-top:24px;
+}
+.visitor-preview .row{display:flex;justify-content:space-between;padding:8px 0;font-size:14px;border-bottom:1px dashed rgba(45,74,62,.18)}
+.visitor-preview .row:last-child{border-bottom:0}
+.visitor-preview .row span:first-child{color:var(--primary-700);font-weight:500}
+.visitor-preview .row span:last-child{font-weight:600;color:var(--ink)}
+.status-badge{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+  background:var(--success-100);color:var(--success);font-size:13px;font-weight:600;margin-top:8px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1024px){
+  .layout{grid-template-columns:72px 1fr}
+  .sidebar .nav-item span,.sidebar .nav-section,.sidebar .user-meta,.sidebar .logout-btn span{display:none}
+  .sidebar{padding:16px 8px}
+  .brand-name{display:none}
+  .brand{justify-content:center}
+  .form-grid{grid-template-columns:1fr}
+  .login-page{grid-template-columns:1fr}
+  .login-aside{display:none}
+}
+@media (max-width:680px){
+  .content{padding:20px 16px 48px}
+  .topbar{padding:12px 16px}
+  .home-cards{grid-template-columns:1fr}
+  .welcome-strip{padding:20px}
+  .demo-bar{font-size:11px;gap:8px;flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     DEMO BAR (solo prototipo — permite cambiar de perfil)
+     ============================================================ -->
+<div class="demo-bar" id="demoBar">
+  <span class="label">Prototipo demo</span>
+  <span style="opacity:.4">·</span>
+  <span style="opacity:.7">Perfil activo:</span>
+  <div class="role-switch" id="roleSwitch">
+    <button data-role="Administrador" class="active">Administrador</button>
+    <button data-role="Inquilino">Inquilino</button>
+    <button data-role="Vigilante">Vigilante</button>
+  </div>
+  <div class="right">
+    <span>UHabitacional · v0.1 · <a href="#/login" style="color:#fff;text-decoration:underline;opacity:.8">Login</a></span>
+  </div>
+</div>
+
+<!-- ============================================================
+     APP SHELL
+     ============================================================ -->
+<div id="app"></div>
+
+<!-- ============================================================
+     LOGO + ICONOS (definidos como template strings)
+     ============================================================ -->
+<script>
+/* ===== Brand mark (Bloques Residenciales) ===== */
+const LOGO_SVG = (size=36) => `
+<svg width="${size}" height="${size}" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2"  y="32" width="16" height="22" rx="2" fill="#2D4A3E"/>
+  <rect x="20" y="20" width="16" height="34" rx="2" fill="#CB6843"/>
+  <rect x="38" y="8"  width="16" height="46" rx="2" fill="#1A1A1A"/>
+  <rect x="44" y="16" width="4" height="4" fill="#A8C09A"/>
+  <rect x="44" y="26" width="4" height="4" fill="#A8C09A"/>
+  <rect x="26" y="32" width="4" height="4" fill="#FBFAF7" opacity=".5"/>
+  <rect x="8"  y="40" width="4" height="4" fill="#FBFAF7" opacity=".5"/>
+</svg>`;
+
+/* ===== Iconos (lucide-style outline) ===== */
+const I = {
+  home:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>',
+  shield:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>',
+  users:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  door:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v18"/><path d="M2 22h20"/><circle cx="15" cy="13" r="1"/></svg>',
+  building:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M8 10h.01M16 10h.01M12 10h.01M8 14h.01M16 14h.01M12 14h.01"/></svg>',
+  badge:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18M3 12h18M3 17h12"/></svg>',
+  idcard:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="9" cy="12" r="2.5"/><path d="M15 10h4M15 14h4"/></svg>',
+  user_plus:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>',
+  scan:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>',
+  clock:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  search:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  edit:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>',
+  plus:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+  logout:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+  bell:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+  arrow:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+  alert:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+  check:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+};
+</script>
+
+<!-- ============================================================
+     MOCK DATA
+     ============================================================ -->
+<script>
+const DATA = {
+  edificios:[
+    {id:'ED-001', nombre:'Torre Roble',     calle:'Av. Insurgentes',   numero:'1250', colonia:'Del Valle',    cp:'03100', ciudad:'CDMX', pisos:5, capacidad:20, ocupados:14},
+    {id:'ED-002', nombre:'Torre Encino',    calle:'Calle Reforma',     numero:'85',   colonia:'Juárez',       cp:'06600', ciudad:'CDMX', pisos:4, capacidad:16, ocupados:10},
+    {id:'ED-003', nombre:'Edificio Cedro',  calle:'Av. Universidad',   numero:'910',  colonia:'Narvarte',     cp:'03020', ciudad:'CDMX', pisos:6, capacidad:24, ocupados:24},
+    {id:'ED-004', nombre:'Residencial Pino',calle:'Calle Sur 12',      numero:'14',   colonia:'Roma Sur',     cp:'06760', ciudad:'CDMX', pisos:3, capacidad:12, ocupados:7},
+  ],
+  perfiles:[
+    {id:'PF-01', nombre:'Administrador', descripcion:'Gestión completa de la plataforma', activos:2},
+    {id:'PF-02', nombre:'Inquilino',     descripcion:'Registra y administra sus visitantes', activos:24},
+    {id:'PF-03', nombre:'Vigilante',     descripcion:'Valida accesos y registra entradas/salidas', activos:5},
+  ],
+  identificaciones:[
+    {id:'TI-01', nombre:'INE / IFE',          descripcion:'Credencial para votar',        activo:true},
+    {id:'TI-02', nombre:'Pasaporte',          descripcion:'Documento oficial internacional', activo:true},
+    {id:'TI-03', nombre:'Licencia de conducir',descripcion:'Emitida por SEMOVI',            activo:true},
+    {id:'TI-04', nombre:'Cédula profesional', descripcion:'Identificación profesional',     activo:true},
+  ],
+  vigilantes:[
+    {id:'VG-001', nombre:'Carlos Méndez Ruiz',   correo:'carlos.mendez@uhab.com', telefono:'55 1234 5678', turno:'Matutino',  activo:true,  ingreso:'2024-08-12'},
+    {id:'VG-002', nombre:'Laura Pérez Soto',     correo:'laura.perez@uhab.com',   telefono:'55 2345 6789', turno:'Vespertino',activo:true,  ingreso:'2024-09-03'},
+    {id:'VG-003', nombre:'Jorge Ramírez Cruz',   correo:'jorge.ramirez@uhab.com', telefono:'55 3456 7890', turno:'Nocturno',  activo:true,  ingreso:'2023-11-22'},
+    {id:'VG-004', nombre:'Ana Gómez Hernández',  correo:'ana.gomez@uhab.com',     telefono:'55 4567 8901', turno:'Matutino',  activo:false, ingreso:'2022-06-15'},
+    {id:'VG-005', nombre:'Roberto Salinas Vega', correo:'roberto.salinas@uhab.com',telefono:'55 5678 9012',turno:'Vespertino',activo:true,  ingreso:'2025-02-10'},
+  ],
+  inquilinos:[
+    {id:'IN-001', nombre:'María Fernanda López',     correo:'mariafer@gmail.com',   telefono:'55 9876 5432', edificio:'Torre Roble',   depto:'A-301', activo:true},
+    {id:'IN-002', nombre:'Ricardo Torres Quintero',  correo:'rtorres@hotmail.com',   telefono:'55 8765 4321', edificio:'Torre Roble',   depto:'B-202', activo:true},
+    {id:'IN-003', nombre:'Sofía Martínez Aguilar',   correo:'sofiama@yahoo.com',     telefono:'55 7654 3210', edificio:'Torre Encino',  depto:'C-104', activo:true},
+    {id:'IN-004', nombre:'Daniel Espinoza Núñez',    correo:'danesp@gmail.com',      telefono:'55 6543 2109', edificio:'Edificio Cedro',depto:'A-405', activo:true},
+    {id:'IN-005', nombre:'Patricia Rivera Morales',  correo:'patry@outlook.com',     telefono:'55 5432 1098', edificio:'Residencial Pino',depto:'B-201', activo:false},
+  ],
+  departamentos:[
+    {id:'DP-001', edificio:'Torre Roble', piso:3, interior:'A-301', recamaras:2, banos:2, estado:'Ocupado'},
+    {id:'DP-002', edificio:'Torre Roble', piso:2, interior:'B-202', recamaras:2, banos:1, estado:'Ocupado'},
+    {id:'DP-003', edificio:'Torre Roble', piso:4, interior:'A-401', recamaras:3, banos:2, estado:'Disponible'},
+    {id:'DP-004', edificio:'Torre Encino', piso:1, interior:'C-104', recamaras:1, banos:1, estado:'Ocupado'},
+    {id:'DP-005', edificio:'Torre Encino', piso:3, interior:'A-303', recamaras:2, banos:2, estado:'Disponible'},
+    {id:'DP-006', edificio:'Edificio Cedro', piso:4, interior:'A-405', recamaras:3, banos:2, estado:'Ocupado'},
+    {id:'DP-007', edificio:'Residencial Pino', piso:2, interior:'B-201', recamaras:2, banos:2, estado:'Ocupado'},
+    {id:'DP-008', edificio:'Residencial Pino', piso:1, interior:'A-101', recamaras:1, banos:1, estado:'Disponible'},
+  ],
+  visitantes:[
+    {id:'VS-001', nombre:'Mariana Herrera',     identificacion:'INE / IFE', numIdent:'4321 5678 9012', codigo:'UH-2K8F-9X', motivo:'Familiar',         entrada:'2026-05-22 18:42', salida:null,                 activo:true},
+    {id:'VS-002', nombre:'José Antonio Vega',   identificacion:'Licencia',  numIdent:'CDMX-12345',      codigo:'UH-7M3L-2R', motivo:'Repartidor',       entrada:'2026-05-22 14:15', salida:'2026-05-22 14:38',  activo:true},
+    {id:'VS-003', nombre:'Carmen Olivares',     identificacion:'INE / IFE', numIdent:'9876 1234 5678', codigo:'UH-4P9V-1B', motivo:'Servicio doméstico',entrada:null,             salida:null,                 activo:true},
+    {id:'VS-004', nombre:'Empresa LimpioMex SA',identificacion:'INE / IFE', numIdent:'1122 3344 5566', codigo:'UH-9D2T-7Q', motivo:'Limpieza',         entrada:'2026-05-21 09:30',salida:'2026-05-21 11:00',  activo:false},
+  ],
+};
+
+/* ===== Estado de la app ===== */
+const STATE = {
+  role:'Administrador',     // Administrador | Inquilino | Vigilante
+  user:{nombre:'Alejandra Romero', correo:'alejandra@uhab.com'},
+};
+</script>
+
+<!-- ============================================================
+     ROUTER + RENDERER
+     ============================================================ -->
+<script>
+const $ = (sel,ctx=document)=>ctx.querySelector(sel);
+const $$ = (sel,ctx=document)=>Array.from(ctx.querySelectorAll(sel));
+
+function navigate(hash){ location.hash = hash; }
+
+function shell(content, {sidebar=true, breadcrumb=[], pageTitle=''}={}){
+  if(!sidebar){
+    return `<div class="layout no-sidebar">${content}</div>`;
+  }
+  return `
+    <div class="layout">
+      ${renderSidebar()}
+      <div>
+        ${renderTopbar(breadcrumb)}
+        <main class="content">${content}</main>
+      </div>
+    </div>
+    <div id="modalRoot"></div>
+  `;
+}
+
+function renderSidebar(){
+  const role = STATE.role;
+  const items = [];
+  items.push({route:'#/home', label:'Home', icon:I.home, roles:['Administrador','Inquilino','Vigilante']});
+  if(role==='Administrador'){
+    items.push({route:'#/vigilantes',       label:'Vigilantes',         icon:I.shield});
+    items.push({route:'#/inquilinos',       label:'Inquilinos',         icon:I.users});
+    items.push({route:'#/departamentos',    label:'Departamentos',      icon:I.door});
+    items.push({route:'#/edificios',        label:'Edificios',          icon:I.building});
+    items.push({route:'#/perfiles',         label:'Perfiles',           icon:I.badge});
+    items.push({route:'#/identificaciones', label:'Identificaciones',   icon:I.idcard});
+  }
+  if(role==='Inquilino'){
+    items.push({route:'#/visitantes',       label:'Mis visitantes',     icon:I.user_plus});
+  }
+  if(role==='Vigilante'){
+    items.push({route:'#/checador',         label:'Checador',           icon:I.clock});
+    items.push({route:'#/registro-visitante',label:'Registro visitante',icon:I.scan});
+  }
+
+  const here = location.hash || '#/home';
+  const active = (r)=> here===r || here.startsWith(r+'/') ? 'active' : '';
+
+  return `
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">${LOGO_SVG(34)}</span>
+        <span class="brand-name">U<span class="accent">Habitacional</span></span>
+      </div>
+      <div class="nav-section">Menú</div>
+      ${items.map(it=>`
+        <a class="nav-item ${active(it.route)}" href="${it.route}">
+          ${it.icon}<span>${it.label}</span>
+        </a>
+      `).join('')}
+
+      <div class="sidebar-foot">
+        <div class="user-chip">
+          <div class="avatar">${STATE.user.nombre.split(' ').map(p=>p[0]).slice(0,2).join('')}</div>
+          <div class="user-meta">
+            <div style="font-weight:600">${STATE.user.nombre.split(' ').slice(0,2).join(' ')}</div>
+            <small>${STATE.role}</small>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="navigate('#/login')">
+          ${I.logout}<span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+  `;
+}
+
+function renderTopbar(crumbs){
+  const parts = crumbs.map((c,i)=>{
+    const isLast = i===crumbs.length-1;
+    return `
+      ${i>0?'<span class="sep">›</span>':''}
+      <span class="crumb ${isLast?'current':'link'}" ${c.route&&!isLast?`onclick="navigate('${c.route}')"`:''}>${c.label}</span>
+    `;
+  }).join('');
+  return `
+    <header class="topbar">
+      <nav class="breadcrumb">${parts}</nav>
+      <div class="topbar-actions">
+        <button class="icon-btn" title="Notificaciones">${I.bell}</button>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('#/login')">${I.logout}<span>Cerrar sesión</span></button>
+      </div>
+    </header>
+  `;
+}
+
+/* ===================== Routes ===================== */
+const ROUTES = {
+  '#/login': ()=>renderLogin(),
+  '#/home': ()=>renderHome(),
+  '#/404': ()=>render404(),
+
+  '#/vigilantes': ()=>renderListVigilantes(),
+  '#/vigilantes/nuevo': ()=>renderFormVigilante(),
+  '#/vigilantes/editar': ()=>renderFormVigilante('VG-001'),
+
+  '#/inquilinos': ()=>renderListInquilinos(),
+  '#/inquilinos/nuevo': ()=>renderFormInquilino(),
+  '#/inquilinos/editar': ()=>renderFormInquilino('IN-001'),
+
+  '#/departamentos': ()=>renderListDepartamentos(),
+  '#/departamentos/nuevo': ()=>renderFormDepartamento(),
+  '#/departamentos/editar': ()=>renderFormDepartamento('DP-001'),
+
+  '#/edificios': ()=>renderListEdificios(),
+  '#/edificios/nuevo': ()=>renderFormEdificio(),
+  '#/edificios/editar': ()=>renderFormEdificio('ED-001'),
+
+  '#/perfiles': ()=>renderListPerfiles(),
+  '#/perfiles/nuevo': ()=>renderFormPerfil(),
+  '#/perfiles/editar': ()=>renderFormPerfil('PF-01'),
+
+  '#/identificaciones': ()=>renderListIdentificaciones(),
+  '#/identificaciones/nuevo': ()=>renderFormIdentificacion(),
+  '#/identificaciones/editar': ()=>renderFormIdentificacion('TI-01'),
+
+  '#/visitantes': ()=>renderListVisitantes(),
+  '#/visitantes/nuevo': ()=>renderFormVisitante(),
+  '#/visitantes/editar': ()=>renderFormVisitante('VS-001'),
+
+  '#/checador': ()=>renderChecador(),
+  '#/registro-visitante': ()=>renderRegistroVisitante(),
+};
+
+function router(){
+  const hash = location.hash || '#/login';
+
+  // Default by role on home
+  let route = hash;
+  const fn = ROUTES[route];
+  const app = $('#app');
+
+  if(!fn){
+    app.innerHTML = shell(render404Inner(), {sidebar:false});
+    return;
+  }
+  if(route==='#/login' || route==='#/404'){
+    app.innerHTML = fn();
+  }else{
+    app.innerHTML = fn();
+  }
+  window.scrollTo(0,0);
+}
+
+window.addEventListener('hashchange', router);
+window.addEventListener('DOMContentLoaded', ()=>{
+  // role switcher
+  $$('#roleSwitch button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      $$('#roleSwitch button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      STATE.role = b.dataset.role;
+      navigate('#/home');
+      router();
+    });
+  });
+  if(!location.hash) location.hash = '#/login';
+  router();
+});
+</script>
+
+<!-- ============================================================
+     PAGE RENDERERS — LOGIN / HOME / 404
+     ============================================================ -->
+<script>
+function renderLogin(){
+  setTimeout(()=>{
+    const form = document.getElementById('loginForm');
+    const errBox = document.getElementById('loginErr');
+    if(!form) return;
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      const u = form.usuario.value.trim();
+      const p = form.password.value.trim();
+      // Demo: cualquier credencial válida si tiene formato; "error@uhab.com" simula fallo
+      if(!u || !p || u==='error@uhab.com'){
+        errBox.style.display='flex';
+        return;
+      }
+      errBox.style.display='none';
+      navigate('#/home');
+    });
+  },0);
+
+  return `
+    <div class="login-page">
+      <aside class="login-aside">
+        <div class="brand" style="margin-bottom:0">
+          <span class="brand-mark">${LOGO_SVG(38)}</span>
+          <span class="brand-name">U<span class="accent">Habitacional</span></span>
+        </div>
+        <div>
+          <h1>Control de acceso<br/>residencial, simplificado.</h1>
+          <p>Gestiona vigilantes, inquilinos y visitantes desde un solo lugar. Trazabilidad completa, seguridad y transparencia.</p>
+          <div class="features">
+            <div class="feature">
+              <span class="dot">${I.shield}</span>
+              <span class="txt">Validación rápida de visitantes con código único de visita.</span>
+            </div>
+            <div class="feature">
+              <span class="dot">${I.clock}</span>
+              <span class="txt">Registro automático de entradas y salidas.</span>
+            </div>
+            <div class="feature">
+              <span class="dot">${I.users}</span>
+              <span class="txt">Roles diferenciados: Administrador, Inquilino y Vigilante.</span>
+            </div>
+          </div>
+        </div>
+        <div class="foot">© 2026 UHabitacional. Todos los derechos reservados.</div>
+      </aside>
+
+      <div class="login-main">
+        <div class="login-card">
+          <h2>Iniciar sesión</h2>
+          <p class="sub">Accede con tu correo y contraseña.</p>
+
+          <div id="loginErr" class="login-error" style="display:none">
+            ${I.alert}
+            <span>Usuario o contraseña incorrectos. Intenta de nuevo.</span>
+          </div>
+
+          <form id="loginForm" class="login-form" autocomplete="off">
+            <div class="field">
+              <label for="usuario">Correo electrónico</label>
+              <input id="usuario" name="usuario" type="email" placeholder="tu@correo.com" required />
+            </div>
+            <div class="field">
+              <label for="password">Contraseña</label>
+              <input id="password" name="password" type="password" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn btn-primary" style="justify-content:center;width:100%;padding:13px">
+              Iniciar sesión
+            </button>
+          </form>
+
+          <div class="login-tips">
+            <strong>Para el prototipo</strong>
+            Usa cualquier correo válido. Para simular error usa <code>error@uhab.com</code>.
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderHome(){
+  const role = STATE.role;
+
+  // Cards por perfil
+  const adminCards = [
+    {route:'#/vigilantes', title:'Administración de vigilantes', desc:'Gestiona el personal de seguridad y sus turnos.', icon:I.shield},
+    {route:'#/inquilinos', title:'Administración de inquilinos', desc:'Alta, edición y baja de residentes registrados.', icon:I.users},
+    {route:'#/departamentos', title:'Administración de departamentos', desc:'Departamentos, ubicación y ocupación.', icon:I.door},
+    {route:'#/edificios', title:'Administración de edificios', desc:'Edificios, pisos y capacidad de la unidad.', icon:I.building},
+    {route:'#/perfiles', title:'Perfiles de usuario', desc:'Roles y permisos dentro de la plataforma.', icon:I.badge, accent:true},
+    {route:'#/identificaciones', title:'Tipos de identificación', desc:'Catálogo de documentos válidos.', icon:I.idcard, accent:true},
+  ];
+  const inquilinoCards = [
+    {route:'#/visitantes', title:'Administración de visitantes', desc:'Registra visitantes y genera su código único de visita.', icon:I.user_plus},
+  ];
+  const vigilanteCards = [
+    {route:'#/checador', title:'Checador (entrada / salida)', desc:'Registra tu entrada y salida de turno.', icon:I.clock, accent:true},
+    {route:'#/registro-visitante', title:'Registro de visitantes', desc:'Valida el código de visita y registra el acceso.', icon:I.scan},
+  ];
+
+  const cards = role==='Administrador' ? adminCards : role==='Inquilino' ? inquilinoCards : vigilanteCards;
+
+  // Métricas demo
+  const stats = role==='Administrador'
+    ? [{n:'42',l:'Inquilinos activos'},{n:'5',l:'Vigilantes'},{n:'12',l:'Visitas hoy'}]
+    : role==='Inquilino'
+      ? [{n:'3',l:'Visitas activas'},{n:'8',l:'Este mes'},{n:'A-301',l:'Mi depto'}]
+      : [{n:'12',l:'Accesos hoy'},{n:'3',l:'Activos ahora'},{n:'Matutino',l:'Mi turno'}];
+
+  return shell(`
+    <div class="welcome-strip">
+      <div>
+        <h2>Hola, ${STATE.user.nombre.split(' ')[0]} 👋</h2>
+        <p>Estás conectada como <strong style="color:#fff">${role}</strong>. ${role==='Administrador'?'Tienes acceso completo a la administración de la unidad.':role==='Inquilino'?'Aquí puedes registrar y dar seguimiento a tus visitantes.':'Aquí controlas el acceso de visitantes y registras tus turnos.'}</p>
+      </div>
+      <div class="stat">
+        ${stats.map(s=>`<div><div class="num">${s.n}</div><div class="lbl">${s.l}</div></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">Módulos disponibles</div>
+        <div class="page-subtitle">Selecciona el módulo al que deseas ingresar. Las opciones varían según tu perfil.</div>
+      </div>
+    </div>
+
+    <div class="home-cards">
+      ${cards.map(c=>`
+        <div class="home-card ${c.accent?'accent':''}" onclick="navigate('${c.route}')">
+          <div class="ico">${c.icon}</div>
+          <h3>${c.title}</h3>
+          <p>${c.desc}</p>
+          <div class="arrow">${I.arrow}</div>
+        </div>
+      `).join('')}
+    </div>
+  `, {breadcrumb:[{label:'Home'}]});
+}
+
+function render404Inner(){
+  return `
+    <div class="notfound">
+      ${LOGO_SVG(56)}
+      <div class="code" style="margin-top:24px">404</div>
+      <h2>Página no encontrada</h2>
+      <p>La página que buscas no existe o fue movida. Regresa al inicio para continuar.</p>
+      <a href="#/home" class="btn btn-primary">${I.home}<span>Ir al Home</span></a>
+    </div>
+  `;
+}
+function render404(){ return shell(render404Inner(),{sidebar:false}) }
+</script>
+
+<!-- ============================================================
+     LIST + FORM PAGES — VIGILANTES
+     ============================================================ -->
+<script>
+/* ============ VIGILANTES ============ */
+function renderListVigilantes(){
+  const rows = DATA.vigilantes.map(v=>`
+    <tr>
+      <td class="cell-id">${v.id}</td>
+      <td class="cell-strong">${v.nombre}</td>
+      <td>${v.correo}</td>
+      <td>${v.telefono}</td>
+      <td><span class="pill pill-soft">${v.turno}</span></td>
+      <td>${v.activo ? '<span class="pill pill-success">Activo</span>' : '<span class="pill pill-neutral">Inactivo</span>'}</td>
+      <td class="cell-actions">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('#/vigilantes/editar')">${I.edit}<span>Editar</span></button>
+        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('vigilante',{id:'${v.id}',nombre:'${v.nombre}',correo:'${v.correo}'})">${I.trash}<span>Eliminar</span></button>
+      </td>
+    </tr>
+  `).join('');
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">Administración de vigilantes</div>
+        <div class="page-subtitle">Gestiona el personal de seguridad asignado a la unidad habitacional.</div>
+      </div>
+      <button class="btn btn-primary" onclick="navigate('#/vigilantes/nuevo')">${I.plus}<span>Nuevo vigilante</span></button>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="search-input">${I.search}<input placeholder="Buscar por nombre, correo o ID..." /></div>
+      <div class="filter-pill"><span>Turno:</span><select><option>Todos</option><option>Matutino</option><option>Vespertino</option><option>Nocturno</option></select></div>
+      <div class="filter-pill"><span>Estatus:</span><select><option>Todos</option><option>Activo</option><option>Inactivo</option></select></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Turno</th><th>Estatus</th><th style="text-align:right">Acciones</th></tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="table-foot">
+        <span>Mostrando ${DATA.vigilantes.length} de ${DATA.vigilantes.length} registros</span>
+        <div class="pagination"><button>‹</button><button class="active">1</button><button>›</button></div>
+      </div>
+    </div>
+  `, {breadcrumb:[{label:'Home',route:'#/home'},{label:'Administración de vigilantes'}]});
+}
+
+function renderFormVigilante(id){
+  const isEdit = !!id;
+  const v = isEdit ? DATA.vigilantes.find(x=>x.id===id) : {nombre:'',correo:'',telefono:'',turno:'',activo:true};
+  const titulo = isEdit ? 'Editar vigilante' : 'Nuevo vigilante';
+
+  setTimeout(()=>wireFormDemo('#frmVigilante'),0);
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">${titulo}</div>
+        <div class="page-subtitle">${isEdit?'Actualiza la información del vigilante seleccionado.':'Completa los datos para dar de alta a un nuevo vigilante.'}</div>
+      </div>
+    </div>
+
+    <div class="card flat">
+      <form id="frmVigilante" novalidate>
+        <div class="form-grid">
+          <div class="form-section-title">Datos personales</div>
+          <div class="field" data-required>
+            <label>Nombre(s) <span class="req">*</span></label>
+            <input name="nombre" placeholder="Ej. Carlos" value="${isEdit?v.nombre.split(' ')[0]:''}" />
+            <span class="err">${I.alert} El campo 'Nombre' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Apellido paterno <span class="req">*</span></label>
+            <input name="apaterno" placeholder="Ej. Méndez" value="${isEdit?v.nombre.split(' ')[1]||'':''}" />
+            <span class="err">${I.alert} El campo 'Apellido paterno' es requerido.</span>
+          </div>
+          <div class="field">
+            <label>Apellido materno</label>
+            <input name="amaterno" placeholder="Ej. Ruiz" value="${isEdit?v.nombre.split(' ')[2]||'':''}" />
+          </div>
+          <div class="field" data-required>
+            <label>Teléfono <span class="req">*</span></label>
+            <input name="telefono" placeholder="55 1234 5678" value="${v.telefono||''}" />
+            <span class="err">${I.alert} El campo 'Teléfono' es requerido.</span>
+          </div>
+
+          <div class="form-section-title">Acceso al sistema</div>
+          <div class="field" data-required>
+            <label>Correo electrónico <span class="req">*</span></label>
+            <input name="correo" type="email" placeholder="correo@uhab.com" value="${v.correo||''}" />
+            <span class="err">${I.alert} El campo 'Correo' es requerido y debe tener formato válido.</span>
+          </div>
+          ${!isEdit?`
+          <div class="field" data-required>
+            <label>Contraseña inicial <span class="req">*</span></label>
+            <input name="password" type="password" placeholder="Mínimo 8 caracteres" />
+            <span class="hint">El vigilante podrá cambiarla en su primer ingreso.</span>
+            <span class="err">${I.alert} El campo 'Contraseña' es requerido (mínimo 8 caracteres).</span>
+          </div>`:''}
+
+          <div class="form-section-title">Asignación</div>
+          <div class="field" data-required>
+            <label>Turno <span class="req">*</span></label>
+            <select name="turno">
+              <option value="">Selecciona un turno</option>
+              <option ${v.turno==='Matutino'?'selected':''}>Matutino</option>
+              <option ${v.turno==='Vespertino'?'selected':''}>Vespertino</option>
+              <option ${v.turno==='Nocturno'?'selected':''}>Nocturno</option>
+            </select>
+            <span class="err">${I.alert} El campo 'Turno' es requerido.</span>
+          </div>
+          <div class="field">
+            <label>Estatus</label>
+            <select name="activo">
+              <option value="1" ${v.activo?'selected':''}>Activo</option>
+              <option value="0" ${!v.activo?'selected':''}>Inactivo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="navigate('#/home')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">${I.check}<span>${isEdit?'Guardar cambios':'Guardar y crear'}</span></button>
+        </div>
+      </form>
+    </div>
+  `, {breadcrumb:[
+    {label:'Home',route:'#/home'},
+    {label:'Administración de vigilantes',route:'#/vigilantes'},
+    {label:isEdit?'Editar':'Nuevo'}
+  ]});
+}
+</script>
+
+<!-- ============================================================
+     INQUILINOS
+     ============================================================ -->
+<script>
+function renderListInquilinos(){
+  const rows = DATA.inquilinos.map(v=>`
+    <tr>
+      <td class="cell-id">${v.id}</td>
+      <td class="cell-strong">${v.nombre}</td>
+      <td>${v.correo}</td>
+      <td>${v.telefono}</td>
+      <td>${v.edificio}</td>
+      <td><span class="pill pill-soft">${v.depto}</span></td>
+      <td>${v.activo ? '<span class="pill pill-success">Activo</span>' : '<span class="pill pill-neutral">Inactivo</span>'}</td>
+      <td class="cell-actions">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('#/inquilinos/editar')">${I.edit}<span>Editar</span></button>
+        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('inquilino',{id:'${v.id}',nombre:'${v.nombre}',correo:'${v.correo}'})">${I.trash}<span>Eliminar</span></button>
+      </td>
+    </tr>
+  `).join('');
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">Administración de inquilinos</div>
+        <div class="page-subtitle">Residentes activos de la unidad habitacional y su asignación a departamentos.</div>
+      </div>
+      <button class="btn btn-primary" onclick="navigate('#/inquilinos/nuevo')">${I.plus}<span>Nuevo inquilino</span></button>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="search-input">${I.search}<input placeholder="Buscar por nombre, correo o depto..." /></div>
+      <div class="filter-pill"><span>Edificio:</span><select><option>Todos</option><option>Torre Roble</option><option>Torre Encino</option><option>Edificio Cedro</option><option>Residencial Pino</option></select></div>
+      <div class="filter-pill"><span>Estatus:</span><select><option>Todos</option><option>Activo</option><option>Inactivo</option></select></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Nombre</th><th>Correo</th><th>Teléfono</th><th>Edificio</th><th>Depto.</th><th>Estatus</th><th style="text-align:right">Acciones</th></tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="table-foot">
+        <span>Mostrando ${DATA.inquilinos.length} de ${DATA.inquilinos.length} registros</span>
+        <div class="pagination"><button>‹</button><button class="active">1</button><button>›</button></div>
+      </div>
+    </div>
+  `, {breadcrumb:[{label:'Home',route:'#/home'},{label:'Administración de inquilinos'}]});
+}
+
+function renderFormInquilino(id){
+  const isEdit = !!id;
+  const v = isEdit ? DATA.inquilinos.find(x=>x.id===id) : {nombre:'',correo:'',telefono:'',edificio:'',depto:'',activo:true};
+
+  // Edificios con departamentos disponibles
+  const edificiosOptions = DATA.edificios.map(e=>`<option value="${e.nombre}" ${v.edificio===e.nombre?'selected':''}>${e.nombre}</option>`).join('');
+
+  setTimeout(()=>{
+    wireFormDemo('#frmInquilino');
+    // Smart selects: edificio -> deptos
+    const edSel = $('#frmInquilino select[name=edificio]');
+    const dpSel = $('#frmInquilino select[name=departamento]');
+    function refreshDeptos(){
+      const eName = edSel.value;
+      if(!eName){
+        dpSel.innerHTML='<option value="">Selecciona primero un edificio</option>';
+        dpSel.disabled = true;
+        return;
+      }
+      let list = DATA.departamentos.filter(d=>d.edificio===eName && d.estado==='Disponible');
+      // Si edita, agregar el actual aunque esté ocupado
+      if(isEdit){
+        const cur = DATA.departamentos.find(d=>d.interior===v.depto && d.edificio===v.edificio);
+        if(cur && !list.find(x=>x.id===cur.id)) list.unshift(cur);
+      }
+      dpSel.innerHTML = '<option value="">Selecciona un departamento</option>' +
+        list.map(d=>`<option value="${d.interior}" ${v.depto===d.interior?'selected':''}>${d.interior} · Piso ${d.piso} · ${d.recamaras} rec.</option>`).join('');
+      dpSel.disabled = false;
+    }
+    edSel.addEventListener('change', refreshDeptos);
+    refreshDeptos();
+  },0);
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">${isEdit?'Editar inquilino':'Nuevo inquilino'}</div>
+        <div class="page-subtitle">${isEdit?'Actualiza los datos del inquilino y su asignación de departamento.':'Captura los datos del nuevo residente y asígnale un departamento.'}</div>
+      </div>
+    </div>
+
+    <div class="card flat">
+      <form id="frmInquilino" novalidate>
+        <div class="form-grid">
+          <div class="form-section-title">Datos personales</div>
+          <div class="field" data-required>
+            <label>Nombre(s) <span class="req">*</span></label>
+            <input name="nombre" value="${isEdit?v.nombre.split(' ')[0]:''}" placeholder="Ej. María Fernanda" />
+            <span class="err">${I.alert} El campo 'Nombre' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Apellido paterno <span class="req">*</span></label>
+            <input name="apaterno" value="${isEdit?v.nombre.split(' ')[1]||'':''}" placeholder="Ej. López" />
+            <span class="err">${I.alert} El campo 'Apellido paterno' es requerido.</span>
+          </div>
+          <div class="field">
+            <label>Apellido materno</label>
+            <input name="amaterno" value="${isEdit?v.nombre.split(' ')[2]||'':''}" />
+          </div>
+          <div class="field" data-required>
+            <label>Teléfono <span class="req">*</span></label>
+            <input name="telefono" value="${v.telefono||''}" placeholder="55 9876 5432" />
+            <span class="err">${I.alert} El campo 'Teléfono' es requerido.</span>
+          </div>
+
+          <div class="form-section-title">Acceso al sistema</div>
+          <div class="field" data-required>
+            <label>Correo electrónico <span class="req">*</span></label>
+            <input type="email" name="correo" value="${v.correo||''}" placeholder="correo@dominio.com" />
+            <span class="err">${I.alert} El campo 'Correo' es requerido.</span>
+          </div>
+          ${!isEdit?`
+          <div class="field" data-required>
+            <label>Contraseña inicial <span class="req">*</span></label>
+            <input name="password" type="password" placeholder="Mínimo 8 caracteres" />
+            <span class="err">${I.alert} El campo 'Contraseña' es requerido.</span>
+          </div>`:''}
+
+          <div class="form-section-title">Asignación de departamento</div>
+          <div class="field" data-required>
+            <label>Edificio <span class="req">*</span></label>
+            <select name="edificio">
+              <option value="">Selecciona un edificio</option>
+              ${edificiosOptions}
+            </select>
+            <span class="hint">Solo se listan edificios con departamentos disponibles.</span>
+            <span class="err">${I.alert} El campo 'Edificio' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Departamento <span class="req">*</span></label>
+            <select name="departamento" disabled>
+              <option value="">Selecciona primero un edificio</option>
+            </select>
+            <span class="hint">Solo se listan departamentos disponibles (sin inquilino activo).</span>
+            <span class="err">${I.alert} El campo 'Departamento' es requerido.</span>
+          </div>
+          <div class="field">
+            <label>Estatus</label>
+            <select name="activo">
+              <option value="1" ${v.activo?'selected':''}>Activo</option>
+              <option value="0" ${!v.activo?'selected':''}>Inactivo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="navigate('#/home')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">${I.check}<span>${isEdit?'Guardar cambios':'Guardar y crear'}</span></button>
+        </div>
+      </form>
+    </div>
+  `, {breadcrumb:[
+    {label:'Home',route:'#/home'},
+    {label:'Administración de inquilinos',route:'#/inquilinos'},
+    {label:isEdit?'Editar':'Nuevo'}
+  ]});
+}
+</script>
+
+<!-- ============================================================
+     DEPARTAMENTOS
+     ============================================================ -->
+<script>
+function renderListDepartamentos(){
+  const rows = DATA.departamentos.map(d=>`
+    <tr>
+      <td class="cell-id">${d.id}</td>
+      <td>${d.edificio}</td>
+      <td>Piso ${d.piso}</td>
+      <td class="cell-strong">${d.interior}</td>
+      <td>${d.recamaras} rec. · ${d.banos} baño${d.banos>1?'s':''}</td>
+      <td>${d.estado==='Ocupado'?'<span class="pill pill-accent">Ocupado</span>':'<span class="pill pill-success">Disponible</span>'}</td>
+      <td class="cell-actions">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('#/departamentos/editar')">${I.edit}<span>Editar</span></button>
+      </td>
+    </tr>
+  `).join('');
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">Administración de departamentos</div>
+        <div class="page-subtitle">Departamentos registrados en cada edificio de la unidad habitacional.</div>
+      </div>
+      <button class="btn btn-primary" onclick="navigate('#/departamentos/nuevo')">${I.plus}<span>Nuevo departamento</span></button>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="search-input">${I.search}<input placeholder="Buscar por número interior o ID..." /></div>
+      <div class="filter-pill"><span>Edificio:</span><select><option>Todos</option>${DATA.edificios.map(e=>`<option>${e.nombre}</option>`).join('')}</select></div>
+      <div class="filter-pill"><span>Estado:</span><select><option>Todos</option><option>Disponible</option><option>Ocupado</option></select></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Edificio</th><th>Piso</th><th>Interior</th><th>Detalle</th><th>Estado</th><th style="text-align:right">Acciones</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="table-foot">
+        <span>Mostrando ${DATA.departamentos.length} de ${DATA.departamentos.length} registros</span>
+        <div class="pagination"><button>‹</button><button class="active">1</button><button>›</button></div>
+      </div>
+    </div>
+  `, {breadcrumb:[{label:'Home',route:'#/home'},{label:'Administración de departamentos'}]});
+}
+
+function renderFormDepartamento(id){
+  const isEdit = !!id;
+  const d = isEdit ? DATA.departamentos.find(x=>x.id===id) : {edificio:'',piso:'',interior:'',recamaras:'',banos:'',estado:'Disponible'};
+
+  const edsDisponibles = DATA.edificios.filter(e=>e.ocupados < e.capacidad);
+  const edificiosOptions = edsDisponibles.map(e=>`<option value="${e.nombre}" data-pisos="${e.pisos}" ${d.edificio===e.nombre?'selected':''}>${e.nombre} (${e.capacidad-e.ocupados} disponibles)</option>`).join('');
+
+  setTimeout(()=>{
+    wireFormDemo('#frmDepto');
+    const edSel = $('#frmDepto select[name=edificio]');
+    const pSel  = $('#frmDepto select[name=piso]');
+    function refreshPisos(){
+      const opt = edSel.options[edSel.selectedIndex];
+      const pisos = opt?Number(opt.dataset.pisos||0):0;
+      if(!pisos){ pSel.innerHTML='<option value="">Selecciona primero un edificio</option>'; pSel.disabled=true; return; }
+      pSel.innerHTML='<option value="">Selecciona un piso</option>' +
+        Array.from({length:pisos},(_,i)=>i+1).map(n=>`<option value="${n}" ${String(d.piso)===String(n)?'selected':''}>Piso ${n}</option>`).join('');
+      pSel.disabled=false;
+    }
+    edSel.addEventListener('change', refreshPisos);
+    refreshPisos();
+  },0);
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">${isEdit?'Editar departamento':'Nuevo departamento'}</div>
+        <div class="page-subtitle">${isEdit?'Actualiza los datos del departamento seleccionado.':'Da de alta un nuevo departamento dentro de un edificio.'}</div>
+      </div>
+    </div>
+
+    <div class="card flat">
+      <form id="frmDepto" novalidate>
+        <div class="form-grid">
+          <div class="form-section-title">Ubicación</div>
+          <div class="field" data-required>
+            <label>Edificio <span class="req">*</span></label>
+            <select name="edificio">
+              <option value="">Selecciona un edificio</option>
+              ${edificiosOptions}
+            </select>
+            <span class="hint">Solo se listan edificios con capacidad disponible.</span>
+            <span class="err">${I.alert} El campo 'Edificio' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Piso <span class="req">*</span></label>
+            <select name="piso" disabled><option value="">Selecciona primero un edificio</option></select>
+            <span class="err">${I.alert} El campo 'Piso' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Número interior <span class="req">*</span></label>
+            <input name="interior" value="${d.interior||''}" placeholder="Ej. A-301" />
+            <span class="err">${I.alert} El campo 'Número interior' es requerido.</span>
+          </div>
+
+          <div class="form-section-title">Detalle del departamento</div>
+          <div class="field" data-required>
+            <label>Recámaras <span class="req">*</span></label>
+            <input type="number" min="1" max="6" name="recamaras" value="${d.recamaras||''}" placeholder="1-6" />
+            <span class="err">${I.alert} El campo 'Recámaras' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Baños <span class="req">*</span></label>
+            <input type="number" min="1" max="5" name="banos" value="${d.banos||''}" placeholder="1-5" />
+            <span class="err">${I.alert} El campo 'Baños' es requerido.</span>
+          </div>
+          <div class="field">
+            <label>Estado</label>
+            <select name="estado">
+              <option ${d.estado==='Disponible'?'selected':''}>Disponible</option>
+              <option ${d.estado==='Ocupado'?'selected':''}>Ocupado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="navigate('#/home')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">${I.check}<span>${isEdit?'Guardar cambios':'Guardar y crear'}</span></button>
+        </div>
+      </form>
+    </div>
+  `, {breadcrumb:[
+    {label:'Home',route:'#/home'},
+    {label:'Administración de departamentos',route:'#/departamentos'},
+    {label:isEdit?'Editar':'Nuevo'}
+  ]});
+}
+</script>
+
+<!-- ============================================================
+     EDIFICIOS
+     ============================================================ -->
+<script>
+function renderListEdificios(){
+  const rows = DATA.edificios.map(e=>`
+    <tr>
+      <td class="cell-id">${e.id}</td>
+      <td class="cell-strong">${e.nombre}</td>
+      <td>${e.calle} ${e.numero}, ${e.colonia}</td>
+      <td>${e.ciudad}</td>
+      <td>${e.pisos}</td>
+      <td>
+        ${e.ocupados}/${e.capacidad}
+        <div style="height:6px;width:90px;background:var(--bg);border-radius:999px;margin-top:4px;overflow:hidden">
+          <div style="height:100%;width:${(e.ocupados/e.capacidad)*100}%;background:${e.ocupados>=e.capacidad?'var(--accent)':'var(--primary)'};border-radius:999px"></div>
+        </div>
+      </td>
+      <td class="cell-actions">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('#/edificios/editar')">${I.edit}<span>Editar</span></button>
+      </td>
+    </tr>
+  `).join('');
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">Administración de edificios</div>
+        <div class="page-subtitle">Edificios que conforman la unidad habitacional y su capacidad de departamentos.</div>
+      </div>
+      <button class="btn btn-primary" onclick="navigate('#/edificios/nuevo')">${I.plus}<span>Nuevo edificio</span></button>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="search-input">${I.search}<input placeholder="Buscar por nombre o dirección..." /></div>
+      <div class="filter-pill"><span>Ciudad:</span><select><option>Todas</option><option>CDMX</option></select></div>
+      <div class="filter-pill"><span>Disponibilidad:</span><select><option>Todos</option><option>Con disponibles</option><option>Llenos</option></select></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nombre</th><th>Dirección</th><th>Ciudad</th><th>Pisos</th><th>Ocupación</th><th style="text-align:right">Acciones</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="table-foot">
+        <span>Mostrando ${DATA.edificios.length} de ${DATA.edificios.length} registros</span>
+        <div class="pagination"><button>‹</button><button class="active">1</button><button>›</button></div>
+      </div>
+    </div>
+  `, {breadcrumb:[{label:'Home',route:'#/home'},{label:'Administración de edificios'}]});
+}
+
+function renderFormEdificio(id){
+  const isEdit = !!id;
+  const e = isEdit ? DATA.edificios.find(x=>x.id===id) : {nombre:'',calle:'',numero:'',colonia:'',cp:'',ciudad:'',pisos:'',capacidad:''};
+
+  setTimeout(()=>wireFormDemo('#frmEdif'),0);
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">${isEdit?'Editar edificio':'Nuevo edificio'}</div>
+        <div class="page-subtitle">${isEdit?'Actualiza los datos del edificio.':'Captura los datos para registrar un nuevo edificio.'}</div>
+      </div>
+    </div>
+
+    <div class="card flat">
+      <form id="frmEdif" novalidate>
+        <div class="form-grid">
+          <div class="form-section-title">Identificación</div>
+          <div class="field full" data-required>
+            <label>Nombre del edificio <span class="req">*</span></label>
+            <input name="nombre" value="${e.nombre||''}" placeholder="Ej. Torre Roble" />
+            <span class="err">${I.alert} El campo 'Nombre' es requerido.</span>
+          </div>
+
+          <div class="form-section-title">Dirección</div>
+          <div class="field" data-required>
+            <label>Calle <span class="req">*</span></label>
+            <input name="calle" value="${e.calle||''}" placeholder="Av. Insurgentes" />
+            <span class="err">${I.alert} El campo 'Calle' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Número <span class="req">*</span></label>
+            <input name="numero" value="${e.numero||''}" />
+            <span class="err">${I.alert} El campo 'Número' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Colonia <span class="req">*</span></label>
+            <input name="colonia" value="${e.colonia||''}" />
+            <span class="err">${I.alert} El campo 'Colonia' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Código postal <span class="req">*</span></label>
+            <input name="cp" value="${e.cp||''}" placeholder="03100" maxlength="5" />
+            <span class="err">${I.alert} El campo 'Código postal' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Ciudad <span class="req">*</span></label>
+            <input name="ciudad" value="${e.ciudad||''}" placeholder="CDMX" />
+            <span class="err">${I.alert} El campo 'Ciudad' es requerido.</span>
+          </div>
+
+          <div class="form-section-title">Capacidad</div>
+          <div class="field" data-required>
+            <label>Número de pisos <span class="req">*</span></label>
+            <input type="number" min="1" max="50" name="pisos" value="${e.pisos||''}" />
+            <span class="err">${I.alert} El campo 'Pisos' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Capacidad de departamentos <span class="req">*</span></label>
+            <input type="number" min="1" name="capacidad" value="${e.capacidad||''}" />
+            <span class="hint">Total máximo de departamentos que tendrá este edificio.</span>
+            <span class="err">${I.alert} El campo 'Capacidad' es requerido.</span>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="navigate('#/home')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">${I.check}<span>${isEdit?'Guardar cambios':'Guardar y crear'}</span></button>
+        </div>
+      </form>
+    </div>
+  `, {breadcrumb:[
+    {label:'Home',route:'#/home'},
+    {label:'Administración de edificios',route:'#/edificios'},
+    {label:isEdit?'Editar':'Nuevo'}
+  ]});
+}
+</script>
+
+<!-- ============================================================
+     PERFILES + TIPOS DE IDENTIFICACIÓN
+     ============================================================ -->
+<script>
+function renderListPerfiles(){
+  const rows = DATA.perfiles.map(p=>`
+    <tr>
+      <td class="cell-id">${p.id}</td>
+      <td class="cell-strong">${p.nombre}</td>
+      <td>${p.descripcion}</td>
+      <td><span class="pill pill-soft">${p.activos} usuarios</span></td>
+      <td class="cell-actions">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('#/perfiles/editar')">${I.edit}<span>Editar</span></button>
+        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('perfil',{id:'${p.id}',nombre:'${p.nombre}'})">${I.trash}<span>Eliminar</span></button>
+      </td>
+    </tr>
+  `).join('');
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">Perfiles de usuario</div>
+        <div class="page-subtitle">Roles que determinan qué módulos puede usar cada usuario.</div>
+      </div>
+      <button class="btn btn-primary" onclick="navigate('#/perfiles/nuevo')">${I.plus}<span>Nuevo perfil</span></button>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="search-input">${I.search}<input placeholder="Buscar perfil..." /></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Asignaciones</th><th style="text-align:right">Acciones</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="table-foot">
+        <span>Mostrando ${DATA.perfiles.length} de ${DATA.perfiles.length} registros</span>
+        <div class="pagination"><button>‹</button><button class="active">1</button><button>›</button></div>
+      </div>
+    </div>
+  `, {breadcrumb:[{label:'Home',route:'#/home'},{label:'Perfiles de usuario'}]});
+}
+
+function renderFormPerfil(id){
+  const isEdit = !!id;
+  const p = isEdit ? DATA.perfiles.find(x=>x.id===id) : {nombre:'',descripcion:''};
+  setTimeout(()=>wireFormDemo('#frmPerfil'),0);
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">${isEdit?'Editar perfil':'Nuevo perfil de usuario'}</div>
+        <div class="page-subtitle">${isEdit?'Modifica el nombre o descripción del perfil.':'Registra un nuevo tipo de perfil de usuario.'}</div>
+      </div>
+    </div>
+
+    <div class="card flat" style="max-width:640px">
+      <form id="frmPerfil" novalidate>
+        <div class="form-grid">
+          <div class="field full" data-required>
+            <label>Nombre del perfil <span class="req">*</span></label>
+            <input name="nombre" value="${p.nombre||''}" placeholder="Ej. Coordinador" />
+            <span class="err">${I.alert} El campo 'Nombre' es requerido.</span>
+          </div>
+          <div class="field full" data-required>
+            <label>Descripción <span class="req">*</span></label>
+            <textarea name="descripcion" rows="3" placeholder="Describe el alcance de este perfil...">${p.descripcion||''}</textarea>
+            <span class="err">${I.alert} El campo 'Descripción' es requerido.</span>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="navigate('#/home')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">${I.check}<span>${isEdit?'Guardar cambios':'Guardar y crear'}</span></button>
+        </div>
+      </form>
+    </div>
+  `, {breadcrumb:[
+    {label:'Home',route:'#/home'},
+    {label:'Perfiles de usuario',route:'#/perfiles'},
+    {label:isEdit?'Editar':'Nuevo'}
+  ]});
+}
+
+function renderListIdentificaciones(){
+  const rows = DATA.identificaciones.map(t=>`
+    <tr>
+      <td class="cell-id">${t.id}</td>
+      <td class="cell-strong">${t.nombre}</td>
+      <td>${t.descripcion}</td>
+      <td>${t.activo?'<span class="pill pill-success">Activo</span>':'<span class="pill pill-neutral">Inactivo</span>'}</td>
+      <td class="cell-actions">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('#/identificaciones/editar')">${I.edit}<span>Editar</span></button>
+        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('identificacion',{id:'${t.id}',nombre:'${t.nombre}'})">${I.trash}<span>Eliminar</span></button>
+      </td>
+    </tr>
+  `).join('');
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">Tipos de identificación</div>
+        <div class="page-subtitle">Catálogo de documentos válidos para registrar visitantes.</div>
+      </div>
+      <button class="btn btn-primary" onclick="navigate('#/identificaciones/nuevo')">${I.plus}<span>Nuevo tipo de identificación</span></button>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="search-input">${I.search}<input placeholder="Buscar tipo de identificación..." /></div>
+      <div class="filter-pill"><span>Estatus:</span><select><option>Todos</option><option>Activo</option><option>Inactivo</option></select></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estatus</th><th style="text-align:right">Acciones</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="table-foot">
+        <span>Mostrando ${DATA.identificaciones.length} de ${DATA.identificaciones.length} registros</span>
+        <div class="pagination"><button>‹</button><button class="active">1</button><button>›</button></div>
+      </div>
+    </div>
+  `, {breadcrumb:[{label:'Home',route:'#/home'},{label:'Tipos de identificación'}]});
+}
+
+function renderFormIdentificacion(id){
+  const isEdit = !!id;
+  const t = isEdit ? DATA.identificaciones.find(x=>x.id===id) : {nombre:'',descripcion:'',activo:true};
+  setTimeout(()=>wireFormDemo('#frmIdent'),0);
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">${isEdit?'Editar tipo de identificación':'Nuevo tipo de identificación'}</div>
+        <div class="page-subtitle">${isEdit?'Modifica los datos del documento.':'Registra un nuevo tipo de documento de identificación.'}</div>
+      </div>
+    </div>
+
+    <div class="card flat" style="max-width:640px">
+      <form id="frmIdent" novalidate>
+        <div class="form-grid">
+          <div class="field full" data-required>
+            <label>Nombre <span class="req">*</span></label>
+            <input name="nombre" value="${t.nombre||''}" placeholder="Ej. INE / IFE" />
+            <span class="err">${I.alert} El campo 'Nombre' es requerido.</span>
+          </div>
+          <div class="field full" data-required>
+            <label>Descripción <span class="req">*</span></label>
+            <textarea name="descripcion" rows="3">${t.descripcion||''}</textarea>
+            <span class="err">${I.alert} El campo 'Descripción' es requerido.</span>
+          </div>
+          <div class="field">
+            <label>Estatus</label>
+            <select name="activo">
+              <option value="1" ${t.activo?'selected':''}>Activo</option>
+              <option value="0" ${!t.activo?'selected':''}>Inactivo</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="navigate('#/home')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">${I.check}<span>${isEdit?'Guardar cambios':'Guardar y crear'}</span></button>
+        </div>
+      </form>
+    </div>
+  `, {breadcrumb:[
+    {label:'Home',route:'#/home'},
+    {label:'Tipos de identificación',route:'#/identificaciones'},
+    {label:isEdit?'Editar':'Nuevo'}
+  ]});
+}
+</script>
+
+<!-- ============================================================
+     VISITANTES (Inquilino) + CHECADOR + REGISTRO VISITANTE
+     ============================================================ -->
+<script>
+function renderListVisitantes(){
+  const rows = DATA.visitantes.filter(v=>v.activo).map(v=>`
+    <tr>
+      <td class="cell-id">${v.id}</td>
+      <td class="cell-strong">${v.nombre}</td>
+      <td>${v.identificacion}</td>
+      <td><code style="background:var(--primary-50);color:var(--primary);padding:3px 8px;border-radius:6px;font-family:'Inter',monospace;font-weight:600;font-size:12px">${v.codigo}</code></td>
+      <td>${v.motivo}</td>
+      <td>${v.entrada ? '<span class="pill pill-success">' + (v.salida ? 'Completado' : 'En unidad') + '</span>' : '<span class="pill pill-neutral">Pendiente</span>'}</td>
+      <td class="cell-actions">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('#/visitantes/editar')">${I.edit}<span>Editar</span></button>
+        <button class="btn btn-danger btn-sm" onclick="openDeleteModal('visitante',{id:'${v.id}',nombre:'${v.nombre}'})">${I.trash}<span>Eliminar</span></button>
+      </td>
+    </tr>
+  `).join('');
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">Mis visitantes</div>
+        <div class="page-subtitle">Visitantes activos registrados a tu departamento. Comparte el <strong>Código de visita</strong> con tu invitado para que el vigilante valide su acceso.</div>
+      </div>
+      <button class="btn btn-primary" onclick="navigate('#/visitantes/nuevo')">${I.plus}<span>Registrar visitante</span></button>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="search-input">${I.search}<input placeholder="Buscar por nombre o código..." /></div>
+      <div class="filter-pill"><span>Estado:</span><select><option>Todos</option><option>Pendiente</option><option>En unidad</option><option>Completado</option></select></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nombre</th><th>Identificación</th><th>Código de visita</th><th>Motivo</th><th>Estado</th><th style="text-align:right">Acciones</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="table-foot">
+        <span>Mostrando ${DATA.visitantes.filter(v=>v.activo).length} visitantes activos</span>
+        <div class="pagination"><button>‹</button><button class="active">1</button><button>›</button></div>
+      </div>
+    </div>
+  `, {breadcrumb:[{label:'Home',route:'#/home'},{label:'Mis visitantes'}]});
+}
+
+function renderFormVisitante(id){
+  const isEdit = !!id;
+  const v = isEdit ? DATA.visitantes.find(x=>x.id===id) : {nombre:'',identificacion:'',numIdent:'',motivo:'',activo:true};
+  const tiposOpts = DATA.identificaciones.filter(t=>t.activo).map(t=>`<option ${v.identificacion===t.nombre?'selected':''}>${t.nombre}</option>`).join('');
+
+  setTimeout(()=>wireFormDemo('#frmVisita'),0);
+
+  const codigoGenerado = isEdit ? v.codigo : ('UH-' + Math.random().toString(36).slice(2,6).toUpperCase() + '-' + Math.random().toString(36).slice(2,4).toUpperCase());
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">${isEdit?'Editar visitante':'Registrar visitante'}</div>
+        <div class="page-subtitle">${isEdit?'Actualiza los datos del visitante registrado.':'Captura los datos del visitante. Al guardar se genera un Código de visita único que debes compartir con tu invitado.'}</div>
+      </div>
+    </div>
+
+    <div class="card flat">
+      <form id="frmVisita" novalidate>
+        <div class="form-grid">
+          <div class="form-section-title">Datos del visitante</div>
+          <div class="field full" data-required>
+            <label>Nombre completo <span class="req">*</span></label>
+            <input name="nombre" value="${v.nombre||''}" placeholder="Ej. Mariana Herrera López" />
+            <span class="err">${I.alert} El campo 'Nombre' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Tipo de identificación <span class="req">*</span></label>
+            <select name="tipo_id">
+              <option value="">Selecciona un tipo</option>
+              ${tiposOpts}
+            </select>
+            <span class="err">${I.alert} El campo 'Tipo de identificación' es requerido.</span>
+          </div>
+          <div class="field" data-required>
+            <label>Número de identificación <span class="req">*</span></label>
+            <input name="num_id" value="${v.numIdent||''}" placeholder="Ej. 4321 5678 9012" />
+            <span class="err">${I.alert} El campo 'Número' es requerido.</span>
+          </div>
+
+          <div class="form-section-title">Detalle de la visita</div>
+          <div class="field full" data-required>
+            <label>Motivo de la visita <span class="req">*</span></label>
+            <input name="motivo" value="${v.motivo||''}" placeholder="Ej. Familiar, repartidor, servicio doméstico..." />
+            <span class="err">${I.alert} El campo 'Motivo' es requerido.</span>
+          </div>
+          <div class="field">
+            <label>Fecha esperada</label>
+            <input type="date" name="fecha" />
+          </div>
+          <div class="field">
+            <label>Hora aproximada</label>
+            <input type="time" name="hora" />
+          </div>
+
+          <div class="form-section-title">${isEdit?'Código actual':'Código de visita (se genera al guardar)'}</div>
+          <div class="field full">
+            <div style="background:var(--primary-50);border:1px dashed var(--primary);border-radius:12px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+              <div>
+                <div style="font-size:11px;color:var(--primary);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px">Código de visita</div>
+                <div style="font-family:'Inter',monospace;font-size:22px;font-weight:700;color:var(--primary);letter-spacing:.15em">${codigoGenerado}</div>
+              </div>
+              <div style="font-size:12px;color:var(--muted);max-width:260px">Comparte este código con tu visitante. El vigilante lo solicitará para validar su acceso a la unidad.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" onclick="navigate('#/home')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">${I.check}<span>${isEdit?'Guardar cambios':'Guardar y crear'}</span></button>
+        </div>
+      </form>
+    </div>
+  `, {breadcrumb:[
+    {label:'Home',route:'#/home'},
+    {label:'Mis visitantes',route:'#/visitantes'},
+    {label:isEdit?'Editar':'Nuevo'}
+  ]});
+}
+
+/* ============ CHECADOR (Vigilante) ============ */
+function renderChecador(){
+  const ahora = new Date();
+  const fechaStr = ahora.toLocaleDateString('es-MX',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+  const horaStr  = ahora.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+
+  setTimeout(()=>{
+    const btnIn  = $('#btnCheckIn');
+    const btnOut = $('#btnCheckOut');
+    const status = $('#checadorStatus');
+    if(btnIn) btnIn.addEventListener('click',()=>{
+      btnIn.disabled = true; btnIn.style.opacity=.4;
+      btnOut.disabled = false;
+      status.innerHTML = `<div class="status-badge">${I.check}<span>Entrada registrada · ${horaStr}</span></div>`;
+    });
+    if(btnOut) btnOut.addEventListener('click',()=>{
+      btnOut.disabled = true; btnOut.style.opacity=.4;
+      status.innerHTML = `<div class="status-badge" style="background:var(--accent-100);color:var(--accent-700)">${I.check}<span>Salida registrada · ${horaStr}</span></div>`;
+    });
+  },0);
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">Checador de turno</div>
+        <div class="page-subtitle">Registra tu entrada y salida del turno.</div>
+      </div>
+    </div>
+
+    <div class="checador-wrap">
+      <div class="card flat" style="text-align:center;padding:40px 32px">
+        <div style="font-size:13px;color:var(--muted);text-transform:capitalize">${fechaStr}</div>
+        <div style="font-family:'Inter',monospace;font-size:64px;font-weight:700;letter-spacing:-.02em;color:var(--primary);margin:6px 0 24px">${horaStr}</div>
+
+        <div style="font-size:14px;color:var(--muted);margin-bottom:20px">Vigilante: <strong style="color:var(--ink)">${STATE.user.nombre}</strong> · Turno asignado: <strong style="color:var(--ink)">Matutino</strong></div>
+
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+          <button id="btnCheckIn"  class="btn btn-primary" style="padding:14px 28px;font-size:15px">${I.check}<span>Registrar entrada</span></button>
+          <button id="btnCheckOut" class="btn btn-accent"  style="padding:14px 28px;font-size:15px" disabled>${I.logout}<span>Registrar salida</span></button>
+        </div>
+
+        <div id="checadorStatus" style="margin-top:24px"></div>
+      </div>
+
+      <div class="card flat" style="margin-top:18px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px">Historial reciente</div>
+        <table>
+          <thead><tr><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>21 may 2026</td><td>06:02</td><td>14:08</td><td>8h 06min</td></tr>
+            <tr><td>20 may 2026</td><td>05:58</td><td>14:03</td><td>8h 05min</td></tr>
+            <tr><td>19 may 2026</td><td>06:05</td><td>14:00</td><td>7h 55min</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `, {breadcrumb:[{label:'Home',route:'#/home'},{label:'Checador'}]});
+}
+
+/* ============ REGISTRO ENTRADA / SALIDA VISITANTE ============ */
+function renderRegistroVisitante(){
+  setTimeout(()=>{
+    const form = $('#frmValidaCodigo');
+    const wrap = $('#visitorWrap');
+    const errBox = $('#codigoErr');
+    if(!form) return;
+
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      const code = form.codigo.value.trim().toUpperCase();
+      const v = DATA.visitantes.find(x=>x.codigo===code);
+      if(!v){
+        wrap.innerHTML='';
+        errBox.style.display='flex';
+        return;
+      }
+      errBox.style.display='none';
+      const tieneEntrada = !!v.entrada;
+      const tieneSalida  = !!v.salida;
+      const inq = DATA.inquilinos.find(i=>i.id==='IN-001'); // demo
+
+      wrap.innerHTML = `
+        <div class="visitor-preview">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="font-weight:700;font-size:18px;color:var(--primary-700)">Visitante validado</div>
+            <span class="pill pill-success">${I.check} Código válido</span>
+          </div>
+          <div class="row"><span>Visitante</span><span>${v.nombre}</span></div>
+          <div class="row"><span>Identificación</span><span>${v.identificacion} · ${v.numIdent}</span></div>
+          <div class="row"><span>Motivo</span><span>${v.motivo}</span></div>
+          <div class="row"><span>Inquilino que invita</span><span>${inq.nombre}</span></div>
+          <div class="row"><span>Departamento</span><span>${inq.edificio} · ${inq.depto}</span></div>
+          <div class="row"><span>Código de visita</span><span><code style="background:#fff;padding:3px 8px;border-radius:6px;font-family:'Inter',monospace;color:var(--primary);font-weight:700">${v.codigo}</code></span></div>
+          ${tieneEntrada?`<div class="row"><span>Hora de entrada</span><span>${v.entrada}</span></div>`:''}
+          ${tieneSalida?`<div class="row"><span>Hora de salida</span><span>${v.salida}</span></div>`:''}
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:18px;justify-content:flex-end;flex-wrap:wrap">
+          ${!tieneEntrada?`<button class="btn btn-primary" onclick="registrarEntrada('${v.id}')">${I.check}<span>Registrar entrada</span></button>`:''}
+          ${tieneEntrada && !tieneSalida?`<button class="btn btn-accent" onclick="registrarSalida('${v.id}')">${I.logout}<span>Registrar salida</span></button>`:''}
+          ${tieneEntrada && tieneSalida?`<div class="status-badge">${I.check} Visita completada</div>`:''}
+        </div>
+      `;
+    });
+  },0);
+
+  return shell(`
+    <div class="page-header">
+      <div>
+        <div class="page-title">Registro entrada / salida de visitante</div>
+        <div class="page-subtitle">Solicita al visitante su Código de visita y valídalo para registrar su acceso.</div>
+      </div>
+    </div>
+
+    <div class="checador-wrap">
+      <div class="card flat">
+        <form id="frmValidaCodigo" novalidate>
+          <div class="field">
+            <label>Código de visita</label>
+            <input class="code-input-big" name="codigo" placeholder="UH-XXXX-XX" maxlength="11" required />
+            <span class="hint" style="text-align:center;margin-top:8px">Prueba con uno de los códigos demo: <strong>UH-2K8F-9X</strong> (sin entrada), <strong>UH-7M3L-2R</strong> (con entrada y salida), <strong>UH-4P9V-1B</strong>.</span>
+          </div>
+          <div id="codigoErr" class="login-error" style="display:none;margin-top:14px">
+            ${I.alert}<span>El código no existe o no está activo. Verifica con el visitante.</span>
+          </div>
+          <div style="display:flex;justify-content:center;margin-top:18px">
+            <button type="submit" class="btn btn-primary" style="padding:13px 28px">${I.scan}<span>Validar código</span></button>
+          </div>
+        </form>
+
+        <div id="visitorWrap"></div>
+      </div>
+    </div>
+  `, {breadcrumb:[{label:'Home',route:'#/home'},{label:'Registro de visitante'}]});
+}
+
+function registrarEntrada(id){
+  const v = DATA.visitantes.find(x=>x.id===id);
+  if(!v) return;
+  v.entrada = new Date().toISOString().slice(0,16).replace('T',' ');
+  router();
+  // Re-validar visualmente
+  setTimeout(()=>{
+    const form = $('#frmValidaCodigo');
+    if(form){ form.codigo.value=v.codigo; form.dispatchEvent(new Event('submit')); }
+  },50);
+}
+function registrarSalida(id){
+  const v = DATA.visitantes.find(x=>x.id===id);
+  if(!v) return;
+  v.salida = new Date().toISOString().slice(0,16).replace('T',' ');
+  router();
+  setTimeout(()=>{
+    const form = $('#frmValidaCodigo');
+    if(form){ form.codigo.value=v.codigo; form.dispatchEvent(new Event('submit')); }
+  },50);
+}
+</script>
+
+<!-- ============================================================
+     MODAL DE ELIMINACIÓN + FORM HELPERS
+     ============================================================ -->
+<script>
+function openDeleteModal(tipo, info){
+  const labels = {
+    vigilante:'vigilante', inquilino:'inquilino', perfil:'tipo de usuario',
+    identificacion:'tipo de identificación', visitante:'visitante'
+  };
+  const titles = {
+    vigilante:'Eliminar vigilante', inquilino:'Eliminar inquilino', perfil:'Eliminar perfil',
+    identificacion:'Eliminar tipo de identificación', visitante:'Eliminar visitante'
+  };
+  const root = $('#modalRoot');
+  root.innerHTML = `
+    <div class="modal-mask open" id="modalMask">
+      <div class="modal" role="dialog" aria-modal="true">
+        <h3>${titles[tipo]}</h3>
+        <p class="subtitle">Esta acción no se puede deshacer.</p>
+        <div class="data-block">
+          <div><span>ID</span><span>${info.id}</span></div>
+          <div><span>Nombre completo</span><span>${info.nombre}</span></div>
+          ${info.correo?`<div><span>Correo</span><span>${info.correo}</span></div>`:''}
+        </div>
+        <p class="confirm-text">¿Está seguro que desea eliminar este ${labels[tipo]}?</p>
+        <div class="actions">
+          <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+          <button class="btn btn-danger" onclick="confirmDelete('${tipo}','${info.id}')">${I.trash}<span>Aceptar</span></button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function closeModal(){
+  const m = $('#modalMask');
+  if(m){ m.classList.remove('open'); setTimeout(()=>m.remove(),200) }
+}
+function confirmDelete(tipo,id){
+  // Demo: feedback visual y cerramos
+  closeModal();
+  showToast(`${tipo[0].toUpperCase()+tipo.slice(1)} ${id} eliminado correctamente`);
+  setTimeout(()=>router(),300);
+}
+function showToast(msg){
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--success);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;z-index:300;box-shadow:0 12px 30px -10px rgba(0,0,0,.3);display:flex;align-items:center;gap:8px';
+  t.innerHTML = I.check+'<span>'+msg+'</span>';
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity=0;t.style.transition='opacity .3s'},2400);
+  setTimeout(()=>t.remove(),2800);
+}
+
+/* ===== Validación inline de formularios (demo) ===== */
+function wireFormDemo(formSel){
+  const form = $(formSel);
+  if(!form) return;
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    let ok = true;
+    form.querySelectorAll('.field[data-required]').forEach(f=>{
+      const input = f.querySelector('input,select,textarea');
+      if(!input) return;
+      if(!input.value || input.value==='' || (input.type==='email' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.value))){
+        f.classList.add('error'); ok = false;
+      }else{
+        f.classList.remove('error');
+      }
+    });
+    if(ok){
+      showToast('Registro guardado correctamente');
+      setTimeout(()=>history.back(),700);
+    }else{
+      // Scroll al primer error
+      const firstErr = form.querySelector('.field.error');
+      if(firstErr) firstErr.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+  });
+  // limpiar error al teclear
+  form.addEventListener('input', e=>{
+    const f = e.target.closest('.field');
+    if(f) f.classList.remove('error');
+  });
+}
+</script>
+
+</body>
+</html>

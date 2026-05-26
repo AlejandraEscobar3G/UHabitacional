@@ -1,0 +1,88 @@
+@model BitacoraVisitanteCreateDto
+@{
+    var id = ViewBag.Id as int?;
+    bool isEdit = id.HasValue;
+    var action = isEdit ? "Edit" : "Create";
+    var ids = (ViewBag.Identificaciones as List<IdentificacionDto>) ?? new List<IdentificacionDto>();
+    var codigo = ViewBag.CodigoExistente as string;
+}
+
+<div class="page-header">
+    <div>
+        <div class="page-title">@(isEdit ? "Editar visitante" : "Registrar visitante")</div>
+        <div class="page-subtitle">El código único de visita se genera automáticamente al guardar.</div>
+    </div>
+</div>
+
+<div class="card flat">
+    @if (!ViewData.ModelState.IsValid && ViewData.ModelState[""]?.Errors.Count > 0)
+    {
+        <div class="alert alert-danger">@ViewData.ModelState[""]!.Errors.First().ErrorMessage</div>
+    }
+
+    <form asp-action="@action" asp-route-id="@id" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-grid">
+            <div class="form-section-title">Datos del visitante</div>
+            <div class="field full">
+                <label asp-for="NombreVisitante">Nombre completo del visitante <span class="req">*</span></label>
+                <input asp-for="NombreVisitante" placeholder="Ej. Ana Patricia Soto" />
+                <span asp-validation-for="NombreVisitante" class="err"></span>
+            </div>
+            <div class="field">
+                <label asp-for="IdIdentificacion">Tipo de identificación <span class="req">*</span></label>
+                <select asp-for="IdIdentificacion">
+                    <option value="0">Selecciona…</option>
+                    @foreach (var i in ids)
+                    {
+                        <option value="@i.IdIdentificacion">@i.Nombre</option>
+                    }
+                </select>
+                <span asp-validation-for="IdIdentificacion" class="err"></span>
+            </div>
+            <div class="field">
+                <label asp-for="NumeroIdentificacion">Número de identificación <span class="req">*</span></label>
+                <input asp-for="NumeroIdentificacion" />
+                <span asp-validation-for="NumeroIdentificacion" class="err"></span>
+            </div>
+            <div class="field full">
+                <label asp-for="Observaciones">Motivo / observaciones</label>
+                <textarea asp-for="Observaciones" rows="3" placeholder="Visita social, entrega, mantenimiento, etc."></textarea>
+            </div>
+
+            @if (!string.IsNullOrEmpty(codigo))
+            {
+                <div class="form-section-title">Código de visita</div>
+                <div class="field full">
+                    <div class="code-display">
+                        <div>
+                            <div class="lbl">Código actual</div>
+                            <div class="code">@codigo</div>
+                        </div>
+                        <div class="hint">Comparte este código con tu visitante. El vigilante lo solicitará al ingreso.</div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-section-title">Código de visita</div>
+                <div class="field full">
+                    <div class="code-display">
+                        <div>
+                            <div class="lbl">Pendiente</div>
+                            <div class="code">UH-XXXX-XX</div>
+                        </div>
+                        <div class="hint">El código se generará al guardar el registro.</div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="form-actions">
+            <a class="btn btn-ghost" href="@Url.Action("Index")">Cancelar</a>
+            <button type="submit" class="btn btn-primary">
+                @await Html.PartialAsync("_Icons", "check")<span>@(isEdit ? "Guardar cambios" : "Guardar y generar código")</span>
+            </button>
+        </div>
+    </form>
+</div>

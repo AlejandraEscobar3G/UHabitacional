@@ -1,0 +1,46 @@
+@model IEnumerable<IdentificacionDto>
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Tipos de identificación</div>
+        <div class="page-subtitle">Catálogo de documentos válidos para identificar usuarios y visitantes.</div>
+    </div>
+    <a class="btn btn-primary" href="@Url.Action("Create")">
+        @await Html.PartialAsync("_Icons", "plus")<span>Nuevo tipo</span>
+    </a>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Estatus</th><th style="text-align:right">Acciones</th></tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="5"><div class="empty-state"><strong>Sin registros</strong><span>Aún no se han creado tipos de identificación.</span></div></td></tr>
+            }
+            @foreach (var i in Model)
+            {
+                <tr>
+                    <td class="cell-id">TI-@i.IdIdentificacion.ToString("D2")</td>
+                    <td class="cell-strong">@i.Nombre</td>
+                    <td>@(string.IsNullOrEmpty(i.Descripcion) ? "—" : i.Descripcion)</td>
+                    <td>@(i.Activo ? Html.Raw("<span class='pill pill-success'>Activo</span>") : Html.Raw("<span class='pill pill-neutral'>Inactivo</span>"))</td>
+                    <td class="cell-actions">
+                        <a class="btn btn-ghost btn-sm" href="@Url.Action("Edit", new { id = i.IdIdentificacion })">
+                            @await Html.PartialAsync("_Icons", "edit")<span>Editar</span>
+                        </a>
+                        <form method="post" action="@Url.Action("Delete", new { id = i.IdIdentificacion })" style="display:inline" data-confirm="¿Eliminar @i.Nombre?">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                @await Html.PartialAsync("_Icons", "trash")<span>Eliminar</span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="table-foot"><span>Mostrando @Model.Count() registro(s)</span></div>
+</div>

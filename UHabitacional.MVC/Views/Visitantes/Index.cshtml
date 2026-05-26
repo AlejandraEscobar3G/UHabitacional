@@ -1,0 +1,59 @@
+@model IEnumerable<BitacoraVisitanteDto>
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Mis visitantes</div>
+        <div class="page-subtitle">Registra a tus invitados y comparte con ellos el código único de visita.</div>
+    </div>
+    <a class="btn btn-primary" href="@Url.Action("Create")">
+        @await Html.PartialAsync("_Icons", "plus")<span>Registrar visitante</span>
+    </a>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th><th>Visitante</th><th>Identificación</th><th>Código</th><th>Entrada</th><th>Salida</th><th>Estatus</th><th style="text-align:right">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="8"><div class="empty-state"><strong>Sin visitantes</strong><span>Registra a tu primer invitado para generar su código de visita.</span></div></td></tr>
+            }
+            @foreach (var v in Model)
+            {
+                string estatusClase;
+                string estatusTexto;
+                if (v.FechaHoraSalida.HasValue) { estatusClase = "pill-neutral"; estatusTexto = "Visita finalizada"; }
+                else if (v.FechaHoraLlegada.HasValue) { estatusClase = "pill-success"; estatusTexto = "Dentro de la unidad"; }
+                else { estatusClase = "pill-soft"; estatusTexto = "Por llegar"; }
+                <tr>
+                    <td class="cell-id">VS-@v.IdBitacoraVisitante.ToString("D3")</td>
+                    <td class="cell-strong">@v.NombreVisitante</td>
+                    <td>@v.Identificacion · <span class="cell-id">@v.NumeroIdentificacion</span></td>
+                    <td><code style="background:var(--primary-50);padding:3px 8px;border-radius:6px;font-family:'Inter',monospace;color:var(--primary);font-weight:700">@v.CodigoVisita</code></td>
+                    <td>@(v.FechaHoraLlegada?.ToString("dd MMM HH:mm") ?? "—")</td>
+                    <td>@(v.FechaHoraSalida?.ToString("dd MMM HH:mm") ?? "—")</td>
+                    <td><span class="pill @estatusClase">@estatusTexto</span></td>
+                    <td class="cell-actions">
+                        <a class="btn btn-ghost btn-sm" href="@Url.Action("Detail", new { id = v.IdBitacoraVisitante })">
+                            @await Html.PartialAsync("_Icons", "scan")<span>Ver</span>
+                        </a>
+                        <a class="btn btn-ghost btn-sm" href="@Url.Action("Edit", new { id = v.IdBitacoraVisitante })">
+                            @await Html.PartialAsync("_Icons", "edit")<span>Editar</span>
+                        </a>
+                        <form method="post" action="@Url.Action("Delete", new { id = v.IdBitacoraVisitante })" style="display:inline" data-confirm="¿Eliminar el registro de @v.NombreVisitante?">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                @await Html.PartialAsync("_Icons", "trash")<span>Eliminar</span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="table-foot"><span>Mostrando @Model.Count() registro(s)</span></div>
+</div>
