@@ -60,11 +60,24 @@ public class VigilantesController : Controller
     {
         ViewBag.PageTitle = "Nuevo vigilante";
         Crumbs("Nuevo");
-        if (!ModelState.IsValid) { await CargarCatalogos(); return View("Form", dto); }
 
-        // Forzamos rol vigilante
+        // El form no expone IdTipoUsuario (siempre es Vigilante).
+        // Lo resolvemos del catálogo ANTES de validar y lo eliminamos del ModelState
+        // para que no falle el Range(1, ...).
         var idRolVig = await ObtenerIdTipoUsuarioAsync(RolVigilante);
-        if (idRolVig.HasValue) dto.IdTipoUsuario = idRolVig.Value;
+        if (idRolVig.HasValue)
+        {
+            dto.IdTipoUsuario = idRolVig.Value;
+        }
+        else
+        {
+            ModelState.AddModelError("", "No se encontró el perfil 'Vigilante' en el catálogo de tipos de usuario.");
+            await CargarCatalogos();
+            return View("Form", dto);
+        }
+        ModelState.Remove(nameof(UsuarioCreateDto.IdTipoUsuario));
+
+        if (!ModelState.IsValid) { await CargarCatalogos(); return View("Form", dto); }
 
         try
         {
@@ -112,6 +125,11 @@ public class VigilantesController : Controller
         ViewBag.Id = id;
         // En edición la contraseña es opcional, evitamos validarla
         ModelState.Remove(nameof(UsuarioCreateDto.Password));
+
+        // IdTipoUsuario no viene en el form: forzamos rol Vigilante y lo quitamos del ModelState
+        var idRolVig = await ObtenerIdTipoUsuarioAsync(RolVigilante);
+        if (idRolVig.HasValue) dto.IdTipoUsuario = idRolVig.Value;
+        ModelState.Remove(nameof(UsuarioCreateDto.IdTipoUsuario));
 
         if (!ModelState.IsValid) { await CargarCatalogos(); return View("Form", dto); }
 

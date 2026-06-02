@@ -46,13 +46,21 @@ public class InquilinosController : Controller
         Crumbs("Nuevo");
         if (!ModelState.IsValid) { await CargarCatalogos(); return View("Form", vm); }
 
+        // Resolvemos el rol Inquilino antes de continuar
+        var idRol = await ObtenerIdTipoUsuarioAsync(RolInquilino);
+        if (!idRol.HasValue)
+        {
+            ModelState.AddModelError("", "No se encontró el perfil 'Inquilino' en el catálogo de tipos de usuario.");
+            await CargarCatalogos();
+            return View("Form", vm);
+        }
+
         try
         {
             // 1) Crear el Usuario con rol Inquilino
-            var idRol = await ObtenerIdTipoUsuarioAsync(RolInquilino);
             var usuarioDto = new UsuarioCreateDto
             {
-                IdTipoUsuario = idRol ?? vm.IdTipoUsuario,
+                IdTipoUsuario = idRol.Value,
                 IdIdentificacion = vm.IdIdentificacion,
                 NumeroIdentificacion = vm.NumeroIdentificacion,
                 Nombre = vm.Nombre,

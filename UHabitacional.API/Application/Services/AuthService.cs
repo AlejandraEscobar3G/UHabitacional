@@ -47,7 +47,10 @@ public class AuthService : IAuthService
             new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
             new Claim(ClaimTypes.NameIdentifier, usuario.IdUsuario.ToString()),
             new Claim(ClaimTypes.Name, $"{usuario.Nombre} {usuario.Apellidos}"),
+            // Emitir el rol con ambos formatos para que sea detectado
+            // independientemente del comportamiento de mapeo de claims.
             new Claim(ClaimTypes.Role, rol),
+            new Claim("role", rol),
             new Claim("IdTipoUsuario", usuario.IdTipoUsuario.ToString())
         };
 
