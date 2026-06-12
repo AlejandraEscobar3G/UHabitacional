@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UHabitacional.MOBILE.Pages.EnConstruccionPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,14">
+            <Label Grid.Column="0" Text="←" FontSize="22" TextColor="{StaticResource Ink}"
+                   VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRegresarTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Grid.Column="1" x:Name="TituloLabel"
+                   Text="Módulo" FontSize="16" FontAttributes="Bold"
+                   TextColor="{StaticResource Ink}"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- Body -->
+        <VerticalStackLayout Grid.Row="1" VerticalOptions="Center" Spacing="10" Padding="32">
+            <Label Text="🚧" FontSize="56" HorizontalOptions="Center" />
+            <Label Text="Sitio en construcción"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource Ink}"
+                   HorizontalOptions="Center" />
+            <Label x:Name="MensajeLabel"
+                   Text="Este módulo estará disponible próximamente."
+                   FontSize="14"
+                   TextColor="{StaticResource Muted}"
+                   HorizontalTextAlignment="Center"
+                   HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+    </Grid>
+</ContentPage>

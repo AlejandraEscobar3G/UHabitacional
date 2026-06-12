@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UHabitacional.MOBILE.Pages.HomePage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Header Inicio -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,14">
+            <Label Grid.Column="0" Text="☰" FontSize="22" TextColor="{StaticResource Ink}"
+                   VerticalOptions="Center" />
+            <Label Grid.Column="1" Text="Inicio" FontSize="16" FontAttributes="Bold"
+                   TextColor="{StaticResource Ink}"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+            <Label Grid.Column="2" Text="👤" FontSize="18"
+                   VerticalOptions="Center" />
+        </Grid>
+
+        <!-- Body -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,4,16,16" Spacing="4">
+
+                <Label x:Name="SaludoLabel"
+                       Text="Hola, Usuario 👋"
+                       FontSize="22"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource Ink}"
+                       Margin="2,4,0,0" />
+
+                <Label Text="MÓDULOS"
+                       FontSize="11"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource Muted}"
+                       Margin="2,8,0,10" />
+
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto"
+                      ColumnSpacing="11" RowSpacing="11">
+
+                    <!-- Inquilinos -->
+                    <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource ModuloCard}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnModuloTapped" CommandParameter="Inquilinos" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="10">
+                            <Border BackgroundColor="{StaticResource Primary50}" Style="{StaticResource IconoBox}">
+                                <Label Text="🧑" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Inquilinos" Style="{StaticResource ModuloTitulo}" />
+                            <Label Text="Residentes y datos" Style="{StaticResource ModuloDesc}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Departamentos -->
+                    <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource ModuloCard}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnModuloTapped" CommandParameter="Departamentos" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="10">
+                            <Border BackgroundColor="{StaticResource Accent100}" Style="{StaticResource IconoBox}">
+                                <Label Text="🏠" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Departamentos" Style="{StaticResource ModuloTitulo}" />
+                            <Label Text="Unidades y estado" Style="{StaticResource ModuloDesc}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Edificios -->
+                    <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource ModuloCard}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnModuloTapped" CommandParameter="Edificios" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="10">
+                            <Border BackgroundColor="{StaticResource Primary50}" Style="{StaticResource IconoBox}">
+                                <Label Text="🏢" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Edificios" Style="{StaticResource ModuloTitulo}" />
+                            <Label Text="Torres y niveles" Style="{StaticResource ModuloDesc}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Vigilantes -->
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ModuloCard}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnModuloTapped" CommandParameter="Vigilantes" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="10">
+                            <Border BackgroundColor="{StaticResource Primary50}" Style="{StaticResource IconoBox}">
+                                <Label Text="🛡️" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Vigilantes" Style="{StaticResource ModuloTitulo}" />
+                            <Label Text="Personal y turnos" Style="{StaticResource ModuloDesc}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Visitantes -->
+                    <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource ModuloCard}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnModuloTapped" CommandParameter="Visitantes" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="10">
+                            <Border BackgroundColor="{StaticResource Accent100}" Style="{StaticResource IconoBox}">
+                                <Label Text="🚶" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Visitantes" Style="{StaticResource ModuloTitulo}" />
+                            <Label Text="Registros de visita" Style="{StaticResource ModuloDesc}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Catalogos -->
+                    <Border Grid.Row="2" Grid.Column="1" Style="{StaticResource ModuloCard}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnModuloTapped" CommandParameter="Catálogos" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="10">
+                            <Border BackgroundColor="{StaticResource Primary50}" Style="{StaticResource IconoBox}">
+                                <Label Text="📋" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Catálogos" Style="{StaticResource ModuloTitulo}" />
+                            <Label Text="Tipos y perfiles" Style="{StaticResource ModuloDesc}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Footer (pendiente definir) -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*,*,*"
+              BackgroundColor="{StaticResource Surface}"
+              Padding="8,9,8,11">
+            <VerticalStackLayout Grid.Column="0" Spacing="3" HorizontalOptions="Center">
+                <Label Text="🏠" FontSize="18" HorizontalOptions="Center" />
+                <Label Text="Inicio" FontSize="10" FontAttributes="Bold"
+                       TextColor="{StaticResource Primary}" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1" Spacing="3" HorizontalOptions="Center">
+                <Label Text="🗂️" FontSize="18" HorizontalOptions="Center" />
+                <Label Text="Módulos" FontSize="10"
+                       TextColor="{StaticResource Muted}" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="2" Spacing="3" HorizontalOptions="Center">
+                <Label Text="🎫" FontSize="18" HorizontalOptions="Center" />
+                <Label Text="Visitas" FontSize="10"
+                       TextColor="{StaticResource Muted}" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="3" Spacing="3" HorizontalOptions="Center">
+                <Label Text="👤" FontSize="18" HorizontalOptions="Center" />
+                <Label Text="Perfil" FontSize="10"
+                       TextColor="{StaticResource Muted}" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+</ContentPage>

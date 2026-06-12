@@ -1,0 +1,15 @@
+using UHabitacional.MOBILE.Pages;
+
+namespace UHabitacional.MOBILE;
+
+public partial class AppShell : Shell
+{
+	public AppShell()
+	{
+		InitializeComponent();
+
+		// Registramos las rutas a las que navegamos desde el código.
+		Routing.RegisterRoute("home", typeof(HomePage));
+		Routing.RegisterRoute("enconstruccion", typeof(EnConstruccionPage));
+	}
+}

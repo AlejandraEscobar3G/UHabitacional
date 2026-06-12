@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UHabitacional.MOBILE.Pages.LoginPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+
+    <ScrollView>
+        <Grid Padding="28,0" RowDefinitions="*,Auto,*">
+
+            <VerticalStackLayout Grid.Row="1" Spacing="0">
+
+                <!-- Logo -->
+                <HorizontalStackLayout HorizontalOptions="Center"
+                                       HeightRequest="64"
+                                       Spacing="6"
+                                       Margin="0,0,0,18">
+                    <BoxView WidthRequest="20" HeightRequest="38" CornerRadius="3"
+                             Color="{StaticResource Primary}" VerticalOptions="End" />
+                    <BoxView WidthRequest="20" HeightRequest="52" CornerRadius="3"
+                             Color="{StaticResource Accent}" VerticalOptions="End" />
+                    <BoxView WidthRequest="20" HeightRequest="64" CornerRadius="3"
+                             Color="{StaticResource Ink}" VerticalOptions="End" />
+                </HorizontalStackLayout>
+
+                <!-- Nombre UHabitacional -->
+                <Label HorizontalOptions="Center" FontSize="22" FontAttributes="Bold">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="U" TextColor="{StaticResource Ink}" />
+                            <Span Text="Habitacional" TextColor="{StaticResource Accent}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <Label Text="Control de acceso residencial"
+                       HorizontalOptions="Center"
+                       FontSize="13"
+                       TextColor="{StaticResource Muted}"
+                       Margin="0,4,0,28" />
+
+                <!-- Formulario -->
+                <Label Text="USUARIO"
+                       FontSize="11"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource Muted}"
+                       Margin="2,0,0,6" />
+                <Border Stroke="{StaticResource Line}" StrokeThickness="1"
+                        BackgroundColor="{StaticResource Surface}"
+                        StrokeShape="RoundRectangle 11"
+                        Padding="13,2">
+                    <Entry x:Name="EmailEntry"
+                           Placeholder="correo@ejemplo.com"
+                           Keyboard="Email"
+                           FontSize="14"
+                           TextColor="{StaticResource Ink}" />
+                </Border>
+
+                <!-- Campo: contraseña -->
+                <Label Text="CONTRASEÑA"
+                       FontSize="11"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource Muted}"
+                       Margin="2,16,0,6" />
+                <Border Stroke="{StaticResource Line}" StrokeThickness="1"
+                        BackgroundColor="{StaticResource Surface}"
+                        StrokeShape="RoundRectangle 11"
+                        Padding="13,2">
+                    <Entry x:Name="PasswordEntry"
+                           Placeholder="••••••••"
+                           IsPassword="True"
+                           FontSize="14"
+                           TextColor="{StaticResource Ink}" />
+                </Border>
+
+                <!-- Mensaje de Error -->
+                <Label x:Name="ErrorLabel"
+                       IsVisible="False"
+                       TextColor="{StaticResource Danger}"
+                       FontSize="12"
+                       Margin="2,10,0,0" />
+
+                <!-- Iniciar sesión -->
+                <Button x:Name="LoginButton"
+                        Text="Iniciar sesión"
+                        Clicked="OnLoginClicked"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="15"
+                        HeightRequest="52"
+                        CornerRadius="12"
+                        Margin="0,22,0,0" />
+
+                <!-- Loader -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsVisible="False"
+                                   IsRunning="False"
+                                   Color="{StaticResource Primary}"
+                                   Margin="0,14,0,0" />
+
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>
