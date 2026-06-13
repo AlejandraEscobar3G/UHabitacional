@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:UHabitacional.MOBILE.Models"
+             x:Class="UHabitacional.MOBILE.Pages.TiposIdentificacionPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+
+    <!-- Definicion de grid principal -->
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- HEADER -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,14">
+            <Label Grid.Column="0" Text="←" FontSize="22" TextColor="{StaticResource Ink}"
+                   VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRegresarTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Grid.Column="1" Text="Tipos de identificación" FontSize="16" FontAttributes="Bold"
+                   TextColor="{StaticResource Ink}"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- BODY -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,4,16,16" Spacing="11">
+
+                <Label Text="Identificaciones válidas para visitantes"
+                       FontSize="12"
+                       TextColor="{StaticResource Muted}"
+                       Margin="2,4,0,4" />
+
+                <!-- Indicador de carga -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsVisible="False" IsRunning="False"
+                                   Color="{StaticResource Primary}"
+                                   HorizontalOptions="Center"
+                                   Margin="0,24,0,0" />
+
+                <!-- Mensaje de error o lista vacia -->
+                <Label x:Name="MensajeLabel"
+                       IsVisible="False"
+                       FontSize="13"
+                       TextColor="{StaticResource Muted}"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,24,0,0" />
+
+                <!-- Lista de tipos de identificacion -->
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Tipos}" Spacing="11">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Identificacion">
+                            <Border Style="{StaticResource ModuloCard}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnTipoTapped"
+                                                          CommandParameter="{Binding Nombre}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Border Grid.Column="0"
+                                            BackgroundColor="{StaticResource Primary50}"
+                                            Style="{StaticResource IconoBox}"
+                                            VerticalOptions="Center">
+                                        <Label Text="🪪" FontSize="18"
+                                               HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                        <Label Text="{Binding Nombre}" Style="{StaticResource ModuloTitulo}" />
+                                        <Label Text="{Binding Descripcion}" Style="{StaticResource ModuloDesc}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="2" Text="›" FontSize="22"
+                                           TextColor="{StaticResource Muted}" VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+</ContentPage>

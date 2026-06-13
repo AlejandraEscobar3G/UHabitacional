@@ -18,6 +18,8 @@ public partial class CatalogosPage : ContentPage
 
         if (catalogo == "Perfiles")
             await Shell.Current.GoToAsync("perfiles");
+        else if (catalogo == "Tipos de identificación")
+            await Shell.Current.GoToAsync("tiposidentificacion");
         else
             await Shell.Current.GoToAsync($"enconstruccion?modulo={Uri.EscapeDataString(catalogo)}");
     }
