@@ -21,8 +21,6 @@ public partial class HomePage : ContentPage
         SaludoLabel.Text = $"Hola, {nombre} 👋";
     }
 
-    // El módulo "Catálogos" abre su propia vista; el resto, por ahora,
-    // llevan a la pantalla "Sitio en construcción".
     private async void OnModuloTapped(object? sender, TappedEventArgs e)
     {
         string modulo = e.Parameter?.ToString() ?? string.Empty;

@@ -5,10 +5,10 @@
              Shell.NavBarIsVisible="False"
              BackgroundColor="{StaticResource Background}">
 
-    <!-- Solo 2 filas: encabezado y contenido. NO hay barra inferior. -->
+    <!-- Definicion de grid principal -->
     <Grid RowDefinitions="Auto,*">
 
-        <!-- ====== Encabezado con flecha para regresar ====== -->
+        <!-- HEADER -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,14">
             <Label Grid.Column="0" Text="←" FontSize="22" TextColor="{StaticResource Ink}"
                    VerticalOptions="Center">
@@ -21,7 +21,7 @@
                    HorizontalOptions="Center" VerticalOptions="Center" />
         </Grid>
 
-        <!-- ====== Contenido ====== -->
+        <!-- BODY -->
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16,4,16,16" Spacing="11">
 

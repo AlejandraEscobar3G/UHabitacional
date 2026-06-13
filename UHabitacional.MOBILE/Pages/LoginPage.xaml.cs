@@ -12,7 +12,6 @@ public partial class LoginPage : ContentPage
         InitializeComponent();
     }
 
-    // Se ejecuta cuando el usuario toca el botón "Iniciar sesión".
     private async void OnLoginClicked(object? sender, EventArgs e)
     {
         ErrorLabel.IsVisible = false;
@@ -20,7 +19,6 @@ public partial class LoginPage : ContentPage
         string email = EmailEntry.Text?.Trim() ?? string.Empty;
         string password = PasswordEntry.Text ?? string.Empty;
 
-        // Validación sencilla antes de llamar a la API.
         if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
         {
             MostrarError("Escribe tu correo y tu contraseña.");

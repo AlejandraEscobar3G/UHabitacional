@@ -23,7 +23,6 @@ public partial class EnConstruccionPage : ContentPage
         InitializeComponent();
     }
 
-    // Flecha "←": regresa a la pantalla anterior (el Home).
     private async void OnRegresarTapped(object? sender, TappedEventArgs e)
     {
         await Shell.Current.GoToAsync("..");
