@@ -9,9 +9,7 @@
 
         <!-- Header Inicio -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,14">
-            <Label Grid.Column="0" Text="☰" FontSize="22" TextColor="{StaticResource Ink}"
-                   VerticalOptions="Center" />
-            <Label Grid.Column="1" Text="Inicio" FontSize="16" FontAttributes="Bold"
+            <Label Grid.Column="0" Text="Inicio" FontSize="16" FontAttributes="Bold"
                    TextColor="{StaticResource Ink}"
                    HorizontalOptions="Center" VerticalOptions="Center" />
             <Label Grid.Column="2" Text="👤" FontSize="18"
@@ -127,30 +125,5 @@
         </ScrollView>
 
         <!-- Footer (pendiente definir) -->
-        <Grid Grid.Row="2" ColumnDefinitions="*,*,*,*"
-              BackgroundColor="{StaticResource Surface}"
-              Padding="8,9,8,11">
-            <VerticalStackLayout Grid.Column="0" Spacing="3" HorizontalOptions="Center">
-                <Label Text="🏠" FontSize="18" HorizontalOptions="Center" />
-                <Label Text="Inicio" FontSize="10" FontAttributes="Bold"
-                       TextColor="{StaticResource Primary}" HorizontalOptions="Center" />
-            </VerticalStackLayout>
-            <VerticalStackLayout Grid.Column="1" Spacing="3" HorizontalOptions="Center">
-                <Label Text="🗂️" FontSize="18" HorizontalOptions="Center" />
-                <Label Text="Módulos" FontSize="10"
-                       TextColor="{StaticResource Muted}" HorizontalOptions="Center" />
-            </VerticalStackLayout>
-            <VerticalStackLayout Grid.Column="2" Spacing="3" HorizontalOptions="Center">
-                <Label Text="🎫" FontSize="18" HorizontalOptions="Center" />
-                <Label Text="Visitas" FontSize="10"
-                       TextColor="{StaticResource Muted}" HorizontalOptions="Center" />
-            </VerticalStackLayout>
-            <VerticalStackLayout Grid.Column="3" Spacing="3" HorizontalOptions="Center">
-                <Label Text="👤" FontSize="18" HorizontalOptions="Center" />
-                <Label Text="Perfil" FontSize="10"
-                       TextColor="{StaticResource Muted}" HorizontalOptions="Center" />
-            </VerticalStackLayout>
-        </Grid>
-
     </Grid>
 </ContentPage>
