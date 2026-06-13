@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UHabitacional.MOBILE.Pages.CatalogosPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+
+    <!-- Solo 2 filas: encabezado y contenido. NO hay barra inferior. -->
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ====== Encabezado con flecha para regresar ====== -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,14">
+            <Label Grid.Column="0" Text="←" FontSize="22" TextColor="{StaticResource Ink}"
+                   VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRegresarTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Grid.Column="1" Text="Catálogos" FontSize="16" FontAttributes="Bold"
+                   TextColor="{StaticResource Ink}"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- ====== Contenido ====== -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,4,16,16" Spacing="11">
+
+                <Label Text="Selecciona un catálogo"
+                       FontSize="12"
+                       TextColor="{StaticResource Muted}"
+                       Margin="2,4,0,4" />
+
+                <!-- Tipos de identificación -->
+                <Border Style="{StaticResource ModuloCard}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCatalogoTapped" CommandParameter="Tipos de identificación" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Border Grid.Column="0" BackgroundColor="{StaticResource Primary50}"
+                                Style="{StaticResource IconoBox}" VerticalOptions="Center">
+                            <Label Text="🪪" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                            <Label Text="Tipos de identificación" Style="{StaticResource ModuloTitulo}" />
+                            <Label Text="Identificaciones válidas para visitantes" Style="{StaticResource ModuloDesc}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="22"
+                               TextColor="{StaticResource Muted}" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <!-- Perfiles -->
+                <Border Style="{StaticResource ModuloCard}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCatalogoTapped" CommandParameter="Perfiles" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Border Grid.Column="0" BackgroundColor="{StaticResource Accent100}"
+                                Style="{StaticResource IconoBox}" VerticalOptions="Center">
+                            <Label Text="👥" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                            <Label Text="Perfiles" Style="{StaticResource ModuloTitulo}" />
+                            <Label Text="Perfiles de usuario y permisos" Style="{StaticResource ModuloDesc}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="›" FontSize="22"
+                               TextColor="{StaticResource Muted}" VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+</ContentPage>

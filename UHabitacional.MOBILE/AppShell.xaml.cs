@@ -10,6 +10,7 @@ public partial class AppShell : Shell
 
 		// Registramos las rutas a las que navegamos desde el código.
 		Routing.RegisterRoute("home", typeof(HomePage));
+		Routing.RegisterRoute("catalogos", typeof(CatalogosPage));
 		Routing.RegisterRoute("enconstruccion", typeof(EnConstruccionPage));
 	}
 }

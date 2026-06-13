@@ -21,11 +21,19 @@ public partial class HomePage : ContentPage
         SaludoLabel.Text = $"Hola, {nombre} 👋";
     }
 
-    // Todos los módulos llevan a la pantalla "Sitio en construcción".
-    // Pasamos el nombre del módulo como parámetro para mostrarlo allí.
+    // El módulo "Catálogos" abre su propia vista; el resto, por ahora,
+    // llevan a la pantalla "Sitio en construcción".
     private async void OnModuloTapped(object? sender, TappedEventArgs e)
     {
         string modulo = e.Parameter?.ToString() ?? string.Empty;
-        await Shell.Current.GoToAsync($"enconstruccion?modulo={Uri.EscapeDataString(modulo)}");
+
+        if (modulo == "Catálogos")
+        {
+            await Shell.Current.GoToAsync("catalogos");
+        }
+        else
+        {
+            await Shell.Current.GoToAsync($"enconstruccion?modulo={Uri.EscapeDataString(modulo)}");
+        }
     }
 }
