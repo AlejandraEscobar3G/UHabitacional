@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UHabitacional.MOBILE.Pages.PerfilesPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+    
+    <!-- Definicion de grid principal -->
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- HEADER -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,14">
+            <Label Grid.Column="0" Text="←" FontSize="22" TextColor="{StaticResource Ink}"
+                   VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRegresarTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Grid.Column="1" Text="Perfiles de usuario" FontSize="16" FontAttributes="Bold"
+                   TextColor="{StaticResource Ink}"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- BODY -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,4,16,16" Spacing="11">
+                <Label Text="Define los permisos por tipo de perfil"
+                       FontSize="12"
+                       TextColor="{StaticResource Muted}"
+                       Margin="2,4,0,4" />
+            
+
+                <!-- Lista de perfiles -->
+                <Border Style="{StaticResource ModuloCard}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPerfilTapped"
+                                CommandParameter="Administrador"/>
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                            ColumnSpacing="12">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource Primary50}"
+                                Style="{StaticResource IconoBox}"
+                                VerticalOptions="Center">
+                            <Label Text="🛡️"
+                                    FontSize="18"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1"
+                                VerticalOptions="Center"
+                                Spacing="3">
+                            <Label Text="Administrador"
+                                    Style="{StaticResource ModuloTitulo}"/>
+                            <Label Text="Acceso total al sistema"
+                                    Style="{StaticResource ModuloDesc}"/>
+                            <Border Style="{StaticResource Pill}"
+                                    HorizontalOptions="Start">
+                                <Label Text="3 usuarios"
+                                        FontSize="10"
+                                        TextColor="{StaticResource Muted}"/>
+                            </Border>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2"
+                                Text="›"
+                                FontSize="22"
+                                TextColor="{StaticResource Muted}"
+                                VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
