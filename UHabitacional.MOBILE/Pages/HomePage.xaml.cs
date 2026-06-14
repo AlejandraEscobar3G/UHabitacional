@@ -33,6 +33,10 @@ public partial class HomePage : ContentPage
         {
             await Shell.Current.GoToAsync("vigilantes");
         }
+        else if (modulo == "Edificios")
+        {
+            await Shell.Current.GoToAsync("edificios");
+        }
         else
         {
             await Shell.Current.GoToAsync($"enconstruccion?modulo={Uri.EscapeDataString(modulo)}");
