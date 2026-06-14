@@ -53,7 +53,7 @@
                             <Border Style="{StaticResource ModuloCard}">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="OnEdificioTapped"
-                                                          CommandParameter="{Binding Nombre}" />
+                                                          CommandParameter="{Binding IdEdificio}" />
                                 </Border.GestureRecognizers>
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                                     <Border Grid.Column="0"
@@ -88,6 +88,20 @@
 
             </VerticalStackLayout>
         </ScrollView>
+
+        <!-- Boton: crear edificio -->
+        <Border Grid.Row="1"
+                BackgroundColor="{StaticResource Primary}"
+                WidthRequest="56" HeightRequest="56"
+                StrokeThickness="0" StrokeShape="RoundRectangle 28"
+                HorizontalOptions="End" VerticalOptions="End"
+                Margin="0,0,20,20">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnNuevoEdificioTapped" />
+            </Border.GestureRecognizers>
+            <Label Text="+" FontSize="28" TextColor="White"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+        </Border>
 
     </Grid>
 </ContentPage>

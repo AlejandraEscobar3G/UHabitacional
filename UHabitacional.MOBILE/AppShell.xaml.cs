@@ -15,6 +15,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("tiposidentificacion", typeof(TiposIdentificacionPage));
 		Routing.RegisterRoute("vigilantes", typeof(VigilantesPage));
 		Routing.RegisterRoute("edificios", typeof(EdificiosPage));
+		Routing.RegisterRoute("edificios/id", typeof(EdificioFormPage));
 		Routing.RegisterRoute("enconstruccion", typeof(EnConstruccionPage));
 	}
 }

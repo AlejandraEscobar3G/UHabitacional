@@ -71,7 +71,18 @@ public partial class EdificiosPage : ContentPage
 
     private async void OnEdificioTapped(object? sender, TappedEventArgs e)
     {
-        string edificio = e.Parameter?.ToString() ?? string.Empty;
-        await Shell.Current.GoToAsync($"enconstruccion?modulo={Uri.EscapeDataString(edificio)}");
+        if (e.Parameter is null)
+        {
+            return;
+        }
+
+        int id = Convert.ToInt32(e.Parameter);
+        await Shell.Current.GoToAsync($"edificios/id?id={id}");
+    }
+
+    private async void OnNuevoEdificioTapped(object? sender, TappedEventArgs e)
+    {
+        // formulario de crear (no lleva id)
+        await Shell.Current.GoToAsync("edificios/id");
     }
 }

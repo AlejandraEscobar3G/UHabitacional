@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UHabitacional.MOBILE.Pages.EdificioFormPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+
+    <!-- Definicion de grid principal -->
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- HEADER -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,14">
+            <Label Grid.Column="0" Text="←" FontSize="22" TextColor="{StaticResource Ink}"
+                   VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRegresarTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label x:Name="TituloLabel" Grid.Column="1" Text="Crear edificio"
+                   FontSize="16" FontAttributes="Bold" TextColor="{StaticResource Ink}"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- BODY -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,4,16,16" Spacing="14">
+
+                <!-- Indicador de carga -->
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsVisible="False" IsRunning="False"
+                                   Color="{StaticResource Primary}"
+                                   HorizontalOptions="Center" Margin="0,8,0,0" />
+
+                <!-- Mensaje de error o validación -->
+                <Label x:Name="MensajeLabel"
+                       IsVisible="False" FontSize="13"
+                       TextColor="{StaticResource Danger}" />
+
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Nombre" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <Entry x:Name="NombreEntry" Placeholder="Escribe el nombre del edificio..." />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Descripción" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <Editor x:Name="DescripcionEditor" Placeholder="Describe el edificio..."
+                                HeightRequest="90" AutoSize="TextChanges" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Número de pisos" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <Entry x:Name="NumeroPisosEntry" Placeholder="0" Keyboard="Numeric" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Total de departamentos" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <Entry x:Name="TotalDeptosEntry" Placeholder="0" Keyboard="Numeric" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="11" Margin="0,8,0,0">
+                    <Button Grid.Column="0" Text="Cancelar" Clicked="OnCancelarClicked"
+                            BackgroundColor="Transparent" TextColor="{StaticResource Primary}"
+                            BorderColor="{StaticResource Line}" BorderWidth="1" />
+                    <Button x:Name="GuardarButton" Grid.Column="1" Text="Guardar" Clicked="OnGuardarClicked" />
+                </Grid>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+</ContentPage>
