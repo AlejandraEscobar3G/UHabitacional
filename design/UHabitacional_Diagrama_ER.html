@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Diagrama ER – UHabitacional</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #F5F7F5; }
+  .page-header {
+    background: #2D4A3E; color: white;
+    padding: 18px 28px; display: flex; align-items: center; gap: 20px;
+  }
+  .page-header h1 { font-size: 18px; }
+  .page-header h2 { font-size: 13px; opacity: .75; font-weight: 400; }
+  .print-btn {
+    margin-left: auto; background: white; color: #2D4A3E;
+    border: none; padding: 8px 18px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .diagram-scroll { padding: 24px; overflow: auto; }
+  svg text { font-family: system-ui, -apple-system, sans-serif; }
+  @media print {
+    body { background: white; }
+    .page-header .print-btn { display: none; }
+    .diagram-scroll { padding: 0; overflow: visible; }
+  }
+  .legend {
+    display: flex; gap: 20px; padding: 12px 24px;
+    background: white; border-top: 1px solid #E6E4DF;
+    font-size: 12px; color: #444;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .badge { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; color: white; }
+  .badge-pk { background: #D4A017; }
+  .badge-fk { background: #3A7BD5; }
+  .badge-line { width: 24px; height: 2px; background: #2D4A3E; display: inline-block; }
+  .badge-dashed { width: 24px; height: 2px; background: #2D4A3E; display: inline-block; border-top: 2px dashed #2D4A3E; background: none; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>Diagrama Entidad-Relación</h1>
+    <h2>Sistema UHabitacional — Base de datos SQL Server</h2>
+  </div>
+  <button class="print-btn" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="badge badge-pk">PK</span> Clave primaria</div>
+  <div class="legend-item"><span class="badge badge-fk">FK</span> Clave foránea</div>
+  <div class="legend-item"><span class="badge-line"></span> Relación 1:N</div>
+  <div class="legend-item"><span class="badge-dashed"></span> Relación 1:N (nullable)</div>
+  <div class="legend-item">1 / N — Cardinalidad en los extremos</div>
+</div>
+
+<div class="diagram-scroll">
+<svg id="er" xmlns="http://www.w3.org/2000/svg" width="1210" height="1090"
+     style="background:white; border-radius:8px; box-shadow:0 2px 12px rgba(0,0,0,.1);">
+
+<defs>
+  <marker id="arrow-n" markerWidth="10" markerHeight="10" refX="9" refY="4" orient="auto">
+    <path d="M0,0 L0,8 L9,4 Z" fill="#2D4A3E"/>
+  </marker>
+  <marker id="arrow-n-dash" markerWidth="10" markerHeight="10" refX="9" refY="4" orient="auto">
+    <path d="M0,0 L0,8 L9,4 Z" fill="#7A9E8E"/>
+  </marker>
+</defs>
+
+<script type="text/javascript">
+// ── Data ────────────────────────────────────────────────────────────────────
+const W=250, RH=24, HH=34;
+const PC='#2D4A3E', GLD='#D4A017', BLU='#3A7BD5', MUT='#6B7280';
+const NS='http://www.w3.org/2000/svg';
+
+const TABLES = [
+  { id:'TipoUsuario', x:10, y:25, cols:[
+    {n:'IdTipoUsuario',   t:'INT',          pk:true},
+    {n:'Nombre',          t:'NVARCHAR(50)'},
+    {n:'Descripcion',     t:'NVARCHAR(200)'},
+    {n:'Activo',          t:'BIT'},
+    {n:'FechaCreacion',   t:'DATETIME2'},
+    {n:'FechaModificacion',t:'DATETIME2'},
+  ]},
+  { id:'Usuario', x:295, y:25, cols:[
+    {n:'IdUsuario',          t:'INT',          pk:true},
+    {n:'IdTipoUsuario',      t:'INT',          fk:true},
+    {n:'IdIdentificacion',   t:'INT',          fk:true},
+    {n:'NumeroIdentificacion',t:'NVARCHAR(50)'},
+    {n:'Nombre',             t:'NVARCHAR(100)'},
+    {n:'Apellidos',          t:'NVARCHAR(100)'},
+    {n:'Email',              t:'NVARCHAR(150)'},
+    {n:'PasswordHash',       t:'NVARCHAR(255)'},
+    {n:'Telefono',           t:'NVARCHAR(20)'},
+    {n:'Activo',             t:'BIT'},
+    {n:'FechaCreacion',      t:'DATETIME2'},
+    {n:'FechaModificacion',  t:'DATETIME2'},
+  ]},
+  { id:'Identificacion', x:635, y:25, cols:[
+    {n:'IdIdentificacion',  t:'INT',          pk:true},
+    {n:'Nombre',            t:'NVARCHAR(50)'},
+    {n:'Descripcion',       t:'NVARCHAR(200)'},
+    {n:'Activo',            t:'BIT'},
+    {n:'FechaCreacion',     t:'DATETIME2'},
+    {n:'FechaModificacion', t:'DATETIME2'},
+  ]},
+  { id:'Edificio', x:940, y:25, cols:[
+    {n:'IdEdificio',        t:'INT',          pk:true},
+    {n:'Nombre',            t:'NVARCHAR(100)'},
+    {n:'Descripcion',       t:'NVARCHAR(500)'},
+    {n:'NumeroPisos',       t:'INT'},
+    {n:'TotalDeptos',       t:'INT'},
+    {n:'FechaCreacion',     t:'DATETIME2'},
+    {n:'FechaModificacion', t:'DATETIME2'},
+  ]},
+  { id:'Sesion', x:10, y:255, cols:[
+    {n:'IdSesion',           t:'INT',          pk:true},
+    {n:'IdUsuario',          t:'INT',          fk:true},
+    {n:'Jti',                t:'NVARCHAR(100)'},
+    {n:'FechaInicio',        t:'DATETIME2'},
+    {n:'FechaExpiracion',    t:'DATETIME2'},
+    {n:'FechaUltimaActividad',t:'DATETIME2'},
+    {n:'FechaCierre',        t:'DATETIME2'},
+    {n:'DireccionIP',        t:'NVARCHAR(50)'},
+    {n:'UserAgent',          t:'NVARCHAR(500)'},
+    {n:'Activa',             t:'BIT'},
+  ]},
+  { id:'Departamento', x:940, y:275, cols:[
+    {n:'IdDepartamento',    t:'INT',          pk:true},
+    {n:'IdEdificio',        t:'INT',          fk:true},
+    {n:'NumeroDepartamento',t:'NVARCHAR(10)'},
+    {n:'Piso',              t:'INT'},
+    {n:'FechaCreacion',     t:'DATETIME2'},
+    {n:'FechaModificacion', t:'DATETIME2'},
+  ]},
+  { id:'Inquilino', x:600, y:410, cols:[
+    {n:'IdInquilino',       t:'INT',          pk:true},
+    {n:'IdUsuario',         t:'INT',          fk:true},
+    {n:'IdDepartamento',    t:'INT',          fk:true},
+    {n:'FechaInicio',       t:'DATE'},
+    {n:'FechaFin',          t:'DATE'},
+    {n:'Activo',            t:'BIT'},
+    {n:'FechaCreacion',     t:'DATETIME2'},
+    {n:'FechaModificacion', t:'DATETIME2'},
+  ]},
+  { id:'BitacoraVigilante', x:10, y:610, cols:[
+    {n:'IdBitacoraVigilante',t:'INT',         pk:true},
+    {n:'IdUsuario',          t:'INT',         fk:true},
+    {n:'FechaHoraEntrada',   t:'DATETIME2'},
+    {n:'FechaHoraSalida',    t:'DATETIME2'},
+    {n:'Observaciones',      t:'NVARCHAR(500)'},
+    {n:'FechaCreacion',      t:'DATETIME2'},
+    {n:'FechaModificacion',  t:'DATETIME2'},
+  ]},
+  { id:'BitacoraVisitante', x:350, y:690, cols:[
+    {n:'IdBitacoraVisitante', t:'INT',         pk:true},
+    {n:'IdInquilino',         t:'INT',         fk:true},
+    {n:'NombreVisitante',     t:'NVARCHAR(150)'},
+    {n:'IdIdentificacion',    t:'INT',         fk:true},
+    {n:'NumeroIdentificacion',t:'NVARCHAR(50)'},
+    {n:'CodigoVisita',        t:'NVARCHAR(6)'},
+    {n:'FechaHoraLlegada',    t:'DATETIME2'},
+    {n:'FechaHoraSalida',     t:'DATETIME2'},
+    {n:'Observaciones',       t:'NVARCHAR(500)'},
+    {n:'IdVigilanteEntrada',  t:'INT',         fk:true, nullable:true},
+    {n:'IdVigilanteSalida',   t:'INT',         fk:true, nullable:true},
+    {n:'Activo',              t:'BIT'},
+    {n:'FechaCreacion',       t:'DATETIME2'},
+    {n:'FechaModificacion',   t:'DATETIME2'},
+  ]},
+];
+
+// Get table object by id
+function tbl(id) { return TABLES.find(t => t.id === id); }
+
+// Table height
+function tH(t) { return HH + t.cols.length * RH; }
+
+// Center y of a specific row (0-based)
+function rY(t, ri) { return t.y + HH + ri * RH + RH/2; }
+
+// Right edge x
+function rX(t) { return t.x + W; }
+
+// ── Render ──────────────────────────────────────────────────────────────────
+function mk(tag, attrs) {
+  const e = document.createElementNS(NS, tag);
+  Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k, String(v)));
+  return e;
+}
+function txt(x, y, s, attrs) {
+  const e = mk('text', {x, y, ...attrs});
+  e.textContent = s;
+  return e;
+}
+
+const svg = document.getElementById('er');
+
+// Draw tables
+for (const t of TABLES) {
+  const h = tH(t);
+  const g = mk('g', {});
+
+  // Drop shadow
+  g.appendChild(mk('rect', {x:t.x+3, y:t.y+3, width:W, height:h, rx:7, fill:'#00000018'}));
+
+  // White body
+  g.appendChild(mk('rect', {x:t.x, y:t.y, width:W, height:h, rx:7, fill:'white', stroke:PC, 'stroke-width':1.5}));
+
+  // Header fill
+  g.appendChild(mk('rect', {x:t.x, y:t.y, width:W, height:HH, rx:7, fill:PC}));
+  // Cover bottom-rounded corners of header
+  g.appendChild(mk('rect', {x:t.x, y:t.y+HH-8, width:W, height:8, fill:PC}));
+  // Header text
+  g.appendChild(txt(t.x+W/2, t.y+HH-10, t.id, {'text-anchor':'middle', fill:'white', 'font-size':12, 'font-weight':'bold'}));
+
+  // Rows
+  t.cols.forEach((col, i) => {
+    const ry = t.y + HH + i * RH;
+    // Alternating row bg
+    if (i % 2 === 0) g.appendChild(mk('rect', {x:t.x+1, y:ry, width:W-2, height:RH, fill:'#F7FAF8'}));
+    // Row divider
+    if (i > 0) g.appendChild(mk('line', {x1:t.x, y1:ry, x2:t.x+W, y2:ry, stroke:'#DEE8E3', 'stroke-width':.5}));
+
+    const cy = ry + RH/2 + 4;
+
+    // Badge
+    if (col.pk) {
+      g.appendChild(mk('rect', {x:t.x+5, y:ry+5, width:23, height:14, rx:3, fill:GLD}));
+      g.appendChild(txt(t.x+16, ry+15, 'PK', {'text-anchor':'middle', fill:'white', 'font-size':7.5, 'font-weight':'bold', 'font-family':'monospace'}));
+    } else if (col.fk) {
+      g.appendChild(mk('rect', {x:t.x+5, y:ry+5, width:23, height:14, rx:3, fill:BLU}));
+      g.appendChild(txt(t.x+16, ry+15, 'FK', {'text-anchor':'middle', fill:'white', 'font-size':7.5, 'font-weight':'bold', 'font-family':'monospace'}));
+    }
+
+    // Column name
+    const nx = (col.pk || col.fk) ? t.x+34 : t.x+10;
+    const nf = col.pk ? 'bold' : 'normal';
+    const nc = col.pk ? '#1A1A2E' : col.fk ? '#1A3A6E' : '#444';
+    g.appendChild(txt(nx, cy, col.n, {'font-size':10, 'font-weight':nf, fill:nc}));
+
+    // Type (right-aligned)
+    const typeStr = col.nullable ? col.t+' ?' : col.t;
+    g.appendChild(txt(t.x+W-5, cy, typeStr, {'text-anchor':'end', 'font-size':8.5, 'font-family':'monospace', fill:'#888'}));
+  });
+
+  // Border on top
+  g.appendChild(mk('rect', {x:t.x, y:t.y, width:W, height:h, rx:7, fill:'none', stroke:PC, 'stroke-width':1.5}));
+  svg.appendChild(g);
+}
+
+// ── Relationships ────────────────────────────────────────────────────────────
+// Draw an elbow path with custom waypoints
+function drawRel(points, dashed=false) {
+  const d = 'M' + points.map(p => p.join(',')).join(' L');
+  const color = dashed ? '#7A9E8E' : PC;
+  const p = mk('path', {
+    d, fill:'none', stroke:color, 'stroke-width':1.5,
+    'marker-end': dashed ? 'url(#arrow-n-dash)' : 'url(#arrow-n)',
+    ...(dashed ? {'stroke-dasharray':'5,3'} : {})
+  });
+  svg.insertBefore(p, svg.firstChild);
+  return p;
+}
+
+// Cardinality labels
+function cardLabel(x, y, s, anchor='middle') {
+  const t = txt(x, y, s, {'text-anchor':anchor, fill:PC, 'font-size':10, 'font-weight':'bold', 'font-family':'monospace'});
+  svg.appendChild(t);
+}
+
+const T = {};
+TABLES.forEach(t => T[t.id] = t);
+
+// 1. TipoUsuario → Usuario.IdTipoUsuario
+// TipoUsuario right at row 0 → Usuario left at row 1
+drawRel([[rX(T.TipoUsuario), rY(T.TipoUsuario,0)], [284, rY(T.TipoUsuario,0)], [284, rY(T.Usuario,1)], [T.Usuario.x, rY(T.Usuario,1)]]);
+cardLabel(rX(T.TipoUsuario)+6, rY(T.TipoUsuario,0)-4, '1', 'start');
+cardLabel(T.Usuario.x-5, rY(T.Usuario,1)-4, 'N', 'end');
+
+// 2. Identificacion → Usuario.IdIdentificacion
+// Identificacion left at row 0 → Usuario right at row 2
+drawRel([[T.Identificacion.x, rY(T.Identificacion,0)], [580, rY(T.Identificacion,0)], [580, rY(T.Usuario,2)], [rX(T.Usuario), rY(T.Usuario,2)]]);
+cardLabel(T.Identificacion.x-5, rY(T.Identificacion,0)-4, '1', 'end');
+cardLabel(rX(T.Usuario)+5, rY(T.Usuario,2)-4, 'N', 'start');
+
+// 3. Edificio → Departamento.IdEdificio
+// Right side → right side via offset
+drawRel([[rX(T.Edificio), rY(T.Edificio,0)], [1185, rY(T.Edificio,0)], [1185, rY(T.Departamento,1)], [rX(T.Departamento), rY(T.Departamento,1)]]);
+cardLabel(rX(T.Edificio)+6, rY(T.Edificio,0)-4, '1', 'start');
+cardLabel(rX(T.Departamento)+6, rY(T.Departamento,1)-4, 'N', 'start');
+
+// 4. Usuario → Sesion.IdUsuario
+// Left side of Usuario row 0 → right of Sesion row 1, through gap
+drawRel([[T.Usuario.x, rY(T.Usuario,0)], [272, rY(T.Usuario,0)], [272, rY(T.Sesion,1)], [rX(T.Sesion), rY(T.Sesion,1)]]);
+cardLabel(T.Usuario.x-5, rY(T.Usuario,0)-4, '1', 'end');
+cardLabel(rX(T.Sesion)+5, rY(T.Sesion,1)-4, 'N', 'start');
+
+// 5. Usuario → Inquilino.IdUsuario
+// Right of Usuario row 0 → left of Inquilino row 1
+drawRel([[rX(T.Usuario), rY(T.Usuario,0)], [556, rY(T.Usuario,0)], [556, rY(T.Inquilino,1)], [T.Inquilino.x, rY(T.Inquilino,1)]]);
+cardLabel(rX(T.Usuario)+5, rY(T.Usuario,0)-4, '1', 'start');
+cardLabel(T.Inquilino.x-5, rY(T.Inquilino,1)-4, 'N', 'end');
+
+// 6. Departamento → Inquilino.IdDepartamento
+// Left of Departamento row 0 → right of Inquilino row 2
+drawRel([[T.Departamento.x, rY(T.Departamento,0)], [862, rY(T.Departamento,0)], [862, rY(T.Inquilino,2)], [rX(T.Inquilino), rY(T.Inquilino,2)]]);
+cardLabel(T.Departamento.x-5, rY(T.Departamento,0)-4, '1', 'end');
+cardLabel(rX(T.Inquilino)+5, rY(T.Inquilino,2)-4, 'N', 'start');
+
+// 7. Usuario → BitacoraVigilante.IdUsuario
+// Right of BitacoraVigilante row 1 → left of Usuario via gap between Sesion and Usuario
+drawRel([[rX(T.BitacoraVigilante), rY(T.BitacoraVigilante,1)], [278, rY(T.BitacoraVigilante,1)], [278, rY(T.Usuario,0)+6], [T.Usuario.x, rY(T.Usuario,0)+6]]);
+cardLabel(T.Usuario.x-5, rY(T.Usuario,0)+10, '1', 'end');
+cardLabel(rX(T.BitacoraVigilante)+5, rY(T.BitacoraVigilante,1)-4, 'N', 'start');
+
+// 8. Inquilino → BitacoraVisitante.IdInquilino
+// Left of Inquilino row 0 → route around → left of BitacoraVisitante row 1
+drawRel([[T.Inquilino.x, rY(T.Inquilino,0)], [336, rY(T.Inquilino,0)], [336, rY(T.BitacoraVisitante,1)], [T.BitacoraVisitante.x, rY(T.BitacoraVisitante,1)]]);
+cardLabel(T.Inquilino.x-5, rY(T.Inquilino,0)-4, '1', 'end');
+cardLabel(T.BitacoraVisitante.x-5, rY(T.BitacoraVisitante,1)-4, 'N', 'end');
+
+// 9. Identificacion → BitacoraVisitante.IdIdentificacion
+// Right of Identificacion row 0 → right of BitacoraVisitante row 3 via right corridor
+drawRel([[rX(T.Identificacion), rY(T.Identificacion,0)], [900, rY(T.Identificacion,0)], [900, rY(T.BitacoraVisitante,3)], [rX(T.BitacoraVisitante), rY(T.BitacoraVisitante,3)]]);
+cardLabel(rX(T.Identificacion)+5, rY(T.Identificacion,0)-4, '1', 'start');
+cardLabel(rX(T.BitacoraVisitante)+5, rY(T.BitacoraVisitante,3)-4, 'N', 'start');
+
+// 10. Usuario → BitacoraVisitante.IdVigilanteEntrada (nullable)
+// Bottom of Usuario → down → left of BitacoraVisitante row 9
+const usuarioBottom = T.Usuario.y + tH(T.Usuario);
+drawRel([[T.Usuario.x+W/2-10, usuarioBottom], [T.Usuario.x+W/2-10, rY(T.BitacoraVisitante,9)], [T.BitacoraVisitante.x, rY(T.BitacoraVisitante,9)]], true);
+cardLabel(T.Usuario.x+W/2-10, usuarioBottom+12, '1', 'middle');
+cardLabel(T.BitacoraVisitante.x-5, rY(T.BitacoraVisitante,9)-4, 'N', 'end');
+
+// 11. Usuario → BitacoraVisitante.IdVigilanteSalida (nullable)
+drawRel([[T.Usuario.x+W/2+10, usuarioBottom], [T.Usuario.x+W/2+10, rY(T.BitacoraVisitante,10)], [T.BitacoraVisitante.x, rY(T.BitacoraVisitante,10)]], true);
+cardLabel(T.BitacoraVisitante.x-5, rY(T.BitacoraVisitante,10)-4, 'N', 'end');
+
+</script>
+</svg>
+</div>
+
+</body>
+</html>

@@ -7,4 +7,8 @@ public class Departamento
     public string? NombreEdificio { get; set; }
     public string NumeroDepartamento { get; set; } = string.Empty;
     public int Piso { get; set; }
+
+    public string PisoTexto => $"Piso {Piso}";
+
+    public string Etiqueta => $"{NumeroDepartamento} · Piso {Piso} · {NombreEdificio}";
 }

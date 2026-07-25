@@ -37,6 +37,26 @@ public partial class HomePage : ContentPage
         {
             await Shell.Current.GoToAsync("edificios");
         }
+        else if (modulo == "Inquilinos")
+        {
+            await Shell.Current.GoToAsync("inquilinos");
+        }
+        else if (modulo == "Departamentos")
+        {
+            await Shell.Current.GoToAsync("departamentos");
+        }
+        else if (modulo == "Visitantes")
+        {
+            await Shell.Current.GoToAsync("visitantes");
+        }
+        else if (modulo == "Checador")
+        {
+            await Shell.Current.GoToAsync("checador");
+        }
+        else if (modulo == "RegistroVisitante")
+        {
+            await Shell.Current.GoToAsync("registrovisitante");
+        }
         else
         {
             await Shell.Current.GoToAsync($"enconstruccion?modulo={Uri.EscapeDataString(modulo)}");

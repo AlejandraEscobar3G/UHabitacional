@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Modelo de Negocio – UHabitacional</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #F5F7F5; color: #1A1A2E; }
+
+  /* ── Header ── */
+  .page-header {
+    background: #2D4A3E; color: white;
+    padding: 18px 28px; display: flex; align-items: center; gap: 16px;
+  }
+  .page-header h1 { font-size: 18px; }
+  .page-header p { font-size: 12px; opacity: .7; margin-top: 3px; }
+  .print-btn {
+    margin-left: auto; background: white; color: #2D4A3E;
+    border: none; padding: 8px 18px; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+
+  /* ── Swimlane wrapper ── */
+  .diagram { padding: 28px 32px; overflow-x: auto; }
+
+  .swimlane-wrap {
+    display: grid;
+    grid-template-columns: 140px 1fr 1fr 1fr 1fr;
+    min-width: 980px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1.5px solid #C8D8D2;
+    background: white;
+  }
+
+  /* ── Row labels column ── */
+  .col-labels { background: #2D4A3E; }
+  .col-label-hdr {
+    height: 52px; display: flex; align-items: center; justify-content: center;
+    border-bottom: 1px solid rgba(255,255,255,.2);
+    font-size: 11px; color: rgba(255,255,255,.7); font-weight: 500;
+    padding: 0 10px; text-align: center;
+  }
+  .col-label {
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px 10px; text-align: center;
+    font-size: 12px; font-weight: 700; color: white; letter-spacing: .4px;
+  }
+  .col-label .icon { font-size: 22px; display: block; margin-bottom: 6px; }
+
+  /* ── Actor column headers ── */
+  .actor-headers { grid-column: 2 / 6; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .actor-header {
+    padding: 14px 12px; text-align: center; font-weight: 700; font-size: 13px;
+    border-left: 1.5px solid #C8D8D2;
+  }
+  .actor-header .actor-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+  .actor-header .actor-sub { font-size: 10px; font-weight: 400; opacity: .7; margin-top: 2px; }
+
+  /* ── Swimlane rows ── */
+  .swimlane { grid-column: 2 / 6; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .swimlane.even { background: #F7FAF8; }
+
+  .lane {
+    padding: 20px 14px; border-left: 1.5px solid #C8D8D2; border-top: 1.5px solid #C8D8D2;
+    display: flex; flex-direction: column; gap: 10px; min-height: 140px;
+  }
+
+  /* ── Process boxes ── */
+  .process {
+    background: white; border: 1.5px solid #2D4A3E; border-radius: 8px;
+    padding: 9px 12px; font-size: 11.5px; line-height: 1.4; color: #1A1A2E;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    position: relative;
+  }
+  .process.primary { background: #EAF2EE; border-color: #2D4A3E; font-weight: 600; }
+  .process.secondary { border-style: dashed; color: #555; font-size: 11px; }
+  .process.result {
+    background: #FFF8E1; border-color: #D4A017; font-size: 11px; color: #5C4200;
+  }
+  .process .tag {
+    display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px;
+    border-radius: 3px; margin-bottom: 4px; letter-spacing: .3px;
+  }
+  .tag-auth  { background: #2D4A3E; color: white; }
+  .tag-crud  { background: #3A7BD5; color: white; }
+  .tag-flow  { background: #D4A017; color: white; }
+  .tag-view  { background: #6B7280; color: white; }
+
+  /* ── Arrow indicators ── */
+  .arrow {
+    text-align: center; font-size: 18px; color: #2D4A3E; line-height: 1;
+    padding: 2px 0;
+  }
+  .cross-arrow {
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px; font-size: 10px; color: #2D4A3E; font-weight: 600;
+    padding: 4px 6px; background: #EAF2EE; border-radius: 4px;
+    border: 1px dashed #2D4A3E;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex; gap: 22px; flex-wrap: wrap;
+    padding: 14px 32px; background: white;
+    border-top: 1px solid #E6E4DF; font-size: 11.5px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 7px; }
+  .swatch { width: 28px; height: 14px; border-radius: 4px; flex-shrink: 0; }
+
+  /* ── Print ── */
+  @media print {
+    .print-btn { display: none; }
+    body, .diagram { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div>
+    <h1>Modelo de Negocio — UHabitacional</h1>
+    <p>Diagrama de carriles (swimlanes) · Flujos por actor y módulo</p>
+  </div>
+  <button class="print-btn" onclick="window.print()">🖨 Imprimir / Guardar PDF</button>
+</div>
+
+<div class="diagram">
+<div class="swimlane-wrap">
+
+  <!-- ════ HEADER ROW ════ -->
+  <div class="col-labels">
+    <div class="col-label-hdr">Módulo / Proceso</div>
+  </div>
+  <div class="actor-headers">
+    <div class="actor-header" style="background:#EAF2EE; color:#2D4A3E;">
+      <span class="actor-icon">🏢</span>
+      Administrador
+      <div class="actor-sub">Gestión total del sistema</div>
+    </div>
+    <div class="actor-header" style="background:#E8F0FC; color:#1A3A6E;">
+      <span class="actor-icon">👮</span>
+      Vigilante
+      <div class="actor-sub">Control de acceso</div>
+    </div>
+    <div class="actor-header" style="background:#FFF8E1; color:#5C4200;">
+      <span class="actor-icon">🏠</span>
+      Inquilino
+      <div class="actor-sub">Residente del edificio</div>
+    </div>
+    <div class="actor-header" style="background:#F3F0FF; color:#3D0099;">
+      <span class="actor-icon">🚶</span>
+      Visitante
+      <div class="actor-sub">Persona externa</div>
+    </div>
+  </div>
+
+  <!-- ════ ROW 1: Autenticación ════ -->
+  <div class="col-labels">
+    <div class="col-label">
+      <span class="icon">🔐</span>
+      Autenti­cación
+    </div>
+  </div>
+  <div class="swimlane">
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-auth">AUTH</span><br>
+        Iniciar sesión (Web/API)
+      </div>
+      <div class="process secondary">JWT generado con jti único</div>
+      <div class="process secondary">Sesión registrada en BD</div>
+    </div>
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-auth">AUTH</span><br>
+        Iniciar sesión (App móvil)
+      </div>
+      <div class="process secondary">Token JWT almacenado en SessionService</div>
+    </div>
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-auth">AUTH</span><br>
+        Iniciar sesión (App móvil)
+      </div>
+      <div class="process secondary">Vista de módulos filtrada por rol</div>
+    </div>
+    <div class="lane" style="background:#F9F9F9; justify-content:center; align-items:center;">
+      <div style="text-align:center; color:#999; font-size:11px; font-style:italic;">
+        Sin acceso al sistema<br>(solo recibe código de visita)
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ ROW 2: Catálogos y Configuración ════ -->
+  <div class="col-labels">
+    <div class="col-label">
+      <span class="icon">📋</span>
+      Catálogos y Config.
+    </div>
+  </div>
+  <div class="swimlane even">
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-crud">CRUD</span><br>
+        Gestionar Edificios
+      </div>
+      <div class="process primary">
+        <span class="tag tag-crud">CRUD</span><br>
+        Gestionar Departamentos
+      </div>
+      <div class="process primary">
+        <span class="tag tag-crud">CRUD</span><br>
+        Gestionar Tipos de Identificación
+      </div>
+      <div class="process primary">
+        <span class="tag tag-crud">CRUD</span><br>
+        Gestionar Tipos de Usuario
+      </div>
+    </div>
+    <div class="lane" style="background:#F9F9F9; justify-content:center; align-items:center;">
+      <div style="text-align:center; color:#999; font-size:11px; font-style:italic;">Sin acceso</div>
+    </div>
+    <div class="lane" style="background:#F9F9F9; justify-content:center; align-items:center;">
+      <div style="text-align:center; color:#999; font-size:11px; font-style:italic;">Sin acceso</div>
+    </div>
+    <div class="lane" style="background:#F9F9F9; justify-content:center; align-items:center;">
+      <div style="text-align:center; color:#999; font-size:11px; font-style:italic;">Sin acceso</div>
+    </div>
+  </div>
+
+  <!-- ════ ROW 3: Gestión de Usuarios ════ -->
+  <div class="col-labels">
+    <div class="col-label">
+      <span class="icon">👥</span>
+      Usuarios e Inquilinos
+    </div>
+  </div>
+  <div class="swimlane">
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-crud">CRUD</span><br>
+        Gestionar Vigilantes
+      </div>
+      <div class="process primary">
+        <span class="tag tag-crud">CRUD</span><br>
+        Gestionar Inquilinos
+      </div>
+      <div class="process secondary">Asigna departamento y fechas de contrato</div>
+      <div class="process secondary">Puede desactivar o dar de baja al inquilino</div>
+    </div>
+    <div class="lane" style="background:#F9F9F9; justify-content:center; align-items:center;">
+      <div style="text-align:center; color:#999; font-size:11px; font-style:italic;">Sin acceso</div>
+    </div>
+    <div class="lane">
+      <div class="process secondary">
+        <span class="tag tag-view">VER</span><br>
+        Consulta su propio perfil
+      </div>
+    </div>
+    <div class="lane" style="background:#F9F9F9; justify-content:center; align-items:center;">
+      <div style="text-align:center; color:#999; font-size:11px; font-style:italic;">Sin acceso</div>
+    </div>
+  </div>
+
+  <!-- ════ ROW 4: Registro de Visitantes ════ -->
+  <div class="col-labels">
+    <div class="col-label">
+      <span class="icon">🚶</span>
+      Registro de Visitantes
+    </div>
+  </div>
+  <div class="swimlane even">
+    <div class="lane">
+      <div class="process secondary">
+        <span class="tag tag-view">VER</span><br>
+        Consulta bitácora completa (Web)
+      </div>
+    </div>
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-flow">FLUJO</span><br>
+        Solicita código al visitante
+      </div>
+      <div class="arrow">↓</div>
+      <div class="process primary">Valida código en App móvil</div>
+      <div class="arrow">↓</div>
+      <div class="process primary">Registra entrada (FechaHoraLlegada)</div>
+      <div class="arrow">↓</div>
+      <div class="process primary">Registra salida (FechaHoraSalida)</div>
+    </div>
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-crud">CREAR</span><br>
+        Registra nuevo visitante en App móvil
+      </div>
+      <div class="arrow">↓</div>
+      <div class="process result">Sistema genera CodigoVisita (6 chars)</div>
+      <div class="arrow">↓</div>
+      <div class="process secondary">Comparte código con el visitante</div>
+    </div>
+    <div class="lane">
+      <div class="process result">
+        <span class="tag tag-flow">EXTERNO</span><br>
+        Recibe código de visita del inquilino
+      </div>
+      <div class="arrow">↓</div>
+      <div class="process secondary">Presenta código al vigilante en caseta</div>
+      <div class="arrow">↓</div>
+      <div class="process result">Accede al edificio con autorización</div>
+    </div>
+  </div>
+
+  <!-- ════ ROW 5: Checador de Turnos ════ -->
+  <div class="col-labels">
+    <div class="col-label">
+      <span class="icon">🕐</span>
+      Checador de Turnos
+    </div>
+  </div>
+  <div class="swimlane">
+    <div class="lane">
+      <div class="process secondary">
+        <span class="tag tag-view">VER</span><br>
+        Consulta bitácora de vigilantes (Web)
+      </div>
+    </div>
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-flow">FLUJO</span><br>
+        Registra entrada al turno (App móvil)
+      </div>
+      <div class="arrow">↓</div>
+      <div class="process secondary">Reloj en tiempo real (live clock)</div>
+      <div class="arrow">↓</div>
+      <div class="process primary">Registra salida del turno</div>
+      <div class="arrow">↓</div>
+      <div class="process result">Historial últimas 7 entradas</div>
+    </div>
+    <div class="lane" style="background:#F9F9F9; justify-content:center; align-items:center;">
+      <div style="text-align:center; color:#999; font-size:11px; font-style:italic;">Sin acceso</div>
+    </div>
+    <div class="lane" style="background:#F9F9F9; justify-content:center; align-items:center;">
+      <div style="text-align:center; color:#999; font-size:11px; font-style:italic;">Sin acceso</div>
+    </div>
+  </div>
+
+  <!-- ════ ROW 6: Seguridad y Sesiones ════ -->
+  <div class="col-labels">
+    <div class="col-label">
+      <span class="icon">🛡️</span>
+      Seguridad y Sesiones
+    </div>
+  </div>
+  <div class="swimlane even">
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-auth">AUTH</span><br>
+        Cierra sesión (invalida jti en BD)
+      </div>
+      <div class="process secondary">Middleware valida jti en cada request</div>
+    </div>
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-auth">AUTH</span><br>
+        Cierra sesión en App móvil
+      </div>
+      <div class="process secondary">SessionService.Limpiar() borra token local</div>
+    </div>
+    <div class="lane">
+      <div class="process primary">
+        <span class="tag tag-auth">AUTH</span><br>
+        Cierra sesión en App móvil
+      </div>
+      <div class="process secondary">Sin acceso a módulos de otros roles</div>
+    </div>
+    <div class="lane" style="background:#F9F9F9; justify-content:center; align-items:center;">
+      <div style="text-align:center; color:#999; font-size:11px; font-style:italic;">Sin acceso al sistema</div>
+    </div>
+  </div>
+
+</div><!-- end swimlane-wrap -->
+</div><!-- end diagram -->
+
+<!-- ── Interaction Flow Diagram ── -->
+<div style="padding: 28px 32px; background: #F5F7F5;">
+  <h3 style="font-size:14px; color:#2D4A3E; margin-bottom:16px; font-weight:700;">
+    Flujo Principal: Registro de Visita (interacción entre actores)
+  </h3>
+  <div style="background:white; border-radius:10px; padding:24px 28px; border:1.5px solid #C8D8D2; overflow-x:auto;">
+    <div style="display:flex; align-items:flex-start; gap:0; min-width:800px;">
+
+      <!-- Inquilino -->
+      <div style="flex:1; text-align:center; padding:0 8px;">
+        <div style="background:#FFF8E1; border:2px solid #D4A017; border-radius:8px; padding:8px 6px; font-size:12px; font-weight:700; color:#5C4200;">🏠 Inquilino</div>
+        <div style="border-left:2px dashed #D4A017; margin:0 auto; height:20px; width:2px;"></div>
+        <div style="background:#FFF8E1; border:1px solid #D4A017; border-radius:6px; padding:7px 8px; font-size:10.5px; color:#5C4200; text-align:left;">1. Registra datos del visitante en App (nombre, identificación, observaciones)</div>
+        <div style="border-left:2px dashed #D4A017; margin:0 auto; height:12px; width:2px;"></div>
+        <div style="background:#EAF2EE; border:1px solid #2D4A3E; border-radius:6px; padding:7px 8px; font-size:10.5px; text-align:left;">3. Recibe código generado (CodigoVisita)</div>
+        <div style="border-left:2px dashed #D4A017; margin:0 auto; height:12px; width:2px;"></div>
+        <div style="background:#FFF8E1; border:1px solid #D4A017; border-radius:6px; padding:7px 8px; font-size:10.5px; color:#5C4200; text-align:left;">4. Comparte código con el visitante (WhatsApp, verbal, etc.)</div>
+      </div>
+
+      <!-- Arrow Inquilino → API -->
+      <div style="display:flex; flex-direction:column; align-items:center; padding-top:52px; width:60px; flex-shrink:0;">
+        <div style="font-size:10px; color:#2D4A3E; font-weight:600; text-align:center; margin-bottom:4px;">POST /api/bitacora-visitante</div>
+        <div style="font-size:18px; color:#2D4A3E;">→</div>
+        <div style="font-size:10px; color:#2D4A3E; margin-top:4px; text-align:center;">← CodigoVisita</div>
+      </div>
+
+      <!-- API / Sistema -->
+      <div style="flex:1; text-align:center; padding:0 8px;">
+        <div style="background:#EAF2EE; border:2px solid #2D4A3E; border-radius:8px; padding:8px 6px; font-size:12px; font-weight:700; color:#2D4A3E;">⚙️ API / Sistema</div>
+        <div style="border-left:2px dashed #2D4A3E; margin:0 auto; height:20px; width:2px;"></div>
+        <div style="background:#EAF2EE; border:1px solid #2D4A3E; border-radius:6px; padding:7px 8px; font-size:10.5px; text-align:left;">2. Valida JWT · Determina IdInquilino · Genera CodigoVisita (6 chars) · Persiste en BD</div>
+        <div style="border-left:2px dashed #2D4A3E; margin:0 auto; height:12px; width:2px;"></div>
+        <div style="background:#EAF2EE; border:1px solid #2D4A3E; border-radius:6px; padding:7px 8px; font-size:10.5px; text-align:left;">5. Valida código · Devuelve datos del visitante</div>
+        <div style="border-left:2px dashed #2D4A3E; margin:0 auto; height:12px; width:2px;"></div>
+        <div style="background:#EAF2EE; border:1px solid #2D4A3E; border-radius:6px; padding:7px 8px; font-size:10.5px; text-align:left;">6. PATCH /api/bitacora-visitante/{id}/registro · Registra FechaHoraLlegada o FechaHoraSalida · Guarda IdVigilante</div>
+      </div>
+
+      <!-- Arrow API → Vigilante -->
+      <div style="display:flex; flex-direction:column; align-items:center; padding-top:120px; width:60px; flex-shrink:0;">
+        <div style="font-size:10px; color:#1A3A6E; font-weight:600; text-align:center; margin-bottom:4px;">GET /api/bitacora-visitante</div>
+        <div style="font-size:18px; color:#1A3A6E;">←</div>
+        <div style="font-size:10px; color:#1A3A6E; margin-top:4px; text-align:center;">PATCH entrada/salida →</div>
+      </div>
+
+      <!-- Vigilante -->
+      <div style="flex:1; text-align:center; padding:0 8px;">
+        <div style="background:#E8F0FC; border:2px solid #3A7BD5; border-radius:8px; padding:8px 6px; font-size:12px; font-weight:700; color:#1A3A6E;">👮 Vigilante</div>
+        <div style="border-left:2px dashed #3A7BD5; margin:0 auto; height:60px; width:2px;"></div>
+        <div style="background:#E8F0FC; border:1px solid #3A7BD5; border-radius:6px; padding:7px 8px; font-size:10.5px; color:#1A3A6E; text-align:left;">4b. Solicita código al visitante en la caseta de acceso</div>
+        <div style="border-left:2px dashed #3A7BD5; margin:0 auto; height:12px; width:2px;"></div>
+        <div style="background:#E8F0FC; border:1px solid #3A7BD5; border-radius:6px; padding:7px 8px; font-size:10.5px; color:#1A3A6E; text-align:left;">5b. Ingresa código en App · Valida y ve datos</div>
+        <div style="border-left:2px dashed #3A7BD5; margin:0 auto; height:12px; width:2px;"></div>
+        <div style="background:#E8F0FC; border:1px solid #3A7BD5; border-radius:6px; padding:7px 8px; font-size:10.5px; color:#1A3A6E; text-align:left;">6b. Presiona "Registrar entrada" o "Registrar salida"</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Legend ── -->
+<div class="legend">
+  <div class="legend-item"><div class="swatch" style="background:#EAF2EE; border:1.5px solid #2D4A3E;"></div> Proceso Administrador</div>
+  <div class="legend-item"><div class="swatch" style="background:#E8F0FC; border:1.5px solid #3A7BD5;"></div> Proceso Vigilante</div>
+  <div class="legend-item"><div class="swatch" style="background:#FFF8E1; border:1.5px solid #D4A017;"></div> Proceso Inquilino / Actor externo</div>
+  <div class="legend-item"><div class="swatch" style="background:white; border:1.5px dashed #2D4A3E;"></div> Proceso secundario / informativo</div>
+  <div class="legend-item"><div class="swatch" style="background:#FFF8E1; border:1.5px solid #D4A017;"></div> Resultado del sistema</div>
+</div>
+
+</body>
+</html>

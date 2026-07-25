@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:UHabitacional.MOBILE.Models"
+             x:Class="UHabitacional.MOBILE.Pages.ChecadorPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- HEADER -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Padding="16,14">
+            <Label Grid.Column="0" Text="←" FontSize="22" TextColor="{StaticResource Ink}"
+                   VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRegresarTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Grid.Column="1" Text="Checador de turno" FontSize="16" FontAttributes="Bold"
+                   TextColor="{StaticResource Ink}"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- BODY -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,4,16,24" Spacing="14">
+
+                <!-- TARJETA DE ESTADO DEL TURNO -->
+                <Border Style="{StaticResource ModuloCard}" Padding="20">
+                    <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+
+                        <!-- Reloj en vivo -->
+                        <Label x:Name="RelojLabel"
+                               Text="--:--:--"
+                               FontSize="52" FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}"
+                               CharacterSpacing="-1"
+                               HorizontalOptions="Center" />
+
+                        <Label x:Name="FechaLabel"
+                               FontSize="12" TextColor="{StaticResource Muted}"
+                               HorizontalOptions="Center" />
+
+                        <!-- Estado del turno -->
+                        <Border x:Name="EstadoBadge"
+                                HorizontalOptions="Center"
+                                Padding="14,6"
+                                StrokeShape="RoundRectangle 999"
+                                StrokeThickness="0">
+                            <Label x:Name="EstadoLabel"
+                                   FontSize="13" FontAttributes="Bold"
+                                   HorizontalOptions="Center" />
+                        </Border>
+
+                        <!-- Info turno abierto -->
+                        <Label x:Name="InfoTurnoLabel"
+                               IsVisible="False"
+                               FontSize="13" TextColor="{StaticResource Muted}"
+                               HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center" />
+
+                        <!-- Mensaje de error -->
+                        <Label x:Name="MensajeLabel"
+                               IsVisible="False"
+                               FontSize="13" TextColor="{StaticResource Danger}"
+                               HorizontalTextAlignment="Center" />
+
+                        <!-- Indicador de carga -->
+                        <ActivityIndicator x:Name="LoadingIndicator"
+                                           IsVisible="False" IsRunning="False"
+                                           Color="{StaticResource Primary}"
+                                           HorizontalOptions="Center" />
+
+                        <!-- Botón de acción principal -->
+                        <Button x:Name="AccionButton"
+                                FontSize="16"
+                                HeightRequest="56"
+                                WidthRequest="240"
+                                HorizontalOptions="Center"
+                                Clicked="OnAccionClicked" />
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- HISTORIAL DE TURNOS -->
+                <Label Text="HISTORIAL RECIENTE"
+                       FontSize="11" FontAttributes="Bold"
+                       TextColor="{StaticResource Muted}"
+                       Margin="2,6,0,2" />
+
+                <Label x:Name="HistorialVacioLabel"
+                       IsVisible="False"
+                       Text="No hay registros anteriores."
+                       FontSize="13" TextColor="{StaticResource Muted}"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,8,0,0" />
+
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Turnos}" Spacing="10">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:TurnoVigilante">
+                            <Border Style="{StaticResource ModuloCard}" Padding="14">
+                                <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="12">
+
+                                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="2">
+                                        <Label Text="{Binding FechaTexto}"
+                                               Style="{StaticResource ModuloTitulo}" FontSize="13" />
+                                        <Label Text="{Binding Observaciones}"
+                                               Style="{StaticResource ModuloDesc}"
+                                               IsVisible="{Binding TieneObservaciones}" />
+                                    </VerticalStackLayout>
+
+                                    <!-- Entrada -->
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center"
+                                                         HorizontalOptions="End" Spacing="1">
+                                        <Label Text="Entrada" FontSize="9"
+                                               TextColor="{StaticResource Muted}"
+                                               HorizontalTextAlignment="End" />
+                                        <Label Text="{Binding EntradaTexto}"
+                                               FontSize="13" FontAttributes="Bold"
+                                               TextColor="{StaticResource Success}"
+                                               HorizontalTextAlignment="End" />
+                                    </VerticalStackLayout>
+
+                                    <!-- Salida -->
+                                    <VerticalStackLayout Grid.Column="2" VerticalOptions="Center"
+                                                         HorizontalOptions="End" Spacing="1">
+                                        <Label Text="Salida" FontSize="9"
+                                               TextColor="{StaticResource Muted}"
+                                               HorizontalTextAlignment="End" />
+                                        <Label Text="{Binding SalidaTexto}"
+                                               FontSize="13" FontAttributes="Bold"
+                                               TextColor="{StaticResource Muted}"
+                                               HorizontalTextAlignment="End" />
+                                    </VerticalStackLayout>
+
+                                    <!-- Duración -->
+                                    <VerticalStackLayout Grid.Column="3" VerticalOptions="Center"
+                                                         HorizontalOptions="End" Spacing="1">
+                                        <Label Text="Duración" FontSize="9"
+                                               TextColor="{StaticResource Muted}"
+                                               HorizontalTextAlignment="End" />
+                                        <Label Text="{Binding DuracionTexto}"
+                                               FontSize="13" FontAttributes="Bold"
+                                               TextColor="{StaticResource Ink}"
+                                               HorizontalTextAlignment="End" />
+                                    </VerticalStackLayout>
+
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

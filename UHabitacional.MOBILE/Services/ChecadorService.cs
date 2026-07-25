@@ -6,7 +6,7 @@ using UHabitacional.MOBILE.Models;
 
 namespace UHabitacional.MOBILE.Services;
 
-public class DepartamentosService
+public class ChecadorService
 {
     private const string BaseUrl = "http://localhost:5000";
 
@@ -16,41 +16,36 @@ public class DepartamentosService
         Timeout = TimeSpan.FromSeconds(30)
     };
 
-    public async Task<List<Departamento>> ObtenerDepartamentosAsync()
+    // Devuelve los últimos 7 turnos del vigilante autenticado
+    public async Task<List<TurnoVigilante>> ObtenerTurnosPropiosAsync()
     {
-        var peticion = new HttpRequestMessage(HttpMethod.Get, "/api/Departamentos");
+        var peticion = new HttpRequestMessage(HttpMethod.Get, "/api/bitacora-vigilante");
         AplicarToken(peticion);
 
         HttpResponseMessage respuesta = await EnviarAsync(peticion);
 
         if (!respuesta.IsSuccessStatusCode)
         {
-            throw new Exception("No se pudieron obtener los departamentos.");
+            throw new Exception("No se pudo obtener el historial de turnos.");
         }
 
-        var departamentos = await respuesta.Content.ReadFromJsonAsync<List<Departamento>>();
-        return departamentos ?? [];
+        var todos = await respuesta.Content.ReadFromJsonAsync<List<TurnoVigilante>>();
+
+        return todos?
+            .Where(t => t.IdUsuario == SessionService.IdUsuario)
+            .OrderByDescending(t => t.FechaHoraEntrada)
+            .Take(7)
+            .ToList() ?? [];
     }
 
-    public async Task<Departamento> ObtenerDepartamentoPorIdAsync(int id)
+    public async Task<TurnoVigilante> RegistrarEntradaAsync()
     {
-        var peticion = new HttpRequestMessage(HttpMethod.Get, $"/api/Departamentos/{id}");
-        AplicarToken(peticion);
-
-        HttpResponseMessage respuesta = await EnviarAsync(peticion);
-
-        if (!respuesta.IsSuccessStatusCode)
+        var request = new TurnoVigilanteCreateRequest
         {
-            throw new Exception("No se pudo obtener el departamento.");
-        }
+            FechaHoraEntrada = DateTime.Now
+        };
 
-        var departamento = await respuesta.Content.ReadFromJsonAsync<Departamento>();
-        return departamento ?? throw new Exception("No se encontró el departamento.");
-    }
-
-    public async Task<Departamento> CrearDepartamentoAsync(DepartamentoCreateRequest request)
-    {
-        var peticion = new HttpRequestMessage(HttpMethod.Post, "/api/Departamentos")
+        var peticion = new HttpRequestMessage(HttpMethod.Post, "/api/bitacora-vigilante")
         {
             Content = JsonContent.Create(request)
         };
@@ -61,16 +56,21 @@ public class DepartamentosService
         if (!respuesta.IsSuccessStatusCode)
         {
             string detalle = await ExtraerDetalleErrorAsync(respuesta);
-            throw new Exception(detalle ?? "No se pudo crear el departamento.");
+            throw new Exception(detalle ?? "No se pudo registrar la entrada.");
         }
 
-        var departamento = await respuesta.Content.ReadFromJsonAsync<Departamento>();
-        return departamento ?? throw new Exception("El servidor no devolvió el departamento creado.");
+        var turno = await respuesta.Content.ReadFromJsonAsync<TurnoVigilante>();
+        return turno ?? throw new Exception("El servidor no devolvió el turno registrado.");
     }
 
-    public async Task<Departamento> ActualizarDepartamentoAsync(int id, DepartamentoUpdateRequest request)
+    public async Task<TurnoVigilante> RegistrarSalidaAsync(int idTurno)
     {
-        var peticion = new HttpRequestMessage(HttpMethod.Put, $"/api/Departamentos/{id}")
+        var request = new TurnoVigilanteUpdateRequest
+        {
+            FechaHoraSalida = DateTime.Now
+        };
+
+        var peticion = new HttpRequestMessage(HttpMethod.Put, $"/api/bitacora-vigilante/{idTurno}")
         {
             Content = JsonContent.Create(request)
         };
@@ -81,11 +81,11 @@ public class DepartamentosService
         if (!respuesta.IsSuccessStatusCode)
         {
             string detalle = await ExtraerDetalleErrorAsync(respuesta);
-            throw new Exception(detalle ?? "No se pudo actualizar el departamento.");
+            throw new Exception(detalle ?? "No se pudo registrar la salida.");
         }
 
-        var departamento = await respuesta.Content.ReadFromJsonAsync<Departamento>();
-        return departamento ?? throw new Exception("El servidor no devolvió el departamento actualizado.");
+        var turno = await respuesta.Content.ReadFromJsonAsync<TurnoVigilante>();
+        return turno ?? throw new Exception("El servidor no devolvió el turno actualizado.");
     }
 
     private static void AplicarToken(HttpRequestMessage peticion)

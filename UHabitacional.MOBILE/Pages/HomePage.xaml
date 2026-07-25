@@ -33,7 +33,7 @@
                        TextColor="{StaticResource Muted}"
                        Margin="2,8,0,10" />
 
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto"
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto"
                       ColumnSpacing="11" RowSpacing="11">
 
                     <!-- Inquilinos -->
@@ -117,6 +117,34 @@
                             </Border>
                             <Label Text="Catálogos" Style="{StaticResource ModuloTitulo}" />
                             <Label Text="Tipos y perfiles" Style="{StaticResource ModuloDesc}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Checador -->
+                    <Border Grid.Row="3" Grid.Column="0" Style="{StaticResource ModuloCard}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnModuloTapped" CommandParameter="Checador" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="10">
+                            <Border BackgroundColor="{StaticResource Primary50}" Style="{StaticResource IconoBox}">
+                                <Label Text="🕐" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Checador" Style="{StaticResource ModuloTitulo}" />
+                            <Label Text="Registro de turno" Style="{StaticResource ModuloDesc}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Registro Visitante -->
+                    <Border Grid.Row="3" Grid.Column="1" Style="{StaticResource ModuloCard}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnModuloTapped" CommandParameter="RegistroVisitante" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="10">
+                            <Border BackgroundColor="{StaticResource Accent100}" Style="{StaticResource IconoBox}">
+                                <Label Text="🔑" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Text="Registro Visitante" Style="{StaticResource ModuloTitulo}" />
+                            <Label Text="Entrada y salida" Style="{StaticResource ModuloDesc}" />
                         </VerticalStackLayout>
                     </Border>
 

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UHabitacional.MOBILE.Pages.InquilinoFormPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- HEADER -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,14">
+            <Label Grid.Column="0" Text="←" FontSize="22" TextColor="{StaticResource Ink}"
+                   VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRegresarTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label x:Name="TituloLabel" Grid.Column="1" Text="Crear inquilino"
+                   FontSize="16" FontAttributes="Bold" TextColor="{StaticResource Ink}"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- BODY -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,4,16,24" Spacing="14">
+
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsVisible="False" IsRunning="False"
+                                   Color="{StaticResource Primary}"
+                                   HorizontalOptions="Center" Margin="0,8,0,0" />
+
+                <Label x:Name="MensajeLabel"
+                       IsVisible="False" FontSize="13"
+                       TextColor="{StaticResource Danger}" />
+
+                <!-- Usuario (solo en modo crear) -->
+                <VerticalStackLayout x:Name="UsuarioSection" Spacing="5">
+                    <Label Text="Usuario inquilino" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <Picker x:Name="UsuarioPicker"
+                                Title="Selecciona un usuario..."
+                                ItemDisplayBinding="{Binding NombreCompleto}" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Nombre usuario (solo en modo editar) -->
+                <VerticalStackLayout x:Name="NombreUsuarioSection" IsVisible="False" Spacing="5">
+                    <Label Text="Inquilino" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Primary50}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,10">
+                        <Label x:Name="NombreUsuarioLabel" FontSize="14" TextColor="{StaticResource Ink}" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Departamento -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Departamento" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <Picker x:Name="DepartamentoPicker"
+                                Title="Selecciona un departamento..."
+                                ItemDisplayBinding="{Binding Etiqueta}" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Fecha de inicio -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Fecha de inicio" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <DatePicker x:Name="FechaInicioPicker"
+                                    Format="dd/MM/yyyy"
+                                    MinimumDate="01/01/2000" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Fecha de salida (solo en modo editar) -->
+                <VerticalStackLayout x:Name="FechaFinSection" IsVisible="False" Spacing="10">
+
+                    <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                        <Label Grid.Column="0" Text="Fecha de salida" FontSize="12"
+                               FontAttributes="Bold" TextColor="{StaticResource Ink}"
+                               VerticalOptions="Center" />
+                        <Switch x:Name="FechaFinSwitch" Grid.Column="1"
+                                Toggled="OnFechaFinSwitchToggled" />
+                    </Grid>
+
+                    <Border x:Name="FechaFinPickerContainer"
+                            IsVisible="False"
+                            BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <DatePicker x:Name="FechaFinPicker"
+                                    Format="dd/MM/yyyy"
+                                    MinimumDate="01/01/2000" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Botones principales -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="11" Margin="0,8,0,0">
+                    <Button Grid.Column="0" Text="Cancelar" Clicked="OnCancelarClicked"
+                            BackgroundColor="Transparent" TextColor="{StaticResource Primary}"
+                            BorderColor="{StaticResource Line}" BorderWidth="1" />
+                    <Button x:Name="GuardarButton" Grid.Column="1" Text="Guardar"
+                            Clicked="OnGuardarClicked" />
+                </Grid>
+
+                <!-- Botón eliminar (solo en modo editar) -->
+                <Button x:Name="EliminarButton"
+                        IsVisible="False"
+                        Text="Eliminar inquilino"
+                        Clicked="OnEliminarClicked"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource Danger}"
+                        BorderColor="{StaticResource Danger}"
+                        BorderWidth="1"
+                        Margin="0,4,0,0" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+</ContentPage>

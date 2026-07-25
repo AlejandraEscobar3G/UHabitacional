@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="UHabitacional.MOBILE.Pages.VisitanteFormPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource Background}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- HEADER -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="16,14">
+            <Label Grid.Column="0" Text="←" FontSize="22" TextColor="{StaticResource Ink}"
+                   VerticalOptions="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRegresarTapped" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label x:Name="TituloLabel" Grid.Column="1" Text="Registrar visitante"
+                   FontSize="16" FontAttributes="Bold" TextColor="{StaticResource Ink}"
+                   HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- BODY -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,4,16,24" Spacing="14">
+
+                <ActivityIndicator x:Name="LoadingIndicator"
+                                   IsVisible="False" IsRunning="False"
+                                   Color="{StaticResource Primary}"
+                                   HorizontalOptions="Center" Margin="0,8,0,0" />
+
+                <Label x:Name="MensajeLabel"
+                       IsVisible="False" FontSize="13"
+                       TextColor="{StaticResource Danger}" />
+
+                <!-- Nombre del visitante -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Nombre del visitante" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <Entry x:Name="NombreEntry" Placeholder="Nombre completo del visitante..." />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Tipo de identificación -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Tipo de identificación" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <Picker x:Name="IdentificacionPicker"
+                                Title="Selecciona el tipo..."
+                                ItemDisplayBinding="{Binding Nombre}" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Número de identificación -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Número de identificación" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <Entry x:Name="NumeroIdEntry" Placeholder="Número del documento..." />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Observaciones -->
+                <VerticalStackLayout Spacing="5">
+                    <Label Text="Observaciones (opcional)" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Surface}" Stroke="{StaticResource Line}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                        <Editor x:Name="ObservacionesEditor"
+                                Placeholder="Motivo de la visita u otras notas..."
+                                HeightRequest="80" AutoSize="TextChanges" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Info: código en modo crear -->
+                <Border x:Name="InfoCodigoBox"
+                        IsVisible="True"
+                        BackgroundColor="{StaticResource Primary50}"
+                        Stroke="{StaticResource Primary}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="14,10">
+                    <Label Text="Al guardar se generará un código de 6 caracteres que deberás compartir con tu visitante para que el vigilante registre su entrada."
+                           FontSize="12" TextColor="{StaticResource Primary}" />
+                </Border>
+
+                <!-- Código actual (modo editar) -->
+                <VerticalStackLayout x:Name="CodigoActualSection" IsVisible="False" Spacing="5">
+                    <Label Text="Código de visita" FontSize="12" FontAttributes="Bold"
+                           TextColor="{StaticResource Ink}" />
+                    <Border BackgroundColor="{StaticResource Primary50}" Stroke="{StaticResource Primary}"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="14,10">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label x:Name="CodigoLabel" Grid.Column="0"
+                                   FontSize="24" FontAttributes="Bold"
+                                   TextColor="{StaticResource Primary}"
+                                   VerticalOptions="Center"
+                                   CharacterSpacing="4" />
+                            <Label Grid.Column="1" Text="Copiar" FontSize="12"
+                                   TextColor="{StaticResource Primary}"
+                                   VerticalOptions="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnCopiarCodigoTapped" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Botones principales -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="11" Margin="0,8,0,0">
+                    <Button Grid.Column="0" Text="Cancelar" Clicked="OnCancelarClicked"
+                            BackgroundColor="Transparent" TextColor="{StaticResource Primary}"
+                            BorderColor="{StaticResource Line}" BorderWidth="1" />
+                    <Button x:Name="GuardarButton" Grid.Column="1" Text="Guardar"
+                            Clicked="OnGuardarClicked" />
+                </Grid>
+
+                <!-- Eliminar (solo editar) -->
+                <Button x:Name="EliminarButton"
+                        IsVisible="False"
+                        Text="Cancelar visita"
+                        Clicked="OnEliminarClicked"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource Danger}"
+                        BorderColor="{StaticResource Danger}"
+                        BorderWidth="1"
+                        Margin="0,4,0,0" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+</ContentPage>

@@ -39,6 +39,10 @@ GO
 :r .\03_SeedData.sql
 GO
 
+-- 4) Crear tabla de sesion
+:r .\04_AddSesionTable.sql
+GO
+
 PRINT '==========================================================';
 PRINT 'Instalacion completa: BD, tablas (con Sesion) y datos.';
 PRINT '==========================================================';
